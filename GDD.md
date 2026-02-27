@@ -214,19 +214,19 @@ Efectos del terreno según el tipo y la altura:
 
 # 3. Aspectos Técnicos (Stack Tecnológico)
 
-Cómo usar Maven y Java, esta sección es crítica para el entorno educativo.
+En principio, el proyecto será un proyecto Maven de Java con JavaFX. Ahora mismo no hay mucho más que definir.
 
 ## Dependencias:
 
-Librerías a usar (ej: LWJGL, LibGDX o JavaFX).
+Librerías a usar: JavaFX. Maven para gestionar dependencias. //TODO: Añadir futuras dependencias si se detecta la necesidad de nuevas.
 
 ## Arquitectura:
 
-Breve mención a si usar un patrón Entity Component System (ECS) o herencia simple.
+La definida en el documento ClassesUML.md.
 
 ## Estructura del Proyecto:
 
-Definición de paquetes (com.game.entities, com.game.engine, etc.).
+Definición de paquetes (com.titozeio.engine, com.titozeio.ui, com.titozeio.victory, etc.).
 
 # 4. Bucle de Juego (Game Loop)
 
