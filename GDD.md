@@ -21,17 +21,15 @@
   - [Arquitectura:](#arquitectura)
   - [Estructura del Proyecto:](#estructura-del-proyecto)
 - [4. Bucle de Juego (Game Loop)](#4-bucle-de-juego-game-loop)
-    - [Input:](#input)
-    - [Update:](#update)
-    - [Render:](#render)
 - [5. Contenido, Niveles](#5-contenido-niveles)
   - [Asset List:](#asset-list)
   - [Diseño de Nivel (mapa):](#diseño-de-nivel-mapa)
   - [Lista de skills:](#lista-de-skills)
   - [Lista de Robots:](#lista-de-robots)
 - [6. Interfaz (UI/HUD)](#6-interfaz-uihud)
-  - [Menús:](#menús)
-  - [HUD:](#hud)
+  - [Pantalla de inicio:](#pantalla-de-inicio)
+  - [Pantalla de Nueva partida:](#pantalla-de-nueva-partida)
+  - [Pantalla de Combate:](#pantalla-de-combate)
 
 
 # 1. Concepto de Alto Nivel (The Pitch)
@@ -71,9 +69,10 @@ Más adelante se explica cómo gestionar el mapa, cómo se visualiza y los eleme
 
 El Core Loop básico sería:
 
-1. P1 realiza su turno. Se comprueba si se cumplen las condiciones de victoria. Si se cumple alguna, se acaba el juego y gana el jugador que cumpla las condiciones. Si no, se pasa al paso 2.
-
-2. P2 realiza su turno. Se comprueba si se cumplen las condiciones de victoria.  Si se cumple alguna, se acaba el juego y gana el jugador que cumpla las condiciones. Si no, se vuelve al paso 1.
+1. P1 posiciona sus robots en las casillas de despliegue designadas para él en el mapa. Puede elegir qué casillas usar, en caso de haber más casillas que robots.
+2. P2 hace lo mismo en las casillas designadas para él.
+3. P1 realiza su turno. Se comprueba si se cumplen las condiciones de victoria. Si se cumple alguna, se acaba el juego y gana el jugador que cumpla las condiciones. Si no, se pasa al paso 4.
+4. P2 realiza su turno. Se comprueba si se cumplen las condiciones de victoria.  Si se cumple alguna, se acaba el juego y gana el jugador que cumpla las condiciones. Si no, se vuelve al paso 3.
 
 **[OMSI]** : Habilitar condiciones de empate para los mapas (por ejemplo, poner un límite de  turnos).
 
@@ -231,17 +230,10 @@ Definición de paquetes (com.game.entities, com.game.engine, etc.).
 
 # 4. Bucle de Juego (Game Loop)
 
-### Input:
-
-Captura de eventos.
-
-### Update:
-
-Lógica y cálculo de estados.
-
-### Render:
-
-Dibujado en pantalla.
+1. El juego comienza en la pantalla de **Nueva Partida**, donde se ve el título, instrucciones y se comienza el juego.
+2. Después se pasa a la pantalla de **Elección de Robots**, donde los jugadores eligen sus robots. 
+3. Una vez que ambos jugadores han elegido sus 3 robots, de forma alterna, se pasa a la pantalla de **Combate**, donde se desarrolla el core loop.
+4. Una vez se cumplen las condiciones de victoria del mapa en cuestión, se muestra el mensaje de victoria y se vuelve a la pantalla de **Nueva Partida** y vuelta al paso 1.
 
 # 5. Contenido, Niveles
 
@@ -393,10 +385,44 @@ Un boceto o descripción del único mapa que tendrá el prototipo.
 
 # 6. Interfaz (UI/HUD)
 
-## Menús:
+## Pantalla de inicio:
+- **Descripción**: La pantalla de inicio es la primera pantalla que ve el jugador al iniciar el juego. Es una pantalla con un diseño futurista y minimalista, con un fondo oscuro y una iluminación azul que resalta el título del juego y el botón de "Jugar".
+- **Elementos**: 
+    - Título del juego: "Devastation Ai Wars 1".
+    - Botón de "Jugar": Al pulsarlo, se inicia el juego (ver pantalla de nueva partida).
 
-Pantalla de inicio, Game Over y pausa.
+## Pantalla de Nueva partida:
+- **Descripción**: 
+    - Al iniciar un nuevo juego, J2 elige su primer robot (empieza él, para compensar que J1 hace el primer turno). Los jugadores van por turno eligiendo robots hasta que ambos tengan 3. Una vez que se elige un modelo de robot, deja de estar disponible para ambos.
+    - Cuando ambos jugadores han elegido sus 3 robots, se pasa a la pantalla de nueva partida.
+- **Elementos**: 
+    - Instrucciones: (Fija): "Los jugadores eligen robots por turnos.  Empieza J2. J1 realizará el primer turno de la partida" (Alternando):  "Jugador 2, elige robot" (luego "Jugador 1, elige robot", y así sucesivamente).
+    - Lista de robots: se muestran los robots disponibles para elegir, con su imagen, nombre, estadísticas y descripción. Cuando se elige uno, su imagen y demás se oscurece e inhabilita. Cuando los jugadorees pasan el ratón por encima, se resalta de alguna manera. 
+ ## Pantalla de Combate:
+  - **Descripción**: La pantalla de combate es la pantalla principal del juego y donde se desarrola el core loop. 
+  - **Elementos**: 
+    - **Turno actual**: Indica el número de turno actual de quién es el turno (por ej.: "Turn: 5. P1")
+    - **Mapa**: Se muestra el mapa donde se desarrolla el combate.
+    - **Mensajes**: Se muestran los mensajes del juego.Pueden ser los siguientes:
+      - "Objetivos del mapa: [objetivos]" (va acompañado de un botón de "Aceptar" que al pulsarlo pasa al siguiente mensaje)
+      - "Jugador 1, posiciona tus robots" (pasa al siguiente mensaje cuando P1 ha posicionado todos sus robots)
+      - "Jugador 2, posiciona tus robots" (desaparece cuando P2 ha posicionado todos sus robots, y muestra el mensaje de "Turno actual")
+    - **Mensajes de combate**: Cuando se produce daño a un robot, se muestra un mensaje indicando el daño causado y el robot que lo ha recibido. Por ejemplo: "[Robot1] ha impactado en [Robot2] causando [daño] puntos de daño!".
+    - **Bloque de info adicional**: Un rectángulo, inicalmente vacío, que mostrará info adicional cuando: 
+      - Se pasa el ratón por encima de un robot: se muestra su nombre, estadísticas y descripción.
+      - Se pasa el ratón por encima de un terreno: se muestra su descripción, el tipo, la altura.
+    - **Botón de Fin de turno**: El jugador puede pulsar este botón para indicar que ha terminado de realizar las acciones de sus robots. Al pulsarlo, se pasa al siguiente jugador. Si queda algún robot por realizar acciones, se mostrará un mensaje indicándolo: "Jugador [X], te quedan robots por realizar acciones. Seguro que quieres finalizar el turno?" con dos opciones: "Cancelar" y "Finalizar turno". Cuando al jugador no le quedan más acciones de ningún robot, se realiza el cambio de turno automáticamente, mostrándose un mensaje antes.
+    - **Botón de Pausa**: El jugador puede pulsar este botón para pausar el juego. Al pulsarlo, se muestra un menú con las opciones: "Reanudar", "Rendirse". Si pulsa "Reanudar", se vuelve a la pantalla de combate. Si pulsa "Rendirse", se muestra el mensaje de "Victoria"del oponente. 
+    - **Robots**: 
+      - Los robots aparecen representados por figuras fuera del mapa al comienzo y luego, una vez posicionados, en las casillas elegidas. Debajo de cada robot aparece una barra de vida que indica su estado actual. La barra está seccionadao en segmentos. Cada uno es 1 HP.
+      - Cuando se pasa el ratón por encima de un robot, se resalta de alguna manera (y se muestra la info correspondiente en el bloque de info adicional).
+      - Cuando se hace clic en un robot, se muestra un menú con las acciones disponibles para ese robot inicialmente: moverse, atacar, usar habilidad (se mostaría el nombre de la skill). 
+        - Moverse: El sistema calcula las casillas a las que puede moverse el robot (teniendo en cuenta su movimiento, el terreno y los obstáculos) y las resalta. El jugador puede hacer clic en una de las casillas resaltadas para confirmar el moviento.El robot se desplaza a la casilla seleccionada. Se puede seleccionar la casilla donde está el robot si no desea reealizar ningún movimiento.
+        - Atacar: El sistema calcula las casillas a las que puede disparar el robot (teniendo en cuenta su alcance, el terreno y los obstáculos) y las resalta. Si hay algún enemigo en alguna de las casillas resaltadas, se resalta de alguna manera especial. El jugador puede hacer clic en una de las casillas donde haya un enemigo para realizar el ataque. Se produce una animación de ataque y se resuelve el daño. Aparece un efecto de impacto sobre el robot enemigo, con el número de daño, y la barra de HP se actualiza. También se muestra en mensaje en grande en el **Mensajes de combate**. También se puede elegir hacer click en la casilla propia o en cualquiera, si no se quiere o puede atacar a un enemigo.
+        - Usar habilidad: Dependiendo de si es una skill de ataque o de movimiento, el sistema actúa como corresponda, aplicando las reglas especiales de cada skill. Por ejemplo, la skill retropropulsares, al ser de movimiento, resaltará las casillas a las que puede moverse el robot, pero sin tener en cuenta el terreno. Las casillas resaltas  para las skills, ya sean por movimiento o ataque, tendrán un color diferente.
+        - Cancelar: Cuando se seleccionan las opciones movimiento, atacar, o skill, aparece este botón de cancelar, que cancela la acción seleccionada y vuelve a mostrar el menú de acciones disponibles.
+        - Confirmación de acción: Una vez que el jugador ha realizado una acción de movimiento o skill de movimiento, se activa automáticamente la acción de atacar. Y viceversa: una vez realizada la acción de ataque (o skill de ataque), se activa automáticamente la acción de movimiento. (una vez se empieza a realizar las acciones de un robot, hay que completar ambas).
+        - Cuando un robot ha realizado sus dos acciones posibles, el robot aparece como "agotado" (un efecto visual de algún tipo, por ejemplo, se oscurece) y no se puede volver a seleccionar.
+       
 
-## HUD:
 
-Visualización de vidas, puntos o tiempo.
