@@ -14,7 +14,7 @@ public class Main extends Application {
         primaryStage.setWidth(1280);
         primaryStage.setHeight(720);
 
-        // Inicializa el juego pasándole la ventana
+        // Inicializa el juego pasandole la ventana
         this.game = new Game(primaryStage);
         this.game.start();
 
