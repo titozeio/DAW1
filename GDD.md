@@ -86,7 +86,11 @@ Todos los robots tienen skills. En cada skill se especifica si es de movimiento 
 
 - **Efecto especial**: Si la skill tiene un efecto especial que contradice una regla establecida del juego, el efecto predomina sobre la regla. Por ejemplo, el efecto puede decir que no se tenga en cuenta la cobertura o el tipo de terreno a la hora de determinar el coste en puntos de movimiento.
 
-- **[OMSI] **Incluir la posibilidad de que existan skills que no sean de movimiento ni de ataque, sino que sean, por ejemplo, pasivas, o reactivas (no se activan voluntariamente sino cuando ocurre algo determinado).
+- **Cooldown**: Indica cuántos turnos deben transcurrir antes de poder usar la skill de nuevo. 
+
+- **[OMSI]** Incluir la posibilidad de que existan skills que no sean de movimiento ni de ataque, sino que sean, por ejemplo, pasivas, o reactivas (no se activan voluntariamente sino cuando ocurre algo determinado).
+
+
 
 ## Alcance:
 
@@ -206,9 +210,68 @@ Elementos que puede haber en un mapa.
 
 Un boceto o descripción del único mapa que tendrá el prototipo.
 
-## Piezas(robots):
+## Lista de skills:
 
-Propiedades iniciales de los robots.
+- **Retropropulsores**:
+    - Tipo: Movimiento.
+    - Movimiento: 3.
+    - Cooldown: 1 turnos.
+    - Efecto especial: Ignora el tipo de terreno a efectos de movimiento (coste y posibilidad). Por ejemplo, un robot con esta skill podría moverse de una casilla de altura 0 a una casilla de altura 2.
+    - Descripción: El robot cuenta con unos retropropulsores que le impulsan por el aire. No llega a poder volar, ya que el impulso dura muy poco dado el coste energético. 
+
+- **Turbo Propulsores**:
+    - Tipo: Movimiento.
+    - Movimiento: 7.
+    - Cooldown: 1 turnos.
+    - Efecto especial: Ninguno.
+    - Descripción: Cada dos turnos, el robot puede activar unos turbo propulsores en sus patas, que le impulsan a una velocidad mucho mayor de su movimiento normal.
+ 
+- **Misiles teledirigidos**:
+    - Tipo: Ataque.
+    - Alcance: 5.
+    - Daño: 5.
+    - Cooldown: 2 turnos.
+    - Efecto especial: Permite atacar sin visibilidad e ignorando reglas de cobertura, siempre que el enemigo esté al alcance.
+    - Descripción: El robot cuenta con unos misiles teledirigidos que viajan hacia el objetivo rodeando obstáculos, permitiendo ignorar todo tipo de cobertura y visibilidad.
+
+- **Nanobots reparadores**:
+    - Tipo: Ataque.
+    - Alcance: 1.
+    - Daño: 5.
+    - Cooldown: 2 turnos.
+    - Efecto especial: Hace que el robot objetivo recupere una cantidad de HPs igual a la cantidad de daño especificada (no se puede usar sobre robots ya destruidos).
+    - Descripción: Aunque parezca un ataque, esta skill despliega un enjambre de nanobbots sobre un robot aliado. Los nanobots actúan rápidamente, restaurando las partes dañadas del robot aliado.
+
+- **Sable de Plasma**:
+    - Tipo: Ataque.
+    - Alcance: 1.
+    - Daño: 10.
+    - Cooldown: 3 turnos.
+    - Descripción: El robot despliega un sable de plasma que hace daño masivo. El sable es tan potente que necesita una cantidad de  energía brutal para volver a generarse, por lo que normalmente solo se puede usar 1 o 2 veces en el combate.
+
+- **Rayo congelador**:
+    - Tipo: Ataque.
+    - Alcance: 3.
+    - Daño: 3.
+    - Cooldown: 2 turnos.
+    - Efecto especial: El robot objetivo no puede actuar durante 1 turno.
+    - Descripción: El robot dispara un rayo de frío criogénico que congela al robot objetivo, impidiendo que pueda actuar durante 1 turno.
+
+- **[OMSI]**
+    - **Carga Kamikaze**:
+        - Tipo: Movimiento.
+        - Movimiento: 10.
+        - Cooldown: 2 turnos.
+        - Efecto especial: Permite avanzar hasta 10 casillas, en línea recta. Si durante el trayecto, hay algún obstáculo (como una casilla de un nivel mayor que el anterior, agua u otro robot), el robot termina su desplazamiento en esa casilla. Si en esa casilla había un robot, ese robot es desplazado una casilla en dirección contraria al movimiento del robot, y recibe 2 puntos de daño por cada casilla que se haya desplazado el robot con la skill. El robot atacante también recibe daño: 1 por cada casilla que se haya desplazado.
+        - Descripción: Las patas del robot cuentan con microretropropulsores, que, una vez activados, impulsan al robot hacia delante a una velocidad increíble, permitiendo recorrer una distancia de 10, pudiendo embestir al enemigo y produciendo daño proporcional a la distancia recorrida, aunque también recibe daño por cada casilla que se haya desplazado.
+    - **Nanobots corrosivos**:
+    - Tipo: Ataque.
+    - Alcance: 3.
+    - Daño: 3.
+    - Cooldown: 2 turnos.
+    - Efecto especial: Además del daño del ataque, el robot objetivo recibe 2 HPs de daño por cada turno que pase, durante 4 turnos.
+    - Descripción: El robot dispara un proyectil, que al impactar, despliega unos nanobots corrosivos que van destruyendo el robot objetivo y causando daño constante hasta que se quedan sin energía o el robot objetivo se destruye.  
+
 
 # 6. Interfaz (UI/HUD)
 
