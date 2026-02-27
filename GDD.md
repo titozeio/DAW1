@@ -28,6 +28,7 @@
   - [Asset List:](#asset-list)
   - [Diseño de Nivel (mapa):](#diseño-de-nivel-mapa)
   - [Lista de skills:](#lista-de-skills)
+  - [Lista de Robots:](#lista-de-robots)
 - [6. Interfaz (UI/HUD)](#6-interfaz-uihud)
   - [Menús:](#menús)
   - [HUD:](#hud)
@@ -315,6 +316,80 @@ Un boceto o descripción del único mapa que tendrá el prototipo.
         - Cooldown: 2 turnos.
         - Efecto especial: Además del daño del ataque, el robot objetivo recibe 2 HPs de daño por cada turno que pase, durante 4 turnos.
         - Descripción: El robot dispara un proyectil, que al impactar, despliega unos nanobots corrosivos que van destruyendo el robot objetivo y causando daño constante hasta que se quedan sin energía o el robot objetivo se destruye.  
+## Lista de Robots:
+
+- **Victory Saber**:
+    - **Modelo**: Victory Saber.
+    - **Descripción**: Un robot de otra época, con aspecto bastante humanoide, anterior a las DAW1, pensado para ser pilotado por un humano y reconvertido a uso por la IA. Suele ser subestimado, pero cuando es capaz de cargar su temible sable de plasma, se convierte en una máquina de matar.
+    - **HP**: 12.
+    - **Movimiento**: 4.
+    - **Armas**:
+        - Nombre: Cañón de plasma.
+        - Alcance: 3.  
+        - Daño: 3.
+        - Descripción: Cañón de plasma. Poco efectivo y de corto alcance.
+     
+    - **Skills**: Sable de plasma.
+  
+  - **Bullseye**:
+    - **Modelo**: Bullseye.
+    - **Descripción**: También conocido en el terreno de combate como "Glass Cannon" (Cañón de cristal), es un robot muy rápido y con un gran alcance de ataque, además de una puntería infalible cuando carga sus misiles, pero con muy poco blindaje.
+    - **HP**: 6.
+    - **Movimiento**: 5.
+    - **Armas**:
+        - Nombre: Doble cañón automático.
+        - Alcance: 4.  
+        - Daño: 5.
+        - Descripción: En lugar de brazos, Bullseye cuenta con dos cañones automáticos que hacen bastante daño a un alcance importante.
+    - **Skills**: Misiles teledirigidos.
+  
+  - **Bulwark**:
+    - **Modelo**: Bulwark.
+    - **Descripción**: Bulwark, tambi;en conocido como DOC en el terreno de combate, es un robot muy resistente, no hace mucho daño y es lento, pero su capacidad para recuperar robots aliados lo convierte en una pieza clave del equipo.
+    - **HP**: 15.
+    - **Movimiento**: 3.
+    - **Armas**:
+        - Nombre: Cañón laser.
+        - Alcance: 2.  
+        - Daño: 3.
+        - Descripción: Cañón laser montado en el hombro derecho. Poco efectivo y de corto alcance.    
+    - **Skills**: Nanobots reparadores.
+
+  - **Scout**:
+    - **Modelo**: Scout.
+    - **Descripción**: Un robot pequeño y ágil, diseñado para explorar el terreno y detectar enemigos. No tiene mucho blindaje, pero su movilidad, gracias a su velocidad y a los retropropulsores en su espalda, y su temible cañón automático, lo convierten en una pieza clave del equipo.
+    - **HP**: 8.
+    - **Movimiento**: 4.
+    - **Armas**:
+        - Nombre: Cañón automático.
+        - Alcance: 5.  
+        - Daño: 5.
+        - Descripción: Su brazo derecho es un cañón automático de gran alcance y potencia.  
+    - **Skills**: Retropropulsores.
+
+  - **Death Knight**:
+    - **Modelo**: Death Knight.
+    - **Descripción**: Su color negro de camuflaje nocturno, combinado con su aspecto de mole con un martillo gigante, le hacen valedor de su apelativo. Es un robot lento, pero muy resistente y con un gran ataque cuerpo a cuerpo. No conviene subestimarlo, ya que a pesar de su lentitud, cuando activa sus retropropulsores, puede desplazarse rápidamente por el campo de batalla. 
+    - **HP**: 12.
+    - **Movimiento**: 3.
+    - **Armas**:
+        - Nombre: Martillo propulsado.
+        - Alcance: 1.  
+        - Daño: 8.
+        - Descripción: Porta un martillo gigante a dos manos, que le impide llevar ningún otro arma. El martillo tiene retropropulsores que le permiten golpear con una fuerza devastadora. 
+    - **Skills**: turbo propulsores.
+
+  - **Ice Age**:
+    - **Modelo**: Ice Age.
+    - **Descripción**: Con un diseño muy angular y agresivo, azul y blanco,  Ice Age parece no preocuparse por el camuflaje. Su arma favorita es un rifle de rayo congelador que porta con ambos brazos, y necesita recargarse tras cada uso. Pero no conviene subestimarlo: mientras se carga su rifle, puede usar sus misiles de racimo, que tienen un alcance considerable.
+    - **HP**: 10.
+    - **Movimiento**: 4.
+    - **Armas**:
+        - Nombre: Misiles de racimo
+        - Alcance: 6.  
+        - Daño: 4.
+        - Descripción: Tiene dos afustes de misiles en los hombros, que disparan misiles de racimo. Tienen muy buen alcance, pero fallan la mita de ellos, por lo que su daño no es tan temible.
+    - **Skills**: Rayo congelador.
 
 
 # 6. Interfaz (UI/HUD)
