@@ -46,6 +46,10 @@ El Core Loop básico sería:
 
 Todos los robots tienen los siguientes parámetros:
 
+- **Modelo**: El nombre del modelo del robot.
+
+- **Descripción**: Un poco de lore sobre el robot.
+
 - **Movimiento**: indica los puntos de movimiento.
 
 - **Armas**:
@@ -55,8 +59,10 @@ Todos los robots tienen los siguientes parámetros:
     - Alcance: distancia en hexágonos a la que llegan las armas.
 
     - Daño: Hit Points (HP) que pierde el enemigo al recibir un impacto.
+      
+    - Descripción: Un poco de "lore" sobre las armas del robot.
 
-- **HP**: Los Hit Points (Puntos de impacto) que puede recibir un robot. Al llegar a 0, queda destruido.
+- **HP**: Los Hit Points (Puntos de impacto) que puede recibir un robot. Cada punto de daño que recibe el robot se resta de sus HPs. Al llegar a 0, queda destruido. Los HPS de un robot NUNCA pueden ser superiores a los originales.
 
 - **Skills**: Habilidades o ataques especiales. Pueden ser de tipo movimiento o ataque, y tienen un efecto distinto con sus propias reglas. 
 
@@ -96,11 +102,15 @@ Todos los robots tienen skills. En cada skill se especifica si es de movimiento 
 
 Se considera que el enemigo está al alcance, si el número de hexágonos de distancia entre el atacante y el objetivo (sin contar ambos) es igual o menor al alcance de las armas o skill de ataque del atacante.
 
+## Visibilidad:
+
+Se considera que el robot tiene visibilidad sobre un objetivo, si entre ellos no hay casillas de más de 1 altura superior a ninguno de ellos.
+
 ## Resolución de ataque:
 
-Cuando un robot realiza un ataque sobre un robot enemigo al alcance, le produce un daño igual al especificado por sus armas o skill de ataque. Es decir, resta el daño de los HPs restantes del robot enemigo.
+Un robot solo puede atacar a otro cuando tiene visibilidad sobre él y  lo tiene al alcance. Si se cumplen ambas condiciones y se realiza el ataque, le produce un daño al objetivo igual al especificado por sus armas o skill de ataque. Es decir, resta el daño de los HPs restantes del robot enemigo.
 
-Si los HPs del robot enemigo queda a 0 o menos, es destruido.
+Si los HPs del robot enemigo quedan a 0 o menos, es destruido.
 
 **[OMSI]** Incorporar la regla de desactivación: Si el robot queda exactamente a 0 HPs es desactivado. No se puede usar durante el siguiente turno. Después de un turno se reactiva y puede usarse con 0 HPs, pero cualquier mínimo impacto lo destruirá.
 
