@@ -50,11 +50,11 @@ Todos los robots tienen los siguientes parámetros:
 
 - **Armas**:
 
-- **[OMSI]** Tipo: pueden ser de energía / explosivas / cinéticas
+    - **[OMSI]** Tipo: pueden ser de energía / explosivas / cinéticas
 
-- Alcance: distancia en hexágonos a la que llegan las armas.
+    - Alcance: distancia en hexágonos a la que llegan las armas.
 
-- Daño: Hit Points (HP) que pierde el enemigo al recibir un impacto.
+    - Daño: Hit Points (HP) que pierde el enemigo al recibir un impacto.
 
 - **HP**: Los Hit Points (Puntos de impacto) que puede recibir un robot. Al llegar a 0, queda destruido.
 
@@ -62,9 +62,9 @@ Todos los robots tienen los siguientes parámetros:
 
 - **[OMSI] Protección**:
 
-- Puede ser  de **tipo**: escudo energía / blindaje /  cinético
+    - Puede ser  de **tipo**: escudo energía / blindaje /  cinético
 
-- **DR **(Damage Reduction): La cantidad de daño que protege.
+    - **DR **(Damage Reduction): La cantidad de daño que protege.
 
 ## Turnos:
 
@@ -98,7 +98,7 @@ Cuando un robot realiza un ataque sobre un robot enemigo al alcance, le produce 
 
 Si los HPs del robot enemigo queda a 0 o menos, es destruido.
 
-**[OMSI] **Incorporar la regla de desactivación: Si el robot queda exactamente a 0 HPs es desactivado. No se puede usar durante el siguiente turno. Después de un turno se reactiva y puede usarse con 0 HPs, pero cualquier mínimo impacto lo destruirá.
+**[OMSI]** Incorporar la regla de desactivación: Si el robot queda exactamente a 0 HPs es desactivado. No se puede usar durante el siguiente turno. Después de un turno se reactiva y puede usarse con 0 HPs, pero cualquier mínimo impacto lo destruirá.
 
 Ciertas casillas de terreno pueden afectar al daño recibido.
 
@@ -120,47 +120,47 @@ Efectos del terreno según el tipo y la altura:
 
 - **Normal**: Ningún tipo de efecto.
 
-- **Vegetación **espesa: 
+- **Vegetación** espesa: 
 
-- Los robots en casillas de este tipo reciben un 25% de reducción de daño.
+    - Los robots en casillas de este tipo reciben un 25% de reducción de daño.
 
-- Coste de movimiento +1.
+    - Coste de movimiento +1.
 
 - **Acuático**: Depende del nivel:
 
-- Nivel -1 (profundidad 1):
+    - Nivel -1 (profundidad 1):
 
-- Overheat: Incrementa el daño que hacen las armas de los robots en estas casillas en un 25% (al estar sumergidos, el agua enfría y pueden sobrecalentar las armas aplicando más potencia).
+        - Overheat: Incrementa el daño que hacen las armas de los robots en estas casillas en un 25% (al estar sumergidos, el agua enfría y pueden sobrecalentar las armas aplicando más potencia).
 
-- Incrementa el daño de los robots en este terreno en un 25% (al estar sumergidos hasta la mitad, todos los impactos van a la cabeza u hombros, partes más vitales del robot).
+        - Incrementa el daño de los robots en este terreno en un 25% (al estar sumergidos hasta la mitad, todos los impactos van a la cabeza u hombros, partes más vitales del robot).
 
-- Coste de movimiento: +1.
+        - Coste de movimiento: +1.
 
-- Nivel -2 (profundidad 2):
+    - Nivel -2 (profundidad 2):
 
-- Los robots en estas casillas no pueden atacar ni ser atacados.
+        - Los robots en estas casillas no pueden atacar ni ser atacados.
 
-- Coste de movimiento: +2.
+        - Coste de movimiento: +2.
 
 - **Por nivel:**
 
-- Terreno** +1 nivel **(cuando se pasa de un nivel terrestre a otro superior en 1):
+    - Terreno **+1 nivel** (cuando se pasa de un nivel terrestre a otro superior en 1):
 
-- Coste de movimiento:+1 (acumulativo con terreno de vegetación espesa si la hubiera).
+        - Coste de movimiento:+1 (acumulativo con terreno de vegetación espesa si la hubiera).
 
-- Terreno **+2 niveles**: Un robot no puede pasar de una casilla a otra contigua dos niveles superior a la que está (a menos que use una Skill que especifique lo contrario).
+    - Terreno **+2 niveles**: Un robot no puede pasar de una casilla a otra contigua dos niveles superior a la que está (a menos que use una Skill que especifique lo contrario).
 
-- Terreno **-1 nivel**  (cuando se pasa de un nivel terrestre  a otro inferior en 1):
+    - Terreno **-1 nivel**  (cuando se pasa de un nivel terrestre  a otro inferior en 1):
 
-- Coste de movimiento:+1 (acumulativo con terreno de vegetación espesa si la hubiera).
+        - Coste de movimiento:+1 (acumulativo con terreno de vegetación espesa si la hubiera).
 
-- Terreno **-2 niveles (o más)**: Un robot puede saltar desde un terreno a otro de nivel inferior en 2 niveles o más:
+    - Terreno **-2 niveles (o más)**: Un robot puede saltar desde un terreno a otro de nivel inferior en 2 niveles o más:
 
-- Coste de movimiento:+1 (NO acumulativo con terreno de vegetación espesa si la hubiera).
+        - Coste de movimiento:+1 (NO acumulativo con terreno de vegetación espesa si la hubiera).
 
-- Daño de caída: 1 HP.
+        - Daño de caída: 1 HP.
 
-- Una Skill de movimiento podría anular el coste adicional e incluso el daño.
+        - Una Skill de movimiento podría anular el coste adicional e incluso el daño.
 
 - **Cobertura**: En un ataque, si entre el robot atacante y el defensor (siguiendo el camino de hexágonos más corto), hay alguna casilla de terreno de 1 nivel superior a la casilla del  atacante y a la del defensor, se considera que el defensor tiene **cobertura media** (el daño se reduce en un 50%). Si hay alguna casilla de 2 niveles superior, entonces se considera **cobertura total** (el atacante no puede atacar a ese defensor desde esa posición).
 
