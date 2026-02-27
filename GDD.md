@@ -1,10 +1,44 @@
 # Devastation Ai Wars 1 (DAW1) GDD
 
+- [Devastation Ai Wars 1 (DAW1) GDD](#devastation-ai-wars-1-daw1-gdd)
+- [1. Concepto de Alto Nivel (The Pitch)](#1-concepto-de-alto-nivel-the-pitch)
+  - [Concepto:](#concepto)
+  - [Narrativa:](#narrativa)
+  - [MVP:](#mvp)
+- [2. Mecánicas de Juego (Gameplay)](#2-mecánicas-de-juego-gameplay)
+  - [Objetivo del juego:](#objetivo-del-juego)
+  - [Mapas:](#mapas)
+  - [Core Loop:](#core-loop)
+  - [Robots:](#robots)
+  - [Turnos:](#turnos)
+  - [Skills:](#skills)
+  - [Alcance:](#alcance)
+  - [Visibilidad:](#visibilidad)
+  - [Resolución de ataque:](#resolución-de-ataque)
+  - [Casillas del mapa:](#casillas-del-mapa)
+- [3. Aspectos Técnicos (Stack Tecnológico)](#3-aspectos-técnicos-stack-tecnológico)
+  - [Dependencias:](#dependencias)
+  - [Arquitectura:](#arquitectura)
+  - [Estructura del Proyecto:](#estructura-del-proyecto)
+- [4. Bucle de Juego (Game Loop)](#4-bucle-de-juego-game-loop)
+    - [Input:](#input)
+    - [Update:](#update)
+    - [Render:](#render)
+- [5. Contenido, Niveles](#5-contenido-niveles)
+  - [Asset List:](#asset-list)
+  - [Diseño de Nivel (mapa):](#diseño-de-nivel-mapa)
+  - [Lista de skills:](#lista-de-skills)
+- [6. Interfaz (UI/HUD)](#6-interfaz-uihud)
+  - [Menús:](#menús)
+  - [HUD:](#hud)
+
+
 # 1. Concepto de Alto Nivel (The Pitch)
 
 ## Concepto:
 
 Videojuego en java (maven) de estrategia por turnos en la que un equipo de robots gigantes se enfrenta a otro en un tablero.
+
 
 ## Narrativa:
 
@@ -275,12 +309,12 @@ Un boceto o descripción del único mapa que tendrá el prototipo.
         - Efecto especial: Permite avanzar hasta 10 casillas, en línea recta. Si durante el trayecto, hay algún obstáculo (como una casilla de un nivel mayor que el anterior, agua u otro robot), el robot termina su desplazamiento en esa casilla. Si en esa casilla había un robot, ese robot es desplazado una casilla en dirección contraria al movimiento del robot, y recibe 2 puntos de daño por cada casilla que se haya desplazado el robot con la skill. El robot atacante también recibe daño: 1 por cada casilla que se haya desplazado.
         - Descripción: Las patas del robot cuentan con microretropropulsores, que, una vez activados, impulsan al robot hacia delante a una velocidad increíble, permitiendo recorrer una distancia de 10, pudiendo embestir al enemigo y produciendo daño proporcional a la distancia recorrida, aunque también recibe daño por cada casilla que se haya desplazado.
     - **Nanobots corrosivos**:
-    - Tipo: Ataque.
-    - Alcance: 3.
-    - Daño: 3.
-    - Cooldown: 2 turnos.
-    - Efecto especial: Además del daño del ataque, el robot objetivo recibe 2 HPs de daño por cada turno que pase, durante 4 turnos.
-    - Descripción: El robot dispara un proyectil, que al impactar, despliega unos nanobots corrosivos que van destruyendo el robot objetivo y causando daño constante hasta que se quedan sin energía o el robot objetivo se destruye.  
+        - Tipo: Ataque.
+        - Alcance: 3.
+        - Daño: 3.
+        - Cooldown: 2 turnos.
+        - Efecto especial: Además del daño del ataque, el robot objetivo recibe 2 HPs de daño por cada turno que pase, durante 4 turnos.
+        - Descripción: El robot dispara un proyectil, que al impactar, despliega unos nanobots corrosivos que van destruyendo el robot objetivo y causando daño constante hasta que se quedan sin energía o el robot objetivo se destruye.  
 
 
 # 6. Interfaz (UI/HUD)
