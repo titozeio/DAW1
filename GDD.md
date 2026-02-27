@@ -320,7 +320,7 @@ Un boceto o descripción del único mapa que tendrá el prototipo.
 
 - **Victory Saber**:
     - **Modelo**: Victory Saber.
-    - **Descripción**: Un robot de otra época, con aspecto bastante humanoide, anterior a las DAW1, pensado para ser pilotado por un humano y reconvertido a uso por la IA. Suele ser subestimado, pero cuando es capaz de cargar su temible sable de plasma, se convierte en una máquina de matar.
+    - **Descripción**: Un robot de otra época, con aspecto bastante humanoide, anterior a las DAW1, pensado para ser pilotado por un humano y reconvertido a uso por la IA. Suele ser subestimado, pero cuando es capaz de cargar su temible sable de plasma, no te conviene estar enfrente suyo.
     - **HP**: 12.
     - **Movimiento**: 4.
     - **Armas**:
@@ -328,10 +328,9 @@ Un boceto o descripción del único mapa que tendrá el prototipo.
         - Alcance: 3.  
         - Daño: 3.
         - Descripción: Cañón de plasma. Poco efectivo y de corto alcance.
-     
     - **Skills**: Sable de plasma.
   
-  - **Bullseye**:
+- **Bullseye**:
     - **Modelo**: Bullseye.
     - **Descripción**: También conocido en el terreno de combate como "Glass Cannon" (Cañón de cristal), es un robot muy rápido y con un gran alcance de ataque, además de una puntería infalible cuando carga sus misiles, pero con muy poco blindaje.
     - **HP**: 6.
@@ -343,23 +342,23 @@ Un boceto o descripción del único mapa que tendrá el prototipo.
         - Descripción: En lugar de brazos, Bullseye cuenta con dos cañones automáticos que hacen bastante daño a un alcance importante.
     - **Skills**: Misiles teledirigidos.
   
-  - **Bulwark**:
+- **Bulwark**:
     - **Modelo**: Bulwark.
-    - **Descripción**: Bulwark, tambi;en conocido como DOC en el terreno de combate, es un robot muy resistente, no hace mucho daño y es lento, pero su capacidad para recuperar robots aliados lo convierte en una pieza clave del equipo.
+    - **Descripción**: Bulwark, también conocido como DOC en el terreno de combate, es un robot muy resistente, no hace mucho daño y es lento, pero su capacidad para recuperar robots aliados lo convierte en una pieza clave del equipo.
     - **HP**: 15.
-    - **Movimiento**: 3.
+    - **Movimiento**: 4.
     - **Armas**:
         - Nombre: Cañón laser.
-        - Alcance: 2.  
+        - Alcance: 3.  
         - Daño: 3.
         - Descripción: Cañón laser montado en el hombro derecho. Poco efectivo y de corto alcance.    
     - **Skills**: Nanobots reparadores.
 
-  - **Scout**:
+- **Scout**:
     - **Modelo**: Scout.
     - **Descripción**: Un robot pequeño y ágil, diseñado para explorar el terreno y detectar enemigos. No tiene mucho blindaje, pero su movilidad, gracias a su velocidad y a los retropropulsores en su espalda, y su temible cañón automático, lo convierten en una pieza clave del equipo.
-    - **HP**: 8.
-    - **Movimiento**: 4.
+    - **HP**: 7.
+    - **Movimiento**: 5.
     - **Armas**:
         - Nombre: Cañón automático.
         - Alcance: 5.  
@@ -367,10 +366,10 @@ Un boceto o descripción del único mapa que tendrá el prototipo.
         - Descripción: Su brazo derecho es un cañón automático de gran alcance y potencia.  
     - **Skills**: Retropropulsores.
 
-  - **Death Knight**:
+- **Death Knight**:
     - **Modelo**: Death Knight.
     - **Descripción**: Su color negro de camuflaje nocturno, combinado con su aspecto de mole con un martillo gigante, le hacen valedor de su apelativo. Es un robot lento, pero muy resistente y con un gran ataque cuerpo a cuerpo. No conviene subestimarlo, ya que a pesar de su lentitud, cuando activa sus retropropulsores, puede desplazarse rápidamente por el campo de batalla. 
-    - **HP**: 12.
+    - **HP**: 13.
     - **Movimiento**: 3.
     - **Armas**:
         - Nombre: Martillo propulsado.
@@ -379,7 +378,7 @@ Un boceto o descripción del único mapa que tendrá el prototipo.
         - Descripción: Porta un martillo gigante a dos manos, que le impide llevar ningún otro arma. El martillo tiene retropropulsores que le permiten golpear con una fuerza devastadora. 
     - **Skills**: turbo propulsores.
 
-  - **Ice Age**:
+- **Ice Age**:
     - **Modelo**: Ice Age.
     - **Descripción**: Con un diseño muy angular y agresivo, azul y blanco,  Ice Age parece no preocuparse por el camuflaje. Su arma favorita es un rifle de rayo congelador que porta con ambos brazos, y necesita recargarse tras cada uso. Pero no conviene subestimarlo: mientras se carga su rifle, puede usar sus misiles de racimo, que tienen un alcance considerable.
     - **HP**: 10.
