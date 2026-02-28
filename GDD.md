@@ -310,8 +310,8 @@ Un boceto o descripción del único mapa que tendrá el prototipo.
         - Descripción: El robot dispara un proyectil, que al impactar, despliega unos nanobots corrosivos que van destruyendo el robot objetivo y causando daño constante hasta que se quedan sin energía o el robot objetivo se destruye.  
 ## Lista de Robots:
 
-- **Victory Saber**:
-    - **Modelo**: Victory Saber.
+- **Saber Prime**:
+    - **Modelo**: Saber Prime.
     - **Descripción**: Un robot de otra época, con aspecto bastante humanoide, anterior a las DAW1, pensado para ser pilotado por un humano y reconvertido a uso por la IA. Suele ser subestimado, pero cuando es capaz de cargar su temible sable de plasma, no te conviene estar enfrente suyo.
     - **HP**: 12.
     - **Movimiento**: 4.

@@ -3,7 +3,7 @@
 - [Devastation Ai Wars 1 (DAW1) Art Design Document](#devastation-ai-wars-1-daw1-art-design-document)
   - [Mechas](#mechas)
   - [Estilo visual:](#estilo-visual)
-    - [Victory Saber](#victory-saber)
+    - [Saber Prime](#saber-prime)
     - [Bullseye](#bullseye)
     - [Bullwark](#bullwark)
     - [Scout](#scout)
@@ -15,7 +15,7 @@
 ## Estilo visual:  
 Una mezcla entre Battletech (realistas, occidentales, orientados a la guerra, y con sensación de desgaste, de tecnología estancada) y Gundam (un poco más humanoides y japonizados). 
 
-### Victory Saber
+### Saber Prime
 Refleja su diseño de otra época, con aspecto más humanoide al estar pensado originalmente para ser pilotado por un humano, y su equipamiento principal.
 
 - **Vertical Image:**
