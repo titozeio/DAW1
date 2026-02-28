@@ -91,6 +91,7 @@ public class RobotSelectionScreen extends Screen {
         updateUI();
 
         this.scene = new Scene(layout, 800, 600);
+        applyGlobalStyle(this.scene);
     }
 
     // Método para inyectar los datos iniciales

@@ -44,6 +44,7 @@ public class GameScreen extends Screen {
 
         layout.getChildren().addAll(titleLabel, infoLabel, surrenderButton);
         this.scene = new Scene(layout, 800, 600);
+        applyGlobalStyle(this.scene);
     }
 
     @Override

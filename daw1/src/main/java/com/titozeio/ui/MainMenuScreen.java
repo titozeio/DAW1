@@ -40,7 +40,7 @@ public class MainMenuScreen extends Screen {
 
         // Cargar imagen de fondo
         try {
-            File imageFile = new File("art/concepts/Splash concept.png");
+            File imageFile = new File("assets/images/Splash concept.png");
             if (imageFile.exists()) {
                 String imageUri = imageFile.toURI().toURL().toString();
                 Image bgImageFile = new Image(imageUri);
@@ -68,7 +68,7 @@ public class MainMenuScreen extends Screen {
 
         // Cargar imagen del título
         try {
-            File titleFile = new File("art/concepts/title_transparent.png");
+            File titleFile = new File("assets/images/title_transparent.png");
             if (titleFile.exists()) {
                 Image titleImg = new Image(titleFile.toURI().toURL().toString());
                 ImageView titleView = new ImageView(titleImg);
@@ -95,6 +95,7 @@ public class MainMenuScreen extends Screen {
         root.getChildren().add(contentLayout);
 
         this.scene = new Scene(root, 1280, 720);
+        applyGlobalStyle(this.scene);
     }
 
     @Override
