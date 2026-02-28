@@ -39,7 +39,7 @@ public class GameScreen extends Screen {
         // Acción de Rendirse: Volver al menú principal
         surrenderButton.setOnAction(e -> {
             System.out.println("El jugador se ha rendido. Volviendo al menú principal...");
-            game.displayScreen(new MainMenuScreen(window, game));
+            game.displayScreen(MainMenuScreen.create(window, game));
         });
 
         layout.getChildren().addAll(titleLabel, infoLabel, surrenderButton);

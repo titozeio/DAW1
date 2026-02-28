@@ -30,7 +30,7 @@ public class Game {
 
     public void start() {
         // Carga y muestra la pantalla inicial
-        MainMenuScreen mainMenu = new MainMenuScreen(this.stage, this);
+        MainMenuScreen mainMenu = MainMenuScreen.create(this.stage, this);
         displayScreen(mainMenu);
     }
 

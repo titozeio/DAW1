@@ -2,18 +2,11 @@ package com.titozeio.ui;
 
 import com.titozeio.engine.Game;
 
-import javafx.geometry.Pos;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import java.io.File;
 import java.io.IOException;
 
 /**
@@ -27,22 +20,26 @@ public class MainMenuScreen extends Screen {
     private Scene scene;
     private Parent root;
 
-    public MainMenuScreen(Stage window, Game game) {
-        this.window = window;
-        this.game = game;
-        loadFXML();
+    public MainMenuScreen() {
+        // Constructor vacío para FXMLLoader
     }
 
-    private void loadFXML() {
+    public static MainMenuScreen create(Stage window, Game game) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/titozeio/ui/MainMenuScreen.fxml"));
-            loader.setController(this);
-            this.root = loader.load();
-            this.scene = new Scene(this.root, 1280, 720);
-            applyGlobalStyle(this.scene);
+            FXMLLoader loader = new FXMLLoader(
+                    MainMenuScreen.class.getResource("/com/titozeio/ui/MainMenuScreen.fxml"));
+            Parent root = loader.load();
+            MainMenuScreen controller = loader.getController();
+            controller.window = window;
+            controller.game = game;
+            controller.root = root;
+            controller.scene = new Scene(root, 1280, 720);
+            controller.applyGlobalStyle(controller.scene);
+            return controller;
         } catch (IOException e) {
             System.err.println("Error al cargar MainMenuScreen.fxml: " + e.getMessage());
             e.printStackTrace();
+            return null;
         }
     }
 

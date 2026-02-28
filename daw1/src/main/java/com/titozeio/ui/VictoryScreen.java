@@ -31,7 +31,7 @@ public class VictoryScreen extends Screen {
     public void handleInput(String input) {
         if ("1".equals(input.trim())) {
             System.out.println("Volviendo al menú principal...");
-            game.displayScreen(new MainMenuScreen(window, game));
+            game.displayScreen(MainMenuScreen.create(window, game));
         }
     }
 
