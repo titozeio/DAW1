@@ -48,9 +48,8 @@ public class MainMenuScreen extends Screen {
     @Override
     public void handleInput(String input) {
         if (input.equals("PLAY")) {
-            System.out.println("Iniciando transicion a GameScreen...");
-            // Logica futura para cambiar de pantalla:
-            // this.game.displayScreen(new GameScreen(window, game));
+            System.out.println("Iniciando transicion a RobotSelectionScreen...");
+            this.game.displayScreen(new RobotSelectionScreen(window, game));
         }
     }
 }
