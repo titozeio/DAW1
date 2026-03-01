@@ -1,0 +1,16 @@
+.root {
+    -fx-font-family: "Exo 2";
+}
+
+.label,
+.button,
+.text,
+.toggle-button,
+.radio-button,
+.check-box,
+.menu-item,
+.menu,
+.text-area,
+.text-field {
+    -fx-font-family: "Exo 2";
+}

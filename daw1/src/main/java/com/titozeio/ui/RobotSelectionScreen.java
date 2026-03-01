@@ -1,14 +1,15 @@
 package com.titozeio.ui;
 
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +33,8 @@ public class RobotSelectionScreen extends Screen {
     private Label turnInstructionsLabel;
     @FXML
     private FlowPane availableRobotsPane;
+    @FXML
+    private Button playButton;
 
     // Estado interno
     private List<Robot> availableRobots;
@@ -43,55 +46,53 @@ public class RobotSelectionScreen extends Screen {
     private Game game;
     private Scene scene;
 
-    public RobotSelectionScreen(Stage window, Game game) {
-        this.stage = window;
-        this.game = game;
-        setupUI();
+    public RobotSelectionScreen() {
+        // Constructor vacío para FXMLLoader
     }
 
-    private void setupUI() {
-        VBox layout = new VBox(20);
-        layout.setAlignment(Pos.CENTER);
+    public static RobotSelectionScreen create(Stage window, Game game) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    RobotSelectionScreen.class.getResource("/com/titozeio/ui/RobotSelectionScreen.fxml"));
+            Parent root = loader.load();
+            RobotSelectionScreen controller = loader.getController();
+            controller.stage = window;
+            controller.game = game;
+            controller.scene = new Scene(root, 1280, 720);
+            controller.applyGlobalStyle(controller.scene);
 
-        Label titleLabel = new Label("Robot Selection Screen");
-        titleLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+            // Inicializar datos y UI
+            controller.initializeData(new ArrayList<>()); // Podrías pasar los robots aquí si los tienes
+            controller.setupInitialUI();
 
-        fixedInstructionsLabel = new Label();
-        turnInstructionsLabel = new Label();
-        availableRobotsPane = new FlowPane();
-        availableRobotsPane.setAlignment(Pos.CENTER);
-        availableRobotsPane.setHgap(10);
-        availableRobotsPane.setVgap(10);
-
-        layout.getChildren().addAll(titleLabel, fixedInstructionsLabel, turnInstructionsLabel, availableRobotsPane);
-
-        // Botón Aceptar para ir a la pantalla de juego
-        Button acceptButton = new Button("Aceptar");
-        acceptButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;");
-        acceptButton.setOnAction(e -> {
-            System.out.println("Aceptando selección, yendo a GameScreen...");
-            this.game.displayScreen(new GameScreen(this.game));
-        });
-        layout.getChildren().add(acceptButton);
-
-        // Añadir algunos botones de prueba para representar robots
-        for (int i = 1; i <= 6; i++) {
-            Button robotBtn = new Button("Robot " + i);
-            robotBtn.setPrefSize(100, 100);
-            int finalI = i;
-            robotBtn.setOnAction(e -> {
-                System.out.println("Robot " + finalI + " seleccionado");
-                // Aquí iría la lógica de selección real
-            });
-            availableRobotsPane.getChildren().add(robotBtn);
+            return controller;
+        } catch (IOException e) {
+            System.err.println("Error al cargar RobotSelectionScreen.fxml: " + e.getMessage());
+            e.printStackTrace();
+            return null;
         }
+    }
 
-        // Inicializar datos y actualizar texto inicial
-        initializeData(new ArrayList<>()); // Empezamos con lista vacía por ahora
+    private void setupInitialUI() {
+        // Añadir algunos botones de prueba si el panel está vacío
+        if (availableRobotsPane.getChildren().isEmpty()) {
+            for (int i = 1; i <= 6; i++) {
+                Button robotBtn = new Button("Robot " + i);
+                robotBtn.setPrefSize(100, 100);
+                int finalI = i;
+                robotBtn.setOnAction(e -> {
+                    System.out.println("Robot " + finalI + " seleccionado");
+                });
+                availableRobotsPane.getChildren().add(robotBtn);
+            }
+        }
         updateUI();
+    }
 
-        this.scene = new Scene(layout, 800, 600);
-        applyGlobalStyle(this.scene);
+    @FXML
+    public void handleAcceptAction() {
+        System.out.println("Aceptando selección, yendo a GameScreen...");
+        this.game.displayScreen(new GameScreen(this.game));
     }
 
     // Método para inyectar los datos iniciales
@@ -135,11 +136,8 @@ public class RobotSelectionScreen extends Screen {
                     "Los jugadores eligen robots por turnos. Empieza J2. J1 realizará el primer turno de la partida");
         }
         if (turnInstructionsLabel != null) {
-            if (isPlayer2Turn) {
-                turnInstructionsLabel.setText("Jugador 2, elige robot");
-            } else {
-                turnInstructionsLabel.setText("Jugador 1, elige robot");
-            }
+            String text = isPlayer2Turn ? "Jugador 2, elige robot" : "Jugador 1, elige robot";
+            turnInstructionsLabel.setText(text);
         }
     }
 

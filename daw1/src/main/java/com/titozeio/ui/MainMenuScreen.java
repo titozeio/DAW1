@@ -18,7 +18,6 @@ public class MainMenuScreen extends Screen {
     private Stage window;
     private Game game;
     private Scene scene;
-    private Parent root;
 
     public MainMenuScreen() {
         // Constructor vacío para FXMLLoader
@@ -32,7 +31,6 @@ public class MainMenuScreen extends Screen {
             MainMenuScreen controller = loader.getController();
             controller.window = window;
             controller.game = game;
-            controller.root = root;
             controller.scene = new Scene(root, 1280, 720);
             controller.applyGlobalStyle(controller.scene);
             return controller;
@@ -58,7 +56,7 @@ public class MainMenuScreen extends Screen {
     public void handleInput(String input) {
         if (input.equals("PLAY")) {
             System.out.println("Iniciando transicion a RobotSelectionScreen...");
-            this.game.displayScreen(new RobotSelectionScreen(window, game));
+            this.game.displayScreen(RobotSelectionScreen.create(window, game));
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.titozeio.ui;
 
-import java.io.File;
 import javafx.scene.Scene;
 
 /**
@@ -17,13 +16,12 @@ public abstract class Screen {
 
     /** Aplica el estilo CSS global a la escena proporcionada. */
     protected void applyGlobalStyle(Scene scene) {
-        try {
-            File cssFile = new File("assets/style.css");
-            if (cssFile.exists()) {
-                scene.getStylesheets().add(cssFile.toURI().toURL().toString());
-            }
-        } catch (Exception e) {
-            System.err.println("Error al cargar el CSS global: " + e.getMessage());
+        String cssPath = "/com/titozeio/ui/style.css";
+        var resource = getClass().getResource(cssPath);
+        if (resource != null) {
+            scene.getStylesheets().add(resource.toExternalForm());
+        } else {
+            System.err.println("No se encontró el archivo CSS global: " + cssPath);
         }
     }
 }
