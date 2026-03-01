@@ -3,6 +3,8 @@ package com.titozeio.engine;
 import com.titozeio.ui.MainMenuScreen;
 import com.titozeio.ui.Screen;
 import com.titozeio.victory.VictoryCondition;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import java.util.List;
 import java.util.ArrayList;
@@ -16,6 +18,7 @@ public class Game {
     private int turnCounter;
     private Screen currentScreen;
     private List<VictoryCondition> victoryConditions;
+    private MediaPlayer mediaPlayer;
 
     // Referencia a la ventana de JavaFX
     private Stage stage;
@@ -29,9 +32,27 @@ public class Game {
     }
 
     public void start() {
+        startMusic();
         // Carga y muestra la pantalla inicial
         MainMenuScreen mainMenu = MainMenuScreen.create(this.stage, this);
         displayScreen(mainMenu);
+    }
+
+    private void startMusic() {
+        try {
+            var resource = getClass().getResource("/com/titozeio/sounds/song.mp3");
+            if (resource != null) {
+                Media media = new Media(resource.toExternalForm());
+                mediaPlayer = new MediaPlayer(media);
+                mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+                mediaPlayer.play();
+                System.out.println("Música iniciada correctamente.");
+            } else {
+                System.err.println("No se encontró el archivo de música: /com/titozeio/sounds/song.mp3");
+            }
+        } catch (Exception e) {
+            System.err.println("Error al reproducir música: " + e.getMessage());
+        }
     }
 
     public void nextTurn() {
