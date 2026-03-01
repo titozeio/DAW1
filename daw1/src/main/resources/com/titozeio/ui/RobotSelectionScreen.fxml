@@ -209,7 +209,7 @@
                         </Text>
                         <ImageView fitHeight="184.0" fitWidth="154.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../images/SaberPrime1.jpg" />
+                              <Image url="@../images/Bullseye1.jpg" />
                            </image>
                            <FlowPane.margin>
                               <Insets bottom="10.0" left="20.0" top="5.0" />
@@ -365,7 +365,7 @@
                         </Text>
                         <ImageView fitHeight="184.0" fitWidth="154.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../images/SaberPrime1.jpg" />
+                              <Image url="@../images/Bullwark1.jpg" />
                            </image>
                            <FlowPane.margin>
                               <Insets bottom="10.0" left="20.0" top="5.0" />
@@ -521,7 +521,7 @@
                         </Text>
                         <ImageView fitHeight="184.0" fitWidth="154.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../images/SaberPrime1.jpg" />
+                              <Image url="@../images/DeathKnight1.jpg" />
                            </image>
                            <FlowPane.margin>
                               <Insets bottom="10.0" left="20.0" top="5.0" />
@@ -677,7 +677,7 @@
                         </Text>
                         <ImageView fitHeight="184.0" fitWidth="154.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../images/SaberPrime1.jpg" />
+                              <Image url="@../images/IceAge1.jpg" />
                            </image>
                            <FlowPane.margin>
                               <Insets bottom="10.0" left="20.0" top="5.0" />
@@ -833,7 +833,7 @@
                         </Text>
                         <ImageView fitHeight="184.0" fitWidth="154.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../images/SaberPrime1.jpg" />
+                              <Image url="@../images/Scout1.jpg" />
                            </image>
                            <FlowPane.margin>
                               <Insets bottom="10.0" left="20.0" top="5.0" />
