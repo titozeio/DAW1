@@ -16,7 +16,7 @@ public class Main extends Application {
 
         primaryStage.setTitle("Devastation AI Wars 1");
         primaryStage.setWidth(1280);
-        primaryStage.setHeight(720);
+        primaryStage.setHeight(755);
 
         // Inicializa el juego pasandole la ventana
         this.game = new Game(primaryStage);

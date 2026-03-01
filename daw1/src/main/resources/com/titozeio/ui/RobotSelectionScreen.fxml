@@ -12,7 +12,6 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.text.TextFlow?>
 
-
 <StackPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.titozeio.ui.RobotSelectionScreen">
    <children>
       <ImageView fitHeight="720.0" fitWidth="1280.0" pickOnBounds="true">
@@ -23,7 +22,7 @@
             <Insets />
          </StackPane.margin>
       </ImageView>
-      <VBox alignment="CENTER" prefHeight="0.0" prefWidth="0.0" spacing="5.0" stylesheets="@style.css">
+      <VBox alignment="CENTER" spacing="5.0" stylesheets="@style.css">
          <children>
             <Label alignment="TOP_CENTER" prefHeight="0.0" text="Pantalla de Selección de Robots" textAlignment="CENTER" textFill="WHITE">
                <font>
