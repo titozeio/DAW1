@@ -232,14 +232,16 @@ public class RobotSelectionScreen extends Screen {
         System.out.println("Selección completada.");
         System.out.println("J1: " + player1Templates);
         System.out.println("J2: " + player2Templates);
-        // TODO: crear los Robot reales con sus owners y navegar a GameScreen
+        // TODO: cuando Game tenga Players inicializados, crear los robots reales aquí:
         // Player p1 = game.getP1();
         // Player p2 = game.getP2();
         // List<Robot> robotsP1 = player1Templates.stream().map(t ->
         // t.createRobot(p1)).toList();
         // List<Robot> robotsP2 = player2Templates.stream().map(t ->
         // t.createRobot(p2)).toList();
-        // game.displayScreen(new GameScreen(game));
+        // game.getP1().setRobots(robotsP1);
+        // game.getP2().setRobots(robotsP2);
+        game.displayScreen(new GameScreen(game));
     }
 
     // ── Screen ────────────────────────────────────────────────────────────────
