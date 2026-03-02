@@ -11,10 +11,11 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.titozeio.engine.Game;
-import com.titozeio.engine.Robot;
+import com.titozeio.enums.RobotTemplate;
 
 /**
  * Pantalla de selección de robots.
@@ -37,9 +38,9 @@ public class RobotSelectionScreen extends Screen {
     private Button playButton;
 
     // Estado interno
-    private List<Robot> availableRobots;
-    private List<Robot> player1Robots;
-    private List<Robot> player2Robots;
+    private List<RobotTemplate> availableTemplates;
+    private List<RobotTemplate> player1Templates;
+    private List<RobotTemplate> player2Templates;
     private boolean isPlayer2Turn;
 
     private Stage stage;
@@ -61,8 +62,8 @@ public class RobotSelectionScreen extends Screen {
             controller.scene = new Scene(root, 1280, 720);
             controller.applyGlobalStyle(controller.scene);
 
-            // Inicializar datos y UI
-            controller.initializeData(new ArrayList<>()); // Podrías pasar los robots aquí si los tienes
+            // Inicializar datos: pasar todos los RobotTemplate del enum
+            controller.initializeData(new ArrayList<>(Arrays.asList(RobotTemplate.values())));
             controller.setupInitialUI();
 
             return controller;
@@ -74,19 +75,37 @@ public class RobotSelectionScreen extends Screen {
     }
 
     private void setupInitialUI() {
-        // Añadir algunos botones de prueba si el panel está vacío
-        if (availableRobotsPane.getChildren().isEmpty()) {
-            for (int i = 1; i <= 6; i++) {
-                Button robotBtn = new Button("Robot " + i);
-                robotBtn.setPrefSize(100, 100);
-                int finalI = i;
-                robotBtn.setOnAction(e -> {
-                    System.out.println("Robot " + finalI + " seleccionado");
-                });
-                availableRobotsPane.getChildren().add(robotBtn);
-            }
-        }
+        refreshRobotButtons();
         updateUI();
+    }
+
+    /**
+     * Reconstruye los botones del panel con los templates todavía disponibles.
+     * Se llama al inicio y tras cada selección para reflejar el estado actual.
+     */
+    private void refreshRobotButtons() {
+        availableRobotsPane.getChildren().clear();
+        for (RobotTemplate template : availableTemplates) {
+            // Obtenemos el nombre usando createRobot(null) sería incorrecto;
+            // usamos el nombre del enum formateado
+            String displayName = formatName(template.name());
+            Button robotBtn = new Button(displayName);
+            robotBtn.setPrefSize(120, 120);
+            robotBtn.setOnAction(e -> onTemplateSelected(template));
+            availableRobotsPane.getChildren().add(robotBtn);
+        }
+    }
+
+    /** Convierte "VICTORY_SABER" -> "Victory Saber" */
+    private String formatName(String enumName) {
+        String[] parts = enumName.split("_");
+        StringBuilder sb = new StringBuilder();
+        for (String part : parts) {
+            if (!sb.isEmpty())
+                sb.append(" ");
+            sb.append(part.charAt(0)).append(part.substring(1).toLowerCase());
+        }
+        return sb.toString();
     }
 
     @FXML
@@ -96,38 +115,39 @@ public class RobotSelectionScreen extends Screen {
     }
 
     // Método para inyectar los datos iniciales
-    public void initializeData(List<Robot> allRobots) {
-        this.availableRobots = new ArrayList<>(allRobots);
-        this.player1Robots = new ArrayList<>();
-        this.player2Robots = new ArrayList<>();
+    public void initializeData(List<RobotTemplate> allTemplates) {
+        this.availableTemplates = new ArrayList<>(allTemplates);
+        this.player1Templates = new ArrayList<>();
+        this.player2Templates = new ArrayList<>();
         this.isPlayer2Turn = true;
     }
 
-    // Acción ejecutada desde la UI al seleccionar un robot
-    public void onRobotSelected(Robot selectedRobot) {
-        if (!availableRobots.contains(selectedRobot)) {
+    // Acción ejecutada desde la UI al seleccionar un template de robot
+    public void onTemplateSelected(RobotTemplate selected) {
+        if (!availableTemplates.contains(selected)) {
             return;
         }
 
         if (isPlayer2Turn) {
-            player2Robots.add(selectedRobot);
+            player2Templates.add(selected);
         } else {
-            player1Robots.add(selectedRobot);
+            player1Templates.add(selected);
         }
 
-        availableRobots.remove(selectedRobot);
+        availableTemplates.remove(selected);
 
         if (isSelectionComplete()) {
             transitionToCombatScreen();
         } else {
             isPlayer2Turn = !isPlayer2Turn;
+            refreshRobotButtons();
             updateUI();
         }
     }
 
     private boolean isSelectionComplete() {
-        return player1Robots.size() == MAX_ROBOTS_PER_PLAYER &&
-                player2Robots.size() == MAX_ROBOTS_PER_PLAYER;
+        return player1Templates.size() == MAX_ROBOTS_PER_PLAYER &&
+                player2Templates.size() == MAX_ROBOTS_PER_PLAYER;
     }
 
     private void updateUI() {
