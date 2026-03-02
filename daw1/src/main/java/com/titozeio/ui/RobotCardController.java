@@ -163,12 +163,12 @@ public class RobotCardController {
     // Estilos de la tarjeta — el borde siempre ocupa 3px; solo cambia el color
     private static final String CARD_STYLE_NORMAL = "-fx-background-color: rgba(183, 185, 212, 0.8); -fx-background-radius: 6; "
             +
-            "-fx-cursor: hand; -fx-border-width: 3; -fx-border-radius: 6; " +
+            "-fx-cursor: hand; -fx-border-width: 4; -fx-border-radius: 6; " +
             "-fx-border-color: transparent;";
-    private static final String CARD_STYLE_SELECTED = "-fx-background-color: rgba(183, 185, 212, 0.8); -fx-background-radius: 6; "
+    private static final String CARD_STYLE_SELECTED = "-fx-background-color: rgba(18, 48, 56, 0.8); -fx-background-radius: 6; "
             +
-            "-fx-cursor: hand; -fx-border-width: 3; -fx-border-radius: 6; " +
-            "-fx-border-color: #2ecc71;";
+            "-fx-cursor: hand; -fx-border-width: 4; -fx-border-radius: 6; " +
+            "-fx-border-color: #4EE2C9;";
 
     /**
      * Resalta visualmente esta tarjeta (borde verde) o la restaura al estado
