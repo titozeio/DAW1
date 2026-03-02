@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
+
+<!--
+   RobotCard.fxml — Tarjeta reutilizable para la pantalla de selección de robots.
+
+   Esta tarjeta se carga N veces desde RobotSelectionScreen.java
+   (una por cada robot disponible) y se rellena con datos reales mediante
+   RobotCardController.setData(RobotTemplate).
+
+   Edita este archivo con SceneBuilder para cambiar el diseño.
+   Los cambios se reflejarán automáticamente en TODAS las tarjetas.
+
+   Campos dinámicos marcados con fx:id:
+     - robotNameText      → nombre del robot
+     - robotImageView     → imagen del robot
+     - hpText             → HP máximo
+     - weaponNameText     → nombre del arma
+     - weaponRangeText    → alcance del arma
+     - weaponDamageText   → daño del arma
+     - skillNameText      → nombre de la skill
+     - skillCooldownText  → cooldown de la skill
+-->
+<FlowPane xmlns="http://javafx.com/javafx/25"
+          xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="com.titozeio.ui.RobotCardController"
+          prefHeight="410.0" prefWidth="0.0"
+          style="-fx-background-color: rgba(183, 185, 212, 0.8); -fx-background-radius: 6; -fx-cursor: hand;">
+   <children>
+
+      <!-- Nombre del robot -->
+      <Text fx:id="robotNameText"
+            fill="#7d0000"
+            stroke="BLACK" strokeWidth="0.0"
+            style="-fx-font-family: Exo 2;"
+            text="Nombre Robot"
+            textAlignment="CENTER"
+            wrappingWidth="164.32400131225586">
+         <font>
+            <Font name="Exo 2 Regular" size="15.0" />
+         </font>
+         <FlowPane.margin>
+            <Insets top="5.0" />
+         </FlowPane.margin>
+      </Text>
+
+      <!-- Imagen del robot (un placeholder hasta que Java la sustituya) -->
+      <ImageView fx:id="robotImageView"
+                 fitHeight="184.0" fitWidth="154.0"
+                 pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/SaberPrime1.jpg" />
+         </image>
+         <FlowPane.margin>
+            <Insets bottom="10.0" left="20.0" top="5.0" />
+         </FlowPane.margin>
+      </ImageView>
+
+      <!-- Panel de estadísticas -->
+      <FlowPane columnHalignment="CENTER"
+                orientation="VERTICAL"
+                prefHeight="185.0" prefWidth="168.0"
+                style="-fx-background-color: rgba(0, 0, 0, 0.3); -fx-background-radius: 4;"
+                vgap="2.0">
+         <padding>
+            <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+         </padding>
+         <FlowPane.margin>
+            <Insets />
+         </FlowPane.margin>
+         <children>
+
+            <!-- HP -->
+            <TextFlow prefHeight="0.0" prefWidth="148.0">
+               <padding><Insets left="10.0" /></padding>
+               <children>
+                  <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="HP:  ">
+                     <font><Font name="Exo 2 Regular" size="12.0" /></font>
+                  </Text>
+                  <Text fx:id="hpText" fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
+               </children>
+            </TextFlow>
+
+            <!-- ARMA (cabecera sección) -->
+            <TextFlow prefHeight="0.0" prefWidth="148.0">
+               <padding><Insets left="10.0" /></padding>
+               <children>
+                  <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="ARMA">
+                     <font><Font name="Exo 2 Bold" size="12.0" /></font>
+                  </Text>
+               </children>
+            </TextFlow>
+
+            <!-- Nombre del arma -->
+            <TextFlow prefHeight="0.0" prefWidth="148.0">
+               <padding><Insets left="20.0" /></padding>
+               <children>
+                  <Text fx:id="weaponNameText" fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="—">
+                     <font><Font name="Exo 2 Regular" size="12.0" /></font>
+                  </Text>
+               </children>
+            </TextFlow>
+
+            <!-- Alcance del arma -->
+            <TextFlow prefHeight="0.0" prefWidth="148.0">
+               <padding><Insets left="20.0" /></padding>
+               <children>
+                  <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="Alcance:  ">
+                     <font><Font name="Exo 2 Regular" size="12.0" /></font>
+                  </Text>
+                  <Text fx:id="weaponRangeText" fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
+               </children>
+            </TextFlow>
+
+            <!-- Daño del arma -->
+            <TextFlow prefHeight="0.0" prefWidth="148.0">
+               <padding><Insets left="20.0" /></padding>
+               <children>
+                  <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="Daño:  ">
+                     <font><Font name="Exo 2 Regular" size="12.0" /></font>
+                  </Text>
+                  <Text fx:id="weaponDamageText" fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
+               </children>
+            </TextFlow>
+
+            <!-- SKILL (cabecera sección) -->
+            <TextFlow prefHeight="0.0" prefWidth="148.0">
+               <padding><Insets left="10.0" /></padding>
+               <children>
+                  <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="SKILL:">
+                     <font><Font name="Exo 2 Bold" size="12.0" /></font>
+                  </Text>
+               </children>
+            </TextFlow>
+
+            <!-- Nombre de la skill -->
+            <TextFlow prefHeight="0.0" prefWidth="148.0">
+               <padding><Insets left="20.0" /></padding>
+               <children>
+                  <Text fx:id="skillNameText" fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="—">
+                     <font><Font name="Exo 2 Regular" size="12.0" /></font>
+                  </Text>
+               </children>
+            </TextFlow>
+
+            <!-- Cooldown de la skill -->
+            <TextFlow prefHeight="0.0" prefWidth="148.0">
+               <padding><Insets left="20.0" /></padding>
+               <children>
+                  <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="Cooldown:  ">
+                     <font><Font name="Exo 2 Regular" size="12.0" /></font>
+                  </Text>
+                  <Text fx:id="skillCooldownText" fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
+               </children>
+            </TextFlow>
+
+         </children>
+      </FlowPane>
+
+   </children>
+</FlowPane>

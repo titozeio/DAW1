@@ -12,8 +12,22 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.text.TextFlow?>
 
-<StackPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.titozeio.ui.RobotSelectionScreen">
+<!--
+   RobotSelectionScreen.fxml — Pantalla de selección de robots.
+
+   Las tarjetas de robot se generan dinámicamente en Java cargando
+   RobotCard.fxml una vez por robot. El panel availableRobotsPane
+   se deja vacío aquí intencionadamente.
+
+   Para editar el diseño de las tarjetas → abre RobotCard.fxml en SceneBuilder.
+   Para editar el resto de la pantalla → edita este archivo.
+-->
+<StackPane xmlns="http://javafx.com/javafx/25"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.titozeio.ui.RobotSelectionScreen">
    <children>
+
+      <!-- Imagen de fondo -->
       <ImageView fitHeight="720.0" fitWidth="1280.0" pickOnBounds="true">
          <image>
             <Image url="@../images/bg1.png" />
@@ -22,1002 +36,98 @@
             <Insets />
          </StackPane.margin>
       </ImageView>
+
+      <!-- Contenido principal -->
       <VBox alignment="CENTER" spacing="5.0" stylesheets="@style.css">
          <children>
-            <Label alignment="TOP_CENTER" prefHeight="0.0" text="Pantalla de Selección de Robots" textAlignment="CENTER" textFill="WHITE">
+
+            <!-- Título fijo -->
+            <Label alignment="TOP_CENTER" prefHeight="0.0"
+                   text="Pantalla de Selección de Robots"
+                   textAlignment="CENTER" textFill="WHITE">
                <font>
                   <Font name="Exo 2 Regular" size="30.0" />
                </font>
             </Label>
-            <Label fx:id="fixedInstructionsLabel" alignment="TOP_CENTER" text="Los jugadores eligen robots por turnos. Empieza J2. J1 realizará el primer turno de la partida" textFill="#c9c9c9" wrapText="true">
+
+            <!-- Instrucción general (fija) -->
+            <Label fx:id="fixedInstructionsLabel"
+                   alignment="TOP_CENTER"
+                   text="Los jugadores eligen robots por turnos. Empieza J2. J1 realizará el primer turno de la partida"
+                   textFill="#c9c9c9" wrapText="true">
                <font>
                   <Font name="Exo 2 Regular" size="20.0" />
                </font>
             </Label>
-            <Label fx:id="turnInstructionsLabel" text="Jugador 2, elige robot" textFill="#c9c9c9">
+
+            <!-- Instrucción de turno actual (dinámica) -->
+            <Label fx:id="turnInstructionsLabel"
+                   text="Jugador 2, elige robot"
+                   textFill="#c9c9c9">
                <font>
                   <Font size="16.0" />
                </font>
             </Label>
-            <FlowPane fx:id="availableRobotsPane" alignment="CENTER" columnHalignment="CENTER" hgap="20.0" vgap="10.0">
-               <children>
-                  <FlowPane prefHeight="410.0" prefWidth="0.0" style="-fx-background-color: rgba(183, 185, 212, 0.8); -fx-background-radius: 6;">
-                     <children>
-                        <Text fill="#7d0000" stroke="BLACK" strokeWidth="0.0" style="-fx-font-family: Exo 2;" text="Victory Prime" textAlignment="CENTER" wrappingWidth="164.32400131225586">
-                           <font>
-                              <Font name="Exo 2 Regular" size="15.0" />
-                           </font>
-                           <FlowPane.margin>
-                              <Insets top="5.0" />
-                           </FlowPane.margin>
-                        </Text>
-                        <ImageView fitHeight="184.0" fitWidth="154.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../images/SaberPrime1.jpg" />
-                           </image>
-                           <FlowPane.margin>
-                              <Insets bottom="10.0" left="20.0" top="5.0" />
-                           </FlowPane.margin>
-                        </ImageView>
-                        <FlowPane columnHalignment="CENTER" orientation="VERTICAL" prefHeight="185.0" prefWidth="168.0" style="-fx-background-color: rgba(0, 0, 0, 0.3); -fx-background-radius: 4;" vgap="2.0">
-                           <padding>
-                              <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
-                           </padding>
-                           <FlowPane.margin>
-                              <Insets />
-                           </FlowPane.margin>
-                           <children>
-                              <TextFlow prefHeight="0.0" prefWidth="118.0">
-                                 <padding>
-                                    <Insets left="10.0" />
-                                 </padding>
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="HP:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="5" />
-                                 </children>
-                              </TextFlow>
-                              <TextFlow layoutX="10.0" layoutY="234.0" prefHeight="0.0" prefWidth="118.0">
-                                 <padding>
-                                    <Insets left="10.0" />
-                                 </padding>
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="ARMAS">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                 </children>
-                              </TextFlow>
-                              <TextFlow layoutX="20.0" layoutY="260.0" prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="Cañón de Plasma">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow layoutX="20.0" layoutY="287.0" prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="Alcance:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="3" />
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow layoutX="20.0" layoutY="320.0" prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="Daño:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="3" />
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="SKILL:">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                 </children>
-                                 <padding>
-                                    <Insets left="10.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="Cañón de Plasma">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="Alcance:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="1" />
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="Daño:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="10" />
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow layoutX="20.0" layoutY="425.0" prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="Cooldown:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="5" />
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                           </children>
-                        </FlowPane>
-                     </children>
-                  </FlowPane>
-                  <FlowPane layoutX="546.0" layoutY="10.0" prefHeight="410.0" prefWidth="0.0" style="-fx-background-color: rgba(183, 185, 212, 0.8); -fx-background-radius: 6;">
-                     <children>
-                        <Text fill="#7d0000" stroke="BLACK" strokeWidth="0.0" style="-fx-font-family: Exo 2;" text="Victory Prime" textAlignment="CENTER" wrappingWidth="164.32400131225586">
-                           <font>
-                              <Font name="Exo 2 Regular" size="15.0" />
-                           </font>
-                           <FlowPane.margin>
-                              <Insets top="5.0" />
-                           </FlowPane.margin>
-                        </Text>
-                        <ImageView fitHeight="184.0" fitWidth="154.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../images/Bullseye1.jpg" />
-                           </image>
-                           <FlowPane.margin>
-                              <Insets bottom="10.0" left="20.0" top="5.0" />
-                           </FlowPane.margin>
-                        </ImageView>
-                        <FlowPane columnHalignment="CENTER" orientation="VERTICAL" prefHeight="185.0" prefWidth="168.0" style="-fx-background-color: rgba(0, 0, 0, 0.3); -fx-background-radius: 4;" vgap="2.0">
-                           <padding>
-                              <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
-                           </padding>
-                           <FlowPane.margin>
-                              <Insets />
-                           </FlowPane.margin>
-                           <children>
-                              <TextFlow prefHeight="0.0" prefWidth="118.0">
-                                 <padding>
-                                    <Insets left="10.0" />
-                                 </padding>
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="HP:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="5" />
-                                 </children>
-                              </TextFlow>
-                              <TextFlow layoutX="10.0" layoutY="234.0" prefHeight="0.0" prefWidth="118.0">
-                                 <padding>
-                                    <Insets left="10.0" />
-                                 </padding>
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="ARMAS">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                 </children>
-                              </TextFlow>
-                              <TextFlow layoutX="20.0" layoutY="260.0" prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="Cañón de Plasma">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow layoutX="20.0" layoutY="287.0" prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="Alcance:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="3" />
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow layoutX="20.0" layoutY="320.0" prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="Daño:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="3" />
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="SKILL:">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                 </children>
-                                 <padding>
-                                    <Insets left="10.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="Cañón de Plasma">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="Alcance:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="1" />
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="Daño:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="10" />
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow layoutX="20.0" layoutY="425.0" prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="Cooldown:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="5" />
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                           </children>
-                        </FlowPane>
-                     </children>
-                  </FlowPane>
-                  <FlowPane layoutX="635.0" layoutY="10.0" prefHeight="410.0" prefWidth="0.0" style="-fx-background-color: rgba(183, 185, 212, 0.8); -fx-background-radius: 6;">
-                     <children>
-                        <Text fill="#7d0000" stroke="BLACK" strokeWidth="0.0" style="-fx-font-family: Exo 2;" text="Victory Prime" textAlignment="CENTER" wrappingWidth="164.32400131225586">
-                           <font>
-                              <Font name="Exo 2 Regular" size="15.0" />
-                           </font>
-                           <FlowPane.margin>
-                              <Insets top="5.0" />
-                           </FlowPane.margin>
-                        </Text>
-                        <ImageView fitHeight="184.0" fitWidth="154.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../images/Bullwark1.jpg" />
-                           </image>
-                           <FlowPane.margin>
-                              <Insets bottom="10.0" left="20.0" top="5.0" />
-                           </FlowPane.margin>
-                        </ImageView>
-                        <FlowPane columnHalignment="CENTER" orientation="VERTICAL" prefHeight="185.0" prefWidth="168.0" style="-fx-background-color: rgba(0, 0, 0, 0.3); -fx-background-radius: 4;" vgap="2.0">
-                           <padding>
-                              <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
-                           </padding>
-                           <FlowPane.margin>
-                              <Insets />
-                           </FlowPane.margin>
-                           <children>
-                              <TextFlow prefHeight="0.0" prefWidth="118.0">
-                                 <padding>
-                                    <Insets left="10.0" />
-                                 </padding>
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="HP:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="5" />
-                                 </children>
-                              </TextFlow>
-                              <TextFlow layoutX="10.0" layoutY="234.0" prefHeight="0.0" prefWidth="118.0">
-                                 <padding>
-                                    <Insets left="10.0" />
-                                 </padding>
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="ARMAS">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                 </children>
-                              </TextFlow>
-                              <TextFlow layoutX="20.0" layoutY="260.0" prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="Cañón de Plasma">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow layoutX="20.0" layoutY="287.0" prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="Alcance:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="3" />
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow layoutX="20.0" layoutY="320.0" prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="Daño:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="3" />
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="SKILL:">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                 </children>
-                                 <padding>
-                                    <Insets left="10.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="Cañón de Plasma">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="Alcance:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="1" />
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="Daño:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="10" />
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow layoutX="20.0" layoutY="425.0" prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="Cooldown:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="5" />
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                           </children>
-                        </FlowPane>
-                     </children>
-                  </FlowPane>
-                  <FlowPane layoutX="724.0" layoutY="10.0" prefHeight="410.0" prefWidth="0.0" style="-fx-background-color: rgba(183, 185, 212, 0.8); -fx-background-radius: 6;">
-                     <children>
-                        <Text fill="#7d0000" stroke="BLACK" strokeWidth="0.0" style="-fx-font-family: Exo 2;" text="Victory Prime" textAlignment="CENTER" wrappingWidth="164.32400131225586">
-                           <font>
-                              <Font name="Exo 2 Regular" size="15.0" />
-                           </font>
-                           <FlowPane.margin>
-                              <Insets top="5.0" />
-                           </FlowPane.margin>
-                        </Text>
-                        <ImageView fitHeight="184.0" fitWidth="154.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../images/DeathKnight1.jpg" />
-                           </image>
-                           <FlowPane.margin>
-                              <Insets bottom="10.0" left="20.0" top="5.0" />
-                           </FlowPane.margin>
-                        </ImageView>
-                        <FlowPane columnHalignment="CENTER" orientation="VERTICAL" prefHeight="185.0" prefWidth="168.0" style="-fx-background-color: rgba(0, 0, 0, 0.3); -fx-background-radius: 4;" vgap="2.0">
-                           <padding>
-                              <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
-                           </padding>
-                           <FlowPane.margin>
-                              <Insets />
-                           </FlowPane.margin>
-                           <children>
-                              <TextFlow prefHeight="0.0" prefWidth="118.0">
-                                 <padding>
-                                    <Insets left="10.0" />
-                                 </padding>
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="HP:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="5" />
-                                 </children>
-                              </TextFlow>
-                              <TextFlow layoutX="10.0" layoutY="234.0" prefHeight="0.0" prefWidth="118.0">
-                                 <padding>
-                                    <Insets left="10.0" />
-                                 </padding>
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="ARMAS">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                 </children>
-                              </TextFlow>
-                              <TextFlow layoutX="20.0" layoutY="260.0" prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="Cañón de Plasma">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow layoutX="20.0" layoutY="287.0" prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="Alcance:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="3" />
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow layoutX="20.0" layoutY="320.0" prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="Daño:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="3" />
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="SKILL:">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                 </children>
-                                 <padding>
-                                    <Insets left="10.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="Cañón de Plasma">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="Alcance:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="1" />
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="Daño:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="10" />
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow layoutX="20.0" layoutY="425.0" prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="Cooldown:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="5" />
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                           </children>
-                        </FlowPane>
-                     </children>
-                  </FlowPane>
-                  <FlowPane layoutX="813.0" layoutY="10.0" prefHeight="410.0" prefWidth="0.0" style="-fx-background-color: rgba(183, 185, 212, 0.8); -fx-background-radius: 6;">
-                     <children>
-                        <Text fill="#7d0000" stroke="BLACK" strokeWidth="0.0" style="-fx-font-family: Exo 2;" text="Victory Prime" textAlignment="CENTER" wrappingWidth="164.32400131225586">
-                           <font>
-                              <Font name="Exo 2 Regular" size="15.0" />
-                           </font>
-                           <FlowPane.margin>
-                              <Insets top="5.0" />
-                           </FlowPane.margin>
-                        </Text>
-                        <ImageView fitHeight="184.0" fitWidth="154.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../images/IceAge1.jpg" />
-                           </image>
-                           <FlowPane.margin>
-                              <Insets bottom="10.0" left="20.0" top="5.0" />
-                           </FlowPane.margin>
-                        </ImageView>
-                        <FlowPane columnHalignment="CENTER" orientation="VERTICAL" prefHeight="185.0" prefWidth="168.0" style="-fx-background-color: rgba(0, 0, 0, 0.3); -fx-background-radius: 4;" vgap="2.0">
-                           <padding>
-                              <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
-                           </padding>
-                           <FlowPane.margin>
-                              <Insets />
-                           </FlowPane.margin>
-                           <children>
-                              <TextFlow prefHeight="0.0" prefWidth="118.0">
-                                 <padding>
-                                    <Insets left="10.0" />
-                                 </padding>
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="HP:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="5" />
-                                 </children>
-                              </TextFlow>
-                              <TextFlow layoutX="10.0" layoutY="234.0" prefHeight="0.0" prefWidth="118.0">
-                                 <padding>
-                                    <Insets left="10.0" />
-                                 </padding>
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="ARMAS">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                 </children>
-                              </TextFlow>
-                              <TextFlow layoutX="20.0" layoutY="260.0" prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="Cañón de Plasma">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow layoutX="20.0" layoutY="287.0" prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="Alcance:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="3" />
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow layoutX="20.0" layoutY="320.0" prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="Daño:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="3" />
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="SKILL:">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                 </children>
-                                 <padding>
-                                    <Insets left="10.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="Cañón de Plasma">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="Alcance:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="1" />
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="Daño:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="10" />
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow layoutX="20.0" layoutY="425.0" prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="Cooldown:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="5" />
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                           </children>
-                        </FlowPane>
-                     </children>
-                  </FlowPane>
-                  <FlowPane layoutX="902.0" layoutY="10.0" prefHeight="410.0" prefWidth="0.0" style="-fx-background-color: rgba(183, 185, 212, 0.8); -fx-background-radius: 6;">
-                     <children>
-                        <Text fill="#7d0000" stroke="BLACK" strokeWidth="0.0" style="-fx-font-family: Exo 2;" text="Victory Prime" textAlignment="CENTER" wrappingWidth="164.32400131225586">
-                           <font>
-                              <Font name="Exo 2 Regular" size="15.0" />
-                           </font>
-                           <FlowPane.margin>
-                              <Insets top="5.0" />
-                           </FlowPane.margin>
-                        </Text>
-                        <ImageView fitHeight="184.0" fitWidth="154.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../images/Scout1.jpg" />
-                           </image>
-                           <FlowPane.margin>
-                              <Insets bottom="10.0" left="20.0" top="5.0" />
-                           </FlowPane.margin>
-                        </ImageView>
-                        <FlowPane columnHalignment="CENTER" orientation="VERTICAL" prefHeight="185.0" prefWidth="168.0" style="-fx-background-color: rgba(0, 0, 0, 0.3); -fx-background-radius: 4;" vgap="2.0">
-                           <padding>
-                              <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
-                           </padding>
-                           <FlowPane.margin>
-                              <Insets />
-                           </FlowPane.margin>
-                           <children>
-                              <TextFlow prefHeight="0.0" prefWidth="118.0">
-                                 <padding>
-                                    <Insets left="10.0" />
-                                 </padding>
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="HP:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="5" />
-                                 </children>
-                              </TextFlow>
-                              <TextFlow layoutX="10.0" layoutY="234.0" prefHeight="0.0" prefWidth="118.0">
-                                 <padding>
-                                    <Insets left="10.0" />
-                                 </padding>
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="ARMAS">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                 </children>
-                              </TextFlow>
-                              <TextFlow layoutX="20.0" layoutY="260.0" prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="Cañón de Plasma">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow layoutX="20.0" layoutY="287.0" prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="Alcance:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="3" />
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow layoutX="20.0" layoutY="320.0" prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="Daño:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="3" />
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="SKILL:">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                 </children>
-                                 <padding>
-                                    <Insets left="10.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="Cañón de Plasma">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="Alcance:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="1" />
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="Daño:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="10" />
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                              <TextFlow layoutX="20.0" layoutY="425.0" prefHeight="0.0" prefWidth="118.0">
-                                 <children>
-                                    <Text fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="Cooldown:  ">
-                                       <font>
-                                          <Font name="Exo 2 Regular" size="12.0" />
-                                       </font>
-                                    </Text>
-                                    <Text fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="5" />
-                                 </children>
-                                 <padding>
-                                    <Insets left="20.0" />
-                                 </padding>
-                              </TextFlow>
-                           </children>
-                        </FlowPane>
-                     </children>
-                  </FlowPane>
-               </children>
+
+            <!--
+               Panel de tarjetas de robots.
+               Se rellena en tiempo de ejecución cargando RobotCard.fxml
+               una vez por cada RobotTemplate disponible.
+            -->
+            <FlowPane fx:id="availableRobotsPane"
+                      alignment="CENTER"
+                      columnHalignment="CENTER"
+                      hgap="20.0" vgap="10.0">
+               <!-- Vacío intencionadamente: lo rellena RobotSelectionScreen.java -->
             </FlowPane>
-            <FlowPane style="-fx-background-color: rgba(11, 22, 28, 1); -fx-background-radius: 6;">
+
+            <!--
+               Panel de descripción inferior.
+               Oculto por defecto (visible="false").
+               Aparece al hacer clic en una tarjeta de robot.
+            -->
+            <FlowPane fx:id="descriptionPane"
+                      style="-fx-background-color: rgba(11, 22, 28, 1); -fx-background-radius: 6;"
+                      visible="false">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
                <children>
+
+                  <!-- Descripción del robot -->
                   <TextFlow prefHeight="43.0" prefWidth="1239.0">
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                      <children>
                         <Text fill="#910000" strokeType="OUTSIDE" strokeWidth="0.0" text="DESCRIPCIÓN:  ">
-                           <font>
-                              <Font name="Exo 2 Regular" size="16.0" />
-                           </font>
+                           <font><Font name="Exo 2 Regular" size="16.0" /></font>
                         </Text>
-                        <Text fill="#b3b3b3" layoutX="10.0" layoutY="10.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Un robot de otra época, con aspecto bastante humanoide, anterior a las DAW1, pensado para ser pilotado por un humano y reconvertido a uso por la IA. Suele ser subestimado, pero cuando es capaz de cargar su temible sable de plasma, no te conviene estar enfrente suyo." wrappingWidth="1215.505126953125">
-                           <font>
-                              <Font name="Exo 2 Regular" size="14.0" />
-                           </font>
+                        <Text fx:id="descRobotText"
+                              fill="#b3b3b3" strokeType="OUTSIDE" strokeWidth="0.0"
+                              text="" wrappingWidth="1175.0">
+                           <font><Font name="Exo 2 Regular" size="14.0" /></font>
                         </Text>
                      </children>
                   </TextFlow>
+
+                  <!-- Descripción del arma -->
                   <TextFlow prefHeight="25.0" prefWidth="1239.0">
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                      <children>
-                        <Text fill="#910000" strokeType="OUTSIDE" strokeWidth="0.0" text="ARMAS:  ">
-                           <font>
-                              <Font name="Exo 2 Regular" size="16.0" />
-                           </font>
+                        <Text fill="#910000" strokeType="OUTSIDE" strokeWidth="0.0" text="ARMA:  ">
+                           <font><Font name="Exo 2 Regular" size="16.0" /></font>
                         </Text>
-                        <Text fill="#b3b3b3" layoutX="10.0" layoutY="10.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Cañón de plasma. Poco efectivo y de corto alcance.">
-                           <font>
-                              <Font name="Exo 2 Regular" size="14.0" />
-                           </font>
+                        <Text fx:id="descWeaponText"
+                              fill="#b3b3b3" strokeType="OUTSIDE" strokeWidth="0.0" text="">
+                           <font><Font name="Exo 2 Regular" size="14.0" /></font>
                         </Text>
                      </children>
                   </TextFlow>
+
+                  <!-- Descripción de la skill -->
                   <TextFlow prefHeight="39.0" prefWidth="1239.0">
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -1027,20 +137,33 @@
                      </FlowPane.margin>
                      <children>
                         <Text fill="#910000" strokeType="OUTSIDE" strokeWidth="0.0" text="SKILL:   ">
-                           <font>
-                              <Font name="Exo 2 Regular" size="16.0" />
-                           </font>
+                           <font><Font name="Exo 2 Regular" size="16.0" /></font>
                         </Text>
-                        <Text fill="#b3b3b3" layoutX="10.0" layoutY="10.0" strokeType="OUTSIDE" strokeWidth="0.0" text="El robot despliega un sable de plasma que hace daño masivo. El sable es tan potente que necesita una cantidad de  energía brutal para volver a generarse, por lo que normalmente solo se puede usar 1 o 2 veces en el combate.">
-                           <font>
-                              <Font name="Exo 2 Regular" size="14.0" />
-                           </font>
+                        <Text fx:id="descSkillText"
+                              fill="#b3b3b3" strokeType="OUTSIDE" strokeWidth="0.0" text="">
+                           <font><Font name="Exo 2 Regular" size="14.0" /></font>
                         </Text>
                      </children>
                   </TextFlow>
+
                </children>
             </FlowPane>
-            <Button fx:id="playButton" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleAcceptAction" style="-fx-font-size: 24; -fx-padding: 0 0; -fx-base: #2ecc71; -fx-text-fill: white; -fx-cursor: hand; -fx-background-color: transparent;" text="Aceptar" textAlignment="CENTER">
+
+            <!--
+               Botón Confirmar.
+               Desactivado y semitransparente por defecto.
+               Se activa al hacer clic en una tarjeta.
+               Registra la selección al pulsarlo.
+            -->
+            <Button fx:id="confirmButton"
+                    contentDisplay="CENTER"
+                    disable="true"
+                    opacity="0.35"
+                    mnemonicParsing="false"
+                    onAction="#handleConfirmAction"
+                    style="-fx-font-size: 24; -fx-padding: 0 0; -fx-base: #2ecc71; -fx-text-fill: white; -fx-cursor: hand; -fx-background-color: transparent;"
+                    text="Confirmar"
+                    textAlignment="CENTER">
                <font>
                   <Font name="Exo 2" size="24.0" />
                </font>
@@ -1052,6 +175,7 @@
                   </ImageView>
                </graphic>
             </Button>
+
          </children>
          <padding>
             <Insets left="20.0" right="20.0" />
@@ -1060,5 +184,6 @@
             <Insets bottom="10.0" />
          </StackPane.margin>
       </VBox>
+
    </children>
 </StackPane>
