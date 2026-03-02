@@ -61,4 +61,11 @@ public class GuidedMissile extends Skill {
     public boolean isIgnoresVisibility() {
         return ignoresVisibility;
     }
+
+    @Override
+    public java.util.List<String[]> getDisplayStats() {
+        return java.util.List.of(
+                new String[] { "Alcance:  ", String.valueOf(RANGE) },
+                new String[] { "Daño:  ", String.valueOf(DAMAGE) });
+    }
 }

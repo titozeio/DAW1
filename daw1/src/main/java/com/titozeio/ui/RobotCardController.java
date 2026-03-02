@@ -5,6 +5,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 
 import com.titozeio.engine.Robot;
 import com.titozeio.enums.RobotTemplate;
@@ -56,6 +57,18 @@ public class RobotCardController {
     private Text skillNameText;
     @FXML
     private Text skillCooldownText;
+    @FXML
+    private TextFlow skillStat1Row;
+    @FXML
+    private Text skillStat1Label;
+    @FXML
+    private Text skillStat1Value;
+    @FXML
+    private TextFlow skillStat2Row;
+    @FXML
+    private Text skillStat2Label;
+    @FXML
+    private Text skillStat2Value;
 
     // ── Estado interno ────────────────────────────────────────────────────────
     private RobotTemplate template;
@@ -99,9 +112,34 @@ public class RobotCardController {
         if (skill != null) {
             skillNameText.setText(skill.getName());
             skillCooldownText.setText(skill.getCooldown() + " turnos");
+
+            // Rellenar stats específicos (Alcance, Daño, Movimiento...)
+            java.util.List<String[]> stats = skill.getDisplayStats();
+            if (stats.size() >= 1) {
+                skillStat1Label.setText(stats.get(0)[0]);
+                skillStat1Value.setText(stats.get(0)[1]);
+                skillStat1Row.setVisible(true);
+                skillStat1Row.setManaged(true);
+            } else {
+                skillStat1Row.setVisible(false);
+                skillStat1Row.setManaged(false);
+            }
+            if (stats.size() >= 2) {
+                skillStat2Label.setText(stats.get(1)[0]);
+                skillStat2Value.setText(stats.get(1)[1]);
+                skillStat2Row.setVisible(true);
+                skillStat2Row.setManaged(true);
+            } else {
+                skillStat2Row.setVisible(false);
+                skillStat2Row.setManaged(false);
+            }
         } else {
             skillNameText.setText("Sin skill");
             skillCooldownText.setText("—");
+            skillStat1Row.setVisible(false);
+            skillStat1Row.setManaged(false);
+            skillStat2Row.setVisible(false);
+            skillStat2Row.setManaged(false);
         }
     }
 

@@ -162,6 +162,28 @@
                </children>
             </TextFlow>
 
+            <!-- Stat 1 específico de la skill (Alcance, Movimiento...) -->
+            <TextFlow fx:id="skillStat1Row" prefHeight="0.0" prefWidth="148.0">
+               <padding><Insets left="20.0" /></padding>
+               <children>
+                  <Text fx:id="skillStat1Label" fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="">
+                     <font><Font name="Exo 2 Regular" size="12.0" /></font>
+                  </Text>
+                  <Text fx:id="skillStat1Value" fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
+               </children>
+            </TextFlow>
+
+            <!-- Stat 2 específico de la skill (Daño, Curación...) -->
+            <TextFlow fx:id="skillStat2Row" prefHeight="0.0" prefWidth="148.0">
+               <padding><Insets left="20.0" /></padding>
+               <children>
+                  <Text fx:id="skillStat2Label" fill="#770909" strokeType="OUTSIDE" strokeWidth="0.0" text="">
+                     <font><Font name="Exo 2 Regular" size="12.0" /></font>
+                  </Text>
+                  <Text fx:id="skillStat2Value" fill="#c7c7c7" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
+               </children>
+            </TextFlow>
+
          </children>
       </FlowPane>
 

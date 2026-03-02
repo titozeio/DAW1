@@ -64,4 +64,11 @@ public class JetpackBoost extends Skill {
     public boolean isIgnoresHeightLimits() {
         return ignoresHeightLimits;
     }
+
+    @Override
+    public java.util.List<String[]> getDisplayStats() {
+        java.util.List<String[]> stats = new java.util.ArrayList<>();
+        stats.add(new String[] { "Movimiento:  ", String.valueOf(movementPoints) });
+        return stats;
+    }
 }

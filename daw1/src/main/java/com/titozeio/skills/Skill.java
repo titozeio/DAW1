@@ -79,6 +79,15 @@ public abstract class Skill {
         return description;
     }
 
+    /**
+     * Devuelve los parámetros específicos de esta skill para mostrar en la
+     * tarjeta de selección de robots. Cada elemento es un array de dos Strings:
+     * [etiqueta, valor]. Por ejemplo: ["Alcance: ", "3"] o ["Movimiento: ", "7"].
+     *
+     * Cada subclase debe implementar este método con sus stats reales.
+     */
+    public abstract java.util.List<String[]> getDisplayStats();
+
     @Override
     public String toString() {
         return name + " [" + type + ", Cooldown:" + cooldown + ", Restante:" + currentCooldown + "]";
