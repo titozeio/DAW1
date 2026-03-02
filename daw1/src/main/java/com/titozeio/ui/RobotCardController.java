@@ -160,18 +160,24 @@ public class RobotCardController {
         return cardRoot;
     }
 
+    // Estilos de la tarjeta — el borde siempre ocupa 3px; solo cambia el color
+    private static final String CARD_STYLE_NORMAL = "-fx-background-color: rgba(183, 185, 212, 0.8); -fx-background-radius: 6; "
+            +
+            "-fx-cursor: hand; -fx-border-width: 3; -fx-border-radius: 6; " +
+            "-fx-border-color: transparent;";
+    private static final String CARD_STYLE_SELECTED = "-fx-background-color: rgba(183, 185, 212, 0.8); -fx-background-radius: 6; "
+            +
+            "-fx-cursor: hand; -fx-border-width: 3; -fx-border-radius: 6; " +
+            "-fx-border-color: #2ecc71;";
+
     /**
-     * Resalta visualmente esta tarjeta (borde verde).
-     * Llamado por RobotSelectionScreen cuando el jugador hace clic.
+     * Resalta visualmente esta tarjeta (borde verde) o la restaura al estado
+     * normal.
+     * El borde siempre reserva 3px de espacio; solo cambia de color → el layout no
+     * se desplaza.
      */
     public void setHighlighted(boolean highlighted) {
-        FlowPane root = getRoot();
-        String base = "-fx-background-color: rgba(183, 185, 212, 0.8); -fx-background-radius: 6; -fx-cursor: hand;";
-        if (highlighted) {
-            root.setStyle(base + " -fx-border-color: #2ecc71; -fx-border-width: 3; -fx-border-radius: 6;");
-        } else {
-            root.setStyle(base);
-        }
+        cardRoot.setStyle(highlighted ? CARD_STYLE_SELECTED : CARD_STYLE_NORMAL);
     }
 
     // ── Handler FXML ──────────────────────────────────────────────────────────

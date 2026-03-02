@@ -33,7 +33,7 @@
           xmlns:fx="http://javafx.com/fxml/1"
           fx:controller="com.titozeio.ui.RobotCardController"
           prefHeight="410.0" prefWidth="0.0"
-          style="-fx-background-color: rgba(183, 185, 212, 0.8); -fx-background-radius: 6; -fx-cursor: hand;">
+          style="-fx-background-color: rgba(183, 185, 212, 0.8); -fx-background-radius: 6; -fx-cursor: hand; -fx-border-color: transparent; -fx-border-width: 3; -fx-border-radius: 6;">
    <children>
 
       <!-- Nombre del robot -->

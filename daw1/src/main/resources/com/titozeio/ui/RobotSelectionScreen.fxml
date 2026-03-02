@@ -87,6 +87,7 @@
                Aparece al hacer clic en una tarjeta de robot.
             -->
             <FlowPane fx:id="descriptionPane"
+                      minHeight="130.0" prefHeight="130.0" maxHeight="130.0"
                       style="-fx-background-color: rgba(11, 22, 28, 1); -fx-background-radius: 6;"
                       visible="false">
                <VBox.margin>
