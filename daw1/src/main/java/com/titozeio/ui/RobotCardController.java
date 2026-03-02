@@ -39,6 +39,8 @@ public class RobotCardController {
 
     // ── Referencias FXML (inyectadas automáticamente) ─────────────────────────
     @FXML
+    private FlowPane cardRoot; // nodo raíz de la tarjeta
+    @FXML
     private Text robotNameText;
     @FXML
     private ImageView robotImageView;
@@ -114,10 +116,10 @@ public class RobotCardController {
     }
 
     /**
-     * Devuelve el nodo raíz (FlowPane) de la tarjeta para poder añadirlo al panel.
+     * Devuelve el nodo raíz (FlowPane) de la tarjeta.
      */
     public FlowPane getRoot() {
-        return (FlowPane) robotNameText.getParent().getParent();
+        return cardRoot;
     }
 
     /**
