@@ -14,6 +14,8 @@ public class Main extends Application {
         // Cargar fuente personalizada
         Font.loadFont(Main.class.getResourceAsStream("/com/titozeio/fonts/Exo2-Regular.ttf"), 14);
 
+        //remote change directly done in github.com
+
         primaryStage.setTitle("Devastation AI Wars 1");
         primaryStage.setWidth(1280);
         primaryStage.setHeight(755);
