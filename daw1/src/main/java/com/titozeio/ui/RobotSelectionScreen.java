@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.titozeio.engine.Game;
+import com.titozeio.engine.Player;
 import com.titozeio.engine.Robot;
 import com.titozeio.enums.RobotTemplate;
 import com.titozeio.model.Weapon;
@@ -229,18 +230,22 @@ public class RobotSelectionScreen extends Screen {
     }
 
     private void transitionToCombatScreen() {
+        // Obtener los jugadores ya creados en Game
+        Player p1 = game.getP1();
+        Player p2 = game.getP2();
+
+        // Instanciar los robots reales con su owner y añadirlos al equipo
+        for (RobotTemplate t : player1Templates) {
+            p1.addUnit(t.createRobot(p1));
+        }
+        for (RobotTemplate t : player2Templates) {
+            p2.addUnit(t.createRobot(p2));
+        }
+
         System.out.println("Selección completada.");
-        System.out.println("J1: " + player1Templates);
-        System.out.println("J2: " + player2Templates);
-        // TODO: cuando Game tenga Players inicializados, crear los robots reales aquí:
-        // Player p1 = game.getP1();
-        // Player p2 = game.getP2();
-        // List<Robot> robotsP1 = player1Templates.stream().map(t ->
-        // t.createRobot(p1)).toList();
-        // List<Robot> robotsP2 = player2Templates.stream().map(t ->
-        // t.createRobot(p2)).toList();
-        // game.getP1().setRobots(robotsP1);
-        // game.getP2().setRobots(robotsP2);
+        System.out.println(p1.getName() + ": " + p1.getUnits());
+        System.out.println(p2.getName() + ": " + p2.getUnits());
+
         game.displayScreen(new GameScreen(game));
     }
 

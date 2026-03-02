@@ -28,7 +28,10 @@ public class Game {
         this.victoryConditions = new ArrayList<>();
         this.turnCounter = 1;
 
-        // TODO: Inicializar mapa y jugadores
+        // Crear los jugadores sin robots (los robots se asignan en
+        // RobotSelectionScreen)
+        this.p1 = new Player("Jugador 1");
+        this.p2 = new Player("Jugador 2");
     }
 
     public void start() {
@@ -74,13 +77,21 @@ public class Game {
         // TODO: Procesar eventos (clics, teclas)
     }
 
-    // Getters
+    // Getters y Setters
     public Player getP1() {
         return p1;
     }
 
     public Player getP2() {
         return p2;
+    }
+
+    public void setP1(Player p1) {
+        this.p1 = p1;
+    }
+
+    public void setP2(Player p2) {
+        this.p2 = p2;
     }
 
     public Player getCurrentPlayer() {
