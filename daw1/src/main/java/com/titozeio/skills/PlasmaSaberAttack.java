@@ -49,4 +49,11 @@ public class PlasmaSaberAttack extends Skill {
     public int getDamage() {
         return DAMAGE;
     }
+
+    @Override
+    public java.util.List<String[]> getDisplayStats() {
+        return java.util.List.of(
+                new String[] { "Alcance:  ", String.valueOf(RANGE) },
+                new String[] { "Daño:  ", String.valueOf(DAMAGE) });
+    }
 }

@@ -214,7 +214,9 @@ Efectos del terreno según el tipo y la altura:
 
 # 3. Aspectos Técnicos (Stack Tecnológico)
 
-En principio, el proyecto será un proyecto Maven de Java con JavaFX. Ahora mismo no hay mucho más que definir.
+En principio, el proyecto será un proyecto Maven de Java con JavaFX. 
+Se usará el framework de JavaFX para crear la interfaz gráfica y SceneBuilder para editar la interfaz gráfica de forma WYSIWYG.
+Paa el mapa se usará TiledMap para editar el mapa y generar el spritesheet del mismo.
 
 ## Dependencias:
 

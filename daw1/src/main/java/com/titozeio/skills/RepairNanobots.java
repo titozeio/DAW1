@@ -55,4 +55,11 @@ public class RepairNanobots extends Skill {
     public int getHealAmount() {
         return healAmount;
     }
+
+    @Override
+    public java.util.List<String[]> getDisplayStats() {
+        return java.util.List.of(
+                new String[] { "Alcance:  ", String.valueOf(range) },
+                new String[] { "Curación:  ", String.valueOf(healAmount) + " HP" });
+    }
 }
