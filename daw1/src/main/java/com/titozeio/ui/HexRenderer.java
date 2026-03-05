@@ -77,6 +77,9 @@ public class HexRenderer {
      */
     private Set<Hexagon> moveHighlighted = new HashSet<>();
 
+    /** Hexágonos resaltados para ataque (objetivos enemigos en rango). */
+    private Set<Hexagon> attackHighlighted = new HashSet<>();
+
     // ── Constructor ───────────────────────────────────────────────────────────
     public HexRenderer(Pane pane) {
         this.pane = pane;
@@ -111,6 +114,18 @@ public class HexRenderer {
      */
     public boolean isMoveHighlighted(Hexagon hex) {
         return moveHighlighted.contains(hex);
+    }
+
+    /**
+     * Establece los hexágonos que se resaltarán en naranja (objetivos de ataque).
+     */
+    public void setAttackHighlightedHexes(Set<Hexagon> hexes) {
+        this.attackHighlighted = (hexes != null) ? hexes : Collections.emptySet();
+    }
+
+    /** @return true si el hexágono está actualmente como objetivo de ataque. */
+    public boolean isAttackHighlighted(Hexagon hex) {
+        return attackHighlighted.contains(hex);
     }
 
     // ── API pública ───────────────────────────────────────────────────────────
@@ -189,6 +204,17 @@ public class HexRenderer {
             hl.setStroke(Color.web("#00aaff", 0.85));
             hl.setStrokeType(StrokeType.INSIDE);
             hl.setStrokeWidth(2.0);
+            hl.setMouseTransparent(true);
+            pane.getChildren().add(hl);
+        }
+
+        // 3c. Overlay de objetivo de ataque (naranja-rojo)
+        if (attackHighlighted.contains(hex)) {
+            Polygon hl = buildHexPolygon(cx, cy, HEX_SIZE - 1);
+            hl.setFill(Color.web("#ff4400", 0.25));
+            hl.setStroke(Color.web("#ff6600", 0.9));
+            hl.setStrokeType(StrokeType.INSIDE);
+            hl.setStrokeWidth(2.5);
             hl.setMouseTransparent(true);
             pane.getChildren().add(hl);
         }
