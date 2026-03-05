@@ -1,15 +1,14 @@
 package com.titozeio.engine;
 
+import com.titozeio.ui.MainMenuScreen;
 import com.titozeio.ui.Screen;
 import com.titozeio.victory.VictoryCondition;
-
-import java.util.ArrayList;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.stage.Stage;
 import java.util.List;
+import java.util.ArrayList;
 
-/**
- * Clase central del juego. Gestiona el estado global, los turnos,
- * las pantallas y la comprobación de condiciones de victoria.
- */
 public class Game {
 
     private Map map;
@@ -19,74 +18,91 @@ public class Game {
     private int turnCounter;
     private Screen currentScreen;
     private List<VictoryCondition> victoryConditions;
+    private MediaPlayer mediaPlayer;
 
-    public Game(Player p1, Player p2, Map map) {
-        this.p1 = p1;
-        this.p2 = p2;
-        this.map = map;
-        this.currentPlayer = p1;
-        this.turnCounter = 1;
+    // Referencia a la ventana de JavaFX
+    private Stage stage;
+
+    public Game(Stage stage) {
+        this.stage = stage;
         this.victoryConditions = new ArrayList<>();
+        this.turnCounter = 1;
+
+        // Crear los jugadores sin robots (los robots se asignan en
+        // RobotSelectionScreen)
+        this.p1 = new Player("Jugador 1");
+        this.p2 = new Player("Jugador 2");
     }
 
-    /** Inicia el juego. */
     public void start() {
-        System.out.println("=== DEVASTATION AI WARS 1 ===");
-        System.out.println("Turno " + turnCounter + " - " + currentPlayer.getName());
+        startMusic();
+        // Carga y muestra la pantalla inicial
+        MainMenuScreen mainMenu = MainMenuScreen.create(this.stage, this);
+        displayScreen(mainMenu);
     }
 
-    /** Pasa al siguiente turno, alternando el jugador activo. */
-    public void nextTurn() {
-        // Comprobar victoria antes de pasar turno
-        Player winner = checkVictory();
-        if (winner != null) {
-            System.out.println("¡" + winner.getName() + " ha ganado!");
-            return;
-        }
-
-        // Resetear estados de acción de los robots del jugador actual
-        currentPlayer.getUnits().forEach(Robot::resetActions);
-
-        // Alternar jugador
-        currentPlayer = (currentPlayer == p1) ? p2 : p1;
-        if (currentPlayer == p1) {
-            turnCounter++;
-        }
-
-        System.out.println("-- Turno " + turnCounter + " - " + currentPlayer.getName() + " --");
-    }
-
-    /**
-     * Comprueba todas las condiciones de victoria registradas.
-     * @return el jugador ganador, o null si nadie ha ganado aún.
-     */
-    public Player checkVictory() {
-        for (VictoryCondition vc : victoryConditions) {
-            Player winner = vc.check(this);
-            if (winner != null) {
-                return winner;
+    private void startMusic() {
+        try {
+            var resource = getClass().getResource("/com/titozeio/sounds/song.mp3");
+            if (resource != null) {
+                Media media = new Media(resource.toExternalForm());
+                mediaPlayer = new MediaPlayer(media);
+                mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+                mediaPlayer.play();
+                System.out.println("Música iniciada correctamente.");
+            } else {
+                System.err.println("No se encontró el archivo de música: /com/titozeio/sounds/song.mp3");
             }
+        } catch (Exception e) {
+            System.err.println("Error al reproducir música: " + e.getMessage());
         }
+    }
+
+    public void nextTurn() {
+        this.turnCounter++;
+        // TODO: Alternar currentPlayer
+    }
+
+    public Player checkVictory() {
+        // TODO: Evaluar victoryConditions
         return null;
     }
 
-    /** Muestra la pantalla indicada. */
     public void displayScreen(Screen screen) {
         this.currentScreen = screen;
-        screen.display();
+        this.currentScreen.display();
     }
 
-    // --- Getters y Setters ---
+    public void handleInput(Object event) {
+        // TODO: Procesar eventos (clics, teclas)
+    }
 
-    public Map getMap() { return map; }
-    public Player getP1() { return p1; }
-    public Player getP2() { return p2; }
-    public Player getCurrentPlayer() { return currentPlayer; }
-    public int getTurnCounter() { return turnCounter; }
-    public Screen getCurrentScreen() { return currentScreen; }
-    public List<VictoryCondition> getVictoryConditions() { return victoryConditions; }
+    // Getters y Setters
+    public Player getP1() {
+        return p1;
+    }
 
-    public void addVictoryCondition(VictoryCondition vc) {
-        victoryConditions.add(vc);
+    public Player getP2() {
+        return p2;
+    }
+
+    public void setP1(Player p1) {
+        this.p1 = p1;
+    }
+
+    public void setP2(Player p2) {
+        this.p2 = p2;
+    }
+
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public int getTurnCounter() {
+        return turnCounter;
+    }
+
+    public Stage getStage() {
+        return stage;
     }
 }

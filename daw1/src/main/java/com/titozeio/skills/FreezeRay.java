@@ -56,4 +56,11 @@ public class FreezeRay extends Skill {
     public int getFreezeDuration() {
         return freezeDuration;
     }
+
+    @Override
+    public java.util.List<String[]> getDisplayStats() {
+        return java.util.List.of(
+                new String[] { "Alcance:  ", String.valueOf(range) },
+                new String[] { "Daño:  ", String.valueOf(damage) });
+    }
 }

@@ -17,9 +17,9 @@
   - [Resolución de ataque:](#resolución-de-ataque)
   - [Casillas del mapa:](#casillas-del-mapa)
 - [3. Aspectos Técnicos (Stack Tecnológico)](#3-aspectos-técnicos-stack-tecnológico)
-  - [Dependencias:](#dependencias)
-  - [Arquitectura:](#arquitectura)
-  - [Estructura del Proyecto:](#estructura-del-proyecto)
+  - [Sistema de Coordenadas del Mapa:](#sistema-de-coordenadas-del-mapa)
+  - [Arquitectura y Patrones:](#arquitectura-y-patrones)
+  - [Estructura de Paquetes:](#estructura-de-paquetes)
 - [4. Bucle de Juego (Game Loop)](#4-bucle-de-juego-game-loop)
 - [5. Contenido, Niveles](#5-contenido-niveles)
   - [Asset List:](#asset-list)
@@ -28,7 +28,7 @@
   - [Lista de Robots:](#lista-de-robots)
 - [6. Interfaz (UI/HUD)](#6-interfaz-uihud)
   - [Pantalla de inicio:](#pantalla-de-inicio)
-  - [Pantalla de Nueva partida:](#pantalla-de-nueva-partida)
+  - [Pantalla de Nueva partida (Selección de Robots):](#pantalla-de-nueva-partida-selección-de-robots)
   - [Pantalla de Combate:](#pantalla-de-combate)
 
 
@@ -214,19 +214,37 @@ Efectos del terreno según el tipo y la altura:
 
 # 3. Aspectos Técnicos (Stack Tecnológico)
 
-Cómo usar Maven y Java, esta sección es crítica para el entorno educativo.
+El proyecto se desarrolla como una aplicación de escritorio multiplataforma utilizando tecnologías modernas de Java.
 
-## Dependencias:
+- **Lenguaje**: Java 21+.
+- **Motor Gráfico y UI**: JavaFX 21. Se utiliza un enfoque declarativo mediante archivos **FXML** para la estructura y **CSS** para el estilo visual.
+- **Herramientas de Diseño**: 
+    - **SceneBuilder**: Para la maquetación visual de las pantallas y componentes.
+    - **Tiled Map Editor**: Para la creación de niveles, definición de capas de terreno y exportación en formato JSON o XML para su integración en el motor.
+- **Gestión de Proyecto**: **Maven** para la resolución de dependencias, compilación y empaquetado.
 
-Librerías a usar (ej: LWJGL, LibGDX o JavaFX).
+## Sistema de Coordenadas del Mapa:
 
-## Arquitectura:
+Para la lógica del tablero hexagonal, se utiliza un sistema de **Coordenadas Axiales (q, r)**:
+- **q (columna)**: Eje horizontal inclinado.
+- **r (fila)**: Eje vertical.
+- **s (derivada)**: Se calcula como `s = -q - r` para permitir cálculos rápidos de distancia y líneas de visión mediante el sistema de coordenadas cúbicas.
+- **Orientación**: Los hexágonos están orientados con "punta arriba" (pointy-topped) para una mejor perspectiva táctica.
 
-Breve mención a si usar un patrón Entity Component System (ECS) o herencia simple.
+## Arquitectura y Patrones:
 
-## Estructura del Proyecto:
+- **Modelo-Vista-Controlador (MVC)**: Clara separación entre los modelos de datos (`Robot`, `Map`), las vistas (FXML) y los controladores de UI.
+- **Arquitectura de Componentes Reutilizables**: El motor permite la inyección de componentes FXML dentro de otros contenedores (ej: `RobotCard.fxml` dentro de `RobotSelectionScreen.fxml`), facilitando el mantenimiento y la escalabilidad de la interfaz.
+- **Sistema de Enums**: Los parámetros de configuración (Robots, Terrenos, Skills) se gestionan mediante Enums que actúan como fábricas (`Template Pattern`), asegurando la integridad de los datos en tiempo de ejecución.
 
-Definición de paquetes (com.game.entities, com.game.engine, etc.).
+## Estructura de Paquetes:
+
+- `com.titozeio.engine`: Núcleo de lógica del juego (mapa, jugadores, hexagon).
+- `com.titozeio.ui`: Controladores JavaFX y lógica de presentación.
+- `com.titozeio.model`: Definición de entidades (Weapon, Objective).
+- `com.titozeio.enums`: Enumerados constantes (RobotTemplate, TerrainType).
+- `com.titozeio.skills`: Implementación de habilidades especiales.
+- `com.titozeio.victory`: Gestores de condiciones de victoria.
 
 # 4. Bucle de Juego (Game Loop)
 
@@ -310,8 +328,8 @@ Un boceto o descripción del único mapa que tendrá el prototipo.
         - Descripción: El robot dispara un proyectil, que al impactar, despliega unos nanobots corrosivos que van destruyendo el robot objetivo y causando daño constante hasta que se quedan sin energía o el robot objetivo se destruye.  
 ## Lista de Robots:
 
-- **Victory Saber**:
-    - **Modelo**: Victory Saber.
+- **Saber Prime**:
+    - **Modelo**: Saber Prime.
     - **Descripción**: Un robot de otra época, con aspecto bastante humanoide, anterior a las DAW1, pensado para ser pilotado por un humano y reconvertido a uso por la IA. Suele ser subestimado, pero cuando es capaz de cargar su temible sable de plasma, no te conviene estar enfrente suyo.
     - **HP**: 12.
     - **Movimiento**: 4.
@@ -386,18 +404,34 @@ Un boceto o descripción del único mapa que tendrá el prototipo.
 # 6. Interfaz (UI/HUD)
 
 ## Pantalla de inicio:
-- **Descripción**: La pantalla de inicio es la primera pantalla que ve el jugador al iniciar el juego. Es una pantalla con un diseño futurista y minimalista, con un fondo oscuro y una iluminación azul que resalta el título del juego y el botón de "Jugar".
-- **Elementos**: 
-    - Título del juego: "Devastation Ai Wars 1".
-    - Botón de "Jugar": Al pulsarlo, se inicia el juego (ver pantalla de nueva partida).
+- **Descripción**: La pantalla de inicio es la primera interacción del jugador. Presenta una estética ciberpunk/futurista coherente con el lore del juego.
+- **Elementos Visuales**: 
+    - **Fondo**: Imagen de arte conceptual (`Splash concept.png`) que cubre toda la pantalla.
+    - **Panel Central**: Un contenedor semi-transparente oscuro (`rgba(0,0,0,0.4)`) con bordes redondeados que agrupa el título y las acciones.
+    - **Título**: Logotipo del juego (`title_transparent.png`) centrado en la parte superior del panel.
+    - **Acciones**: Botón de "Play" estilizado con una imagen de base personalizada (`boton_1.png`) y tipografía "Exo 2".
 
-## Pantalla de Nueva partida:
+## Pantalla de Nueva partida (Selección de Robots):
 - **Descripción**: 
-    - Al iniciar un nuevo juego, J2 elige su primer robot (empieza él, para compensar que J1 hace el primer turno). Los jugadores van por turno eligiendo robots hasta que ambos tengan 3. Una vez que se elige un modelo de robot, deja de estar disponible para ambos.
-    - Cuando ambos jugadores han elegido sus 3 robots, se pasa a la pantalla de nueva partida.
-- **Elementos**: 
-    - Instrucciones: (Fija): "Los jugadores eligen robots por turnos.  Empieza J2. J1 realizará el primer turno de la partida" (Alternando):  "Jugador 2, elige robot" (luego "Jugador 1, elige robot", y así sucesivamente).
-    - Lista de robots: se muestran los robots disponibles para elegir, con su imagen, nombre, estadísticas y descripción. Cuando se elige uno, su imagen y demás se oscurece e inhabilita. Cuando los jugadorees pasan el ratón por encima, se resalta de alguna manera. 
+    - Los jugadores eligen su equipo de 3 robots de forma alterna. Por equilibrio competitivo, **J2 elige primero** (compensando que J1 tendrá el primer turno en combate).
+    - La pantalla utiliza un sistema de **tarjetas dinámicas** cargadas de forma independiente para cada modelo de robot disponible.
+- **Flujo de Selección**: 
+    1. El jugador activo hace clic en una tarjeta para inspeccionarla.
+    2. Al hacer clic, se muestra un panel inferior con el **Lore y detalles extendidos** del robot, su arma y su habilidad.
+    3. La tarjeta seleccionada se resalta visualmente (borde turquesa `#4EE2C9`, fondo oscurecido `#123038`).
+    4. Se activa el botón de **"Confirmar"**. El jugador puede cambiar de opinión y elegir otra tarjeta antes de confirmar.
+    5. Tras confirmar, el turno pasa al oponente y la tarjeta elegida desaparece de la lista de disponibles.
+- **Elementos UI**: 
+    - **Fondo**: Imagen de fondo de hangar/laboratorio (`bg1.png`).
+    - **Instrucciones**: Etiquetas de texto que indican de quién es el turno y cuántos robots lleva cada uno.
+    - **Tarjetas de Robot**: Generadas dinámicamente con:
+        - Nombre e imagen del modelo.
+        - Estadísticas básicas: HP y Movimiento.
+        - Detalles del Arma: Nombre, Alcance y Daño.
+        - Detalles de la Skill: Nombre, Cooldown y parámetros específicos (ej: Curación, Alcance extra).
+    - **Panel de Descripción**: Situado en la parte inferior, con un espacio fijo reservado (130px) para evitar desplazamientos bruscos en la interfaz cuando aparece el texto.
+    - **Botón Confirmar**: Estilizado con `boton_1.png`, solo habilitado cuando hay una selección pendiente.
+    - **Transición**: Al confirmar el 6º robot, la pantalla navega automáticamente a la **Pantalla de Combate**.
  ## Pantalla de Combate:
   - **Descripción**: La pantalla de combate es la pantalla principal del juego y donde se desarrola el core loop. 
   - **Elementos**: 
@@ -408,13 +442,13 @@ Un boceto o descripción del único mapa que tendrá el prototipo.
       - "Jugador 1, posiciona tus robots" (pasa al siguiente mensaje cuando P1 ha posicionado todos sus robots)
       - "Jugador 2, posiciona tus robots" (desaparece cuando P2 ha posicionado todos sus robots, y muestra el mensaje de "Turno actual")
     - **Mensajes de combate**: Cuando se produce daño a un robot, se muestra un mensaje indicando el daño causado y el robot que lo ha recibido. Por ejemplo: "[Robot1] ha impactado en [Robot2] causando [daño] puntos de daño!".
-    - **Bloque de info adicional**: Un rectángulo, inicalmente vacío, que mostrará info adicional cuando: 
+    - **Bloque de info adicional**: Un panel, inicalmente vacío (simplemente un label informativo de "info"), que mostrará info adicional cuando: 
       - Se pasa el ratón por encima de un robot: se muestra su nombre, estadísticas y descripción.
       - Se pasa el ratón por encima de un terreno: se muestra su descripción, el tipo, la altura.
     - **Botón de Fin de turno**: El jugador puede pulsar este botón para indicar que ha terminado de realizar las acciones de sus robots. Al pulsarlo, se pasa al siguiente jugador. Si queda algún robot por realizar acciones, se mostrará un mensaje indicándolo: "Jugador [X], te quedan robots por realizar acciones. Seguro que quieres finalizar el turno?" con dos opciones: "Cancelar" y "Finalizar turno". Cuando al jugador no le quedan más acciones de ningún robot, se realiza el cambio de turno automáticamente, mostrándose un mensaje antes.
     - **Botón de Pausa**: El jugador puede pulsar este botón para pausar el juego. Al pulsarlo, se muestra un menú con las opciones: "Reanudar", "Rendirse". Si pulsa "Reanudar", se vuelve a la pantalla de combate. Si pulsa "Rendirse", se muestra el mensaje de "Victoria"del oponente. 
     - **Robots**: 
-      - Los robots aparecen representados por figuras fuera del mapa al comienzo y luego, una vez posicionados, en las casillas elegidas. Debajo de cada robot aparece una barra de vida que indica su estado actual. La barra está seccionadao en segmentos. Cada uno es 1 HP.
+      - Los robots aparecen representados por figuras (a escala, de forma que quepan sobradamente en un hexágono del mapa) fuera del mapa al comienzo y luego, una vez posicionados, en las casillas elegidas. Debajo de cada robot aparece una barra de vida que indica su barra actual de HP. La barra está seccionadao en segmentos. Cada uno es 1 HP.
       - Cuando se pasa el ratón por encima de un robot, se resalta de alguna manera (y se muestra la info correspondiente en el bloque de info adicional).
       - Cuando se hace clic en un robot, se muestra un menú con las acciones disponibles para ese robot inicialmente: moverse, atacar, usar habilidad (se mostaría el nombre de la skill). 
         - Moverse: El sistema calcula las casillas a las que puede moverse el robot (teniendo en cuenta su movimiento, el terreno y los obstáculos) y las resalta. El jugador puede hacer clic en una de las casillas resaltadas para confirmar el moviento.El robot se desplaza a la casilla seleccionada. Se puede seleccionar la casilla donde está el robot si no desea reealizar ningún movimiento.
