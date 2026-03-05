@@ -17,9 +17,9 @@
   - [Resolución de ataque:](#resolución-de-ataque)
   - [Casillas del mapa:](#casillas-del-mapa)
 - [3. Aspectos Técnicos (Stack Tecnológico)](#3-aspectos-técnicos-stack-tecnológico)
-  - [Dependencias:](#dependencias)
-  - [Arquitectura:](#arquitectura)
-  - [Estructura del Proyecto:](#estructura-del-proyecto)
+  - [Sistema de Coordenadas del Mapa:](#sistema-de-coordenadas-del-mapa)
+  - [Arquitectura y Patrones:](#arquitectura-y-patrones)
+  - [Estructura de Paquetes:](#estructura-de-paquetes)
 - [4. Bucle de Juego (Game Loop)](#4-bucle-de-juego-game-loop)
 - [5. Contenido, Niveles](#5-contenido-niveles)
   - [Asset List:](#asset-list)
@@ -28,7 +28,7 @@
   - [Lista de Robots:](#lista-de-robots)
 - [6. Interfaz (UI/HUD)](#6-interfaz-uihud)
   - [Pantalla de inicio:](#pantalla-de-inicio)
-  - [Pantalla de Nueva partida:](#pantalla-de-nueva-partida)
+  - [Pantalla de Nueva partida (Selección de Robots):](#pantalla-de-nueva-partida-selección-de-robots)
   - [Pantalla de Combate:](#pantalla-de-combate)
 
 
@@ -442,13 +442,13 @@ Un boceto o descripción del único mapa que tendrá el prototipo.
       - "Jugador 1, posiciona tus robots" (pasa al siguiente mensaje cuando P1 ha posicionado todos sus robots)
       - "Jugador 2, posiciona tus robots" (desaparece cuando P2 ha posicionado todos sus robots, y muestra el mensaje de "Turno actual")
     - **Mensajes de combate**: Cuando se produce daño a un robot, se muestra un mensaje indicando el daño causado y el robot que lo ha recibido. Por ejemplo: "[Robot1] ha impactado en [Robot2] causando [daño] puntos de daño!".
-    - **Bloque de info adicional**: Un rectángulo, inicalmente vacío, que mostrará info adicional cuando: 
+    - **Bloque de info adicional**: Un panel, inicalmente vacío (simplemente un label informativo de "info"), que mostrará info adicional cuando: 
       - Se pasa el ratón por encima de un robot: se muestra su nombre, estadísticas y descripción.
       - Se pasa el ratón por encima de un terreno: se muestra su descripción, el tipo, la altura.
     - **Botón de Fin de turno**: El jugador puede pulsar este botón para indicar que ha terminado de realizar las acciones de sus robots. Al pulsarlo, se pasa al siguiente jugador. Si queda algún robot por realizar acciones, se mostrará un mensaje indicándolo: "Jugador [X], te quedan robots por realizar acciones. Seguro que quieres finalizar el turno?" con dos opciones: "Cancelar" y "Finalizar turno". Cuando al jugador no le quedan más acciones de ningún robot, se realiza el cambio de turno automáticamente, mostrándose un mensaje antes.
     - **Botón de Pausa**: El jugador puede pulsar este botón para pausar el juego. Al pulsarlo, se muestra un menú con las opciones: "Reanudar", "Rendirse". Si pulsa "Reanudar", se vuelve a la pantalla de combate. Si pulsa "Rendirse", se muestra el mensaje de "Victoria"del oponente. 
     - **Robots**: 
-      - Los robots aparecen representados por figuras fuera del mapa al comienzo y luego, una vez posicionados, en las casillas elegidas. Debajo de cada robot aparece una barra de vida que indica su estado actual. La barra está seccionadao en segmentos. Cada uno es 1 HP.
+      - Los robots aparecen representados por figuras (a escala, de forma que quepan sobradamente en un hexágono del mapa) fuera del mapa al comienzo y luego, una vez posicionados, en las casillas elegidas. Debajo de cada robot aparece una barra de vida que indica su barra actual de HP. La barra está seccionadao en segmentos. Cada uno es 1 HP.
       - Cuando se pasa el ratón por encima de un robot, se resalta de alguna manera (y se muestra la info correspondiente en el bloque de info adicional).
       - Cuando se hace clic en un robot, se muestra un menú con las acciones disponibles para ese robot inicialmente: moverse, atacar, usar habilidad (se mostaría el nombre de la skill). 
         - Moverse: El sistema calcula las casillas a las que puede moverse el robot (teniendo en cuenta su movimiento, el terreno y los obstáculos) y las resalta. El jugador puede hacer clic en una de las casillas resaltadas para confirmar el moviento.El robot se desplaza a la casilla seleccionada. Se puede seleccionar la casilla donde está el robot si no desea reealizar ningún movimiento.
