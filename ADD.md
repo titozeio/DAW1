@@ -56,6 +56,27 @@
   - [11.4 Scout](#114-scout)
   - [11.5 Death Knight](#115-death-knight)
   - [11.6 Ice Age](#116-ice-age)
+- [12. Silhouette Guide (Guía de Siluetas)](#12-silhouette-guide-guía-de-siluetas)
+  - [12.1 Principios de silueta](#121-principios-de-silueta)
+    - [Claridad](#claridad)
+    - [Diferenciación](#diferenciación)
+    - [Reconocimiento rápido](#reconocimiento-rápido)
+  - [12.2 Escala de proporciones](#122-escala-de-proporciones)
+- [13. Color Guide (Guía de Color)](#13-color-guide-guía-de-color)
+  - [13.1 Saber Prime](#131-saber-prime)
+  - [13.2 Bullseye](#132-bullseye)
+  - [13.3 Bulwark](#133-bulwark)
+  - [13.4 Scout](#134-scout)
+  - [13.5 Death Knight](#135-death-knight)
+  - [13.6 Ice Age](#136-ice-age)
+- [14. Concept Art Prompts](#14-concept-art-prompts)
+  - [14.1 Saber Prime](#141-saber-prime)
+  - [14.2 Bullseye](#142-bullseye)
+  - [14.3 Bulwark](#143-bulwark)
+  - [14.4 Scout](#144-scout)
+  - [14.5 Death Knight](#145-death-knight)
+  - [14.6 Ice Age](#146-ice-age)
+- [15. Futuras ampliaciones del apartado artístico](#15-futuras-ampliaciones-del-apartado-artístico)
 
 ---
 
@@ -696,20 +717,21 @@ Concepto visual:
 
 Saber Prime es un robot de diseño relativamente antiguo, pensado originalmente para ser **pilotado por humanos**, antes de que las IA dominaran el combate.
 
-Su diseño es **claramente humanoide**, con proporciones equilibradas y una estructura robusta.
+Su diseño es **claramente humanoide**, con proporciones equilibradas y una estructura robusta. Sensación heroica al verlo.
 
 Características visuales:
 
 - cabeza pequeña con sensor óptico
 - torso blindado
 - brazos completos
-- generador del sable de plasma integrado en el brazo
+- sable de plasma enorme sujeto por la mano derecha.
+- Cañón de plasma en la mano izquierda.
 
 El sable de plasma debe sentirse como su **arma icónica**.
 
 Sensación visual:
 
-**caballero mecánico veterano**
+**Héroe mecánico veterano**
 
 ---
 
@@ -862,3 +884,240 @@ Características visuales:
 Sensación visual:
 
 **francotirador tecnológico**
+
+# 12. Silhouette Guide (Guía de Siluetas)
+
+Las siluetas son uno de los elementos más importantes del diseño visual en juegos de estrategia.  
+Un jugador debe poder **reconocer cada robot instantáneamente**, incluso con poco zoom o en medio del combate.
+
+Para lograrlo, cada robot tiene una **silueta distintiva**.
+
+| Robot        | Categoría        | Silueta principal  | Rasgo distintivo                |
+| ------------ | ---------------- | ------------------ | ------------------------------- |
+| Saber Prime  | Humanoide        | equilibrada        | arma de energía cuerpo a cuerpo |
+| Bullseye     | Tanque con patas | torso compacto     | cañones como brazos             |
+| Bulwark      | Tanque con patas | voluminoso         | blindaje masivo                 |
+| Scout        | Ligero           | estilizado         | retropropulsores                |
+| Death Knight | Humanoide pesado | hombros muy anchos | martillo gigante                |
+| Ice Age      | Semi-humanoide   | angular            | rifle largo                     |
+
+---
+
+## 12.1 Principios de silueta
+
+Las siluetas deben cumplir tres requisitos:
+
+### Claridad
+
+La forma debe ser identificable **sin necesidad de textura o color**.
+
+### Diferenciación
+
+Cada robot debe tener **proporciones únicas**.
+
+Ejemplos:
+
+- hombros muy anchos
+- cañones largos
+- torso voluminoso
+- piernas largas
+
+### Reconocimiento rápido
+
+Un jugador debe poder distinguir los robots **en menos de un segundo**.
+
+---
+
+## 12.2 Escala de proporciones
+
+Para mejorar la diferenciación visual:
+
+| Tipo de robot    | Proporciones                     |
+| ---------------- | -------------------------------- |
+| Tanque con patas | torso grande, piernas robustas   |
+| Semi-humanoide   | proporciones equilibradas        |
+| Humanoide        | torso vertical, brazos definidos |
+
+---
+
+# 13. Color Guide (Guía de Color)
+
+Los colores ayudan a reforzar la identidad visual de cada robot.
+
+La paleta se mantiene **industrial y militar**, evitando colores demasiado saturados.
+
+Principios:
+
+- base metálica
+- acentos tecnológicos
+- colores funcionales
+
+---
+
+## 13.1 Saber Prime
+
+Paleta:
+
+- acero oscuro
+- detalles plateados
+- energía naranja del sable
+
+Sensación:
+
+**caballero mecánico clásico**
+
+---
+
+## 13.2 Bullseye
+
+Paleta:
+
+- gris industrial
+- rojo oscuro
+- marcas de advertencia
+
+Sensación:
+
+**máquina de guerra especializada en fuego pesado**
+
+---
+
+## 13.3 Bulwark
+
+Paleta:
+
+- verde militar
+- gris acero
+- luces médicas o técnicas
+
+Sensación:
+
+**unidad de soporte resistente**
+
+---
+
+## 13.4 Scout
+
+Paleta:
+
+- gris claro
+- azul tecnológico
+- detalles de sensores
+
+Sensación:
+
+**unidad rápida y tecnológica**
+
+---
+
+## 13.5 Death Knight
+
+Paleta:
+
+- negro mate
+- rojo oscuro
+- metal expuesto
+
+Sensación:
+
+**máquina de asalto intimidante**
+
+---
+
+## 13.6 Ice Age
+
+Paleta:
+
+- blanco
+- azul claro
+- azul oscuro
+
+Sensación:
+
+**tecnología criogénica avanzada**
+
+---
+
+# 14. Concept Art Prompts
+
+Esta sección define **prompts de concept art** que pueden utilizarse para generar ilustraciones de los robots mediante herramientas de IA.
+
+Objetivo:
+
+- crear referencias visuales
+- generar concept art rápido
+- mantener coherencia estética
+
+Estilo base recomendado:
+
+- realistic mech design
+- industrial military mech
+- heavy armor
+- battletech inspired
+- cinematic lighting
+
+---
+
+## 14.1 Saber Prime
+
+Prompt:
+humanoid military mech, heavy armored knight style robot, industrial design, battletech inspired mech, plasma energy sword, mechanical joints, armored torso, realistic metal textures, cinematic lighting, futuristic battlefield, concept art
+
+
+---
+
+## 14.2 Bullseye
+
+Prompt:
+
+heavy artillery mech, tank-like mech with legs, arms replaced with large rotary cannons, battletech style mech, industrial military design, armored torso, targeting sensors, realistic metal plating, gritty sci-fi battlefield, cinematic lighting
+
+
+---
+
+## 14.3 Bulwark
+
+Prompt:
+
+heavy support mech, extremely bulky armored mech, tank-like walking machine, repair drones modules, industrial military mech design, battletech inspired, thick armor plates, mechanical joints, realistic metal textures, cinematic lighting
+
+
+---
+
+## 14.4 Scout
+
+Prompt:
+
+light reconnaissance mech, agile military robot, long legs, jet boosters on the back, automatic cannon arm, battletech style mech, futuristic sensors, lightweight armor, dynamic pose, sci-fi battlefield, concept art
+
+
+---
+
+## 14.5 Death Knight
+
+Prompt:
+
+heavy assault mech, intimidating black armored mech, giant powered hammer weapon, battletech inspired design, bulky shoulders, heavy mechanical structure, industrial military mech, dark futuristic battlefield, cinematic lighting
+
+
+---
+
+## 14.6 Ice Age
+
+Prompt:
+
+advanced sniper mech, angular armored mech, white and blue armor, long cryogenic rifle weapon, missile pods on shoulders, battletech style military mech, futuristic cooling systems, realistic metal textures, cinematic sci-fi lighting
+
+
+---
+
+# 15. Futuras ampliaciones del apartado artístico
+
+En versiones futuras del proyecto el apartado artístico podría ampliarse con:
+
+- facciones con esquemas de color propios
+- variaciones visuales de los robots
+- skins alternativas
+- efectos visuales más complejos
+- animaciones avanzadas
+- destrucción del entorno
