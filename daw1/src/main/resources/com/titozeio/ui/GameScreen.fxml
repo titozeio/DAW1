@@ -155,5 +155,45 @@
          </children>
       </StackPane>
 
+      <!-- Overlay de Victoria / Derrota -->
+      <StackPane fx:id="victoryPane" visible="false">
+         <children>
+            <Pane opacity="0.88" style="-fx-background-color: #000814;" />
+            <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="400.0" prefWidth="560.0" spacing="24.0" styleClass="scifi-panel">
+               <children>
+                  <!-- Emoji resultado -->
+                  <Label fx:id="victoryIcon" text="🏆" style="-fx-font-size: 56px;" />
+                  <!-- Título ganador -->
+                  <Label fx:id="victoryTitle" text="¡VICTORIA!" textFill="#f5c518" wrapText="true">
+                     <font>
+                        <Font name="Exo 2 Bold" size="36.0" />
+                     </font>
+                  </Label>
+                  <!-- Motivo -->
+                  <Label fx:id="victoryReason" alignment="CENTER" text="Has eliminado a todos los robots enemigos." textAlignment="CENTER" textFill="#e1e1e1" wrapText="true">
+                     <font>
+                        <Font name="Exo 2 Regular" size="16.0" />
+                     </font>
+                  </Label>
+                  <!-- Turno final -->
+                  <Label fx:id="victoryTurnLabel" text="Turno 0" textFill="#4ee2c9">
+                     <font>
+                        <Font name="Exo 2 Light" size="13.0" />
+                     </font>
+                  </Label>
+                  <!-- Acción -->
+                  <Button fx:id="victoryMenuButton" mnemonicParsing="false" prefHeight="44.0" prefWidth="200.0" styleClass="scifi-button" text="VOLVER AL MENÚ">
+                     <font>
+                        <Font name="Exo 2 Bold" size="14.0" />
+                     </font>
+                  </Button>
+               </children>
+               <padding>
+                  <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+               </padding>
+            </VBox>
+         </children>
+      </StackPane>
+
    </children>
 </StackPane>

@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 /**
  * Pantalla principal de combate.
  * Gestiona la fase de despliegue y la fase de combate por turnos.
- * Carga su diseño desde GameScreen.fxml.
+ * Detecta las condiciones de victoria al final de cada ataque y turno.
  */
 public class GameScreen extends Screen {
 
@@ -53,6 +53,7 @@ public class GameScreen extends Screen {
     private VBox combatLogContent;
     @FXML
     private Button endTurnButton;
+    // Overlay genérico (mensajes informativos)
     @FXML
     private StackPane overlayPane;
     @FXML
@@ -61,34 +62,43 @@ public class GameScreen extends Screen {
     private Label overlayMessage;
     @FXML
     private Button overlayAcceptButton;
+    // Overlay de victoria/derrota
+    @FXML
+    private StackPane victoryPane;
+    @FXML
+    private Label victoryIcon;
+    @FXML
+    private Label victoryTitle;
+    @FXML
+    private Label victoryReason;
+    @FXML
+    private Label victoryTurnLabel;
+    @FXML
+    private Button victoryMenuButton;
 
     // ── Propiedades de pantalla ───────────────────────────────────────────────
     private Game game;
     private Stage window;
     private Scene scene;
-
-    /** Renderizador del mapa hexagonal. */
     private HexRenderer hexRenderer;
 
-    // ── Estado de la fase de despliegue ───────────────────────────────────────
+    // ── Estado despliegue ─────────────────────────────────────────────────────
     private Player deployingPlayer;
     private Queue<Robot> robotsToPlace;
 
-    // ── Estado de la fase de combate ──────────────────────────────────────────
+    // ── Estado combate ────────────────────────────────────────────────────────
     private Robot selectedRobot;
 
-    /** Modos de selección durante el combate. */
     private enum SelectionMode {
         NONE, MOVE, ATTACK
     }
 
     private SelectionMode selectionMode = SelectionMode.NONE;
 
-    // ── Constructor vacío (requerido por FXMLLoader) ──────────────────────────
+    // ── Constructor / Factory ─────────────────────────────────────────────────
     public GameScreen() {
     }
 
-    // ── Factory ───────────────────────────────────────────────────────────────
     public static GameScreen create(Game game) {
         try {
             FXMLLoader loader = new FXMLLoader(
@@ -117,6 +127,7 @@ public class GameScreen extends Screen {
         pauseButton.setOnAction(e -> System.out.println("Pausa activada."));
         endTurnButton.setDisable(true);
         overlayAcceptButton.setOnAction(e -> overlayPane.setVisible(false));
+        victoryMenuButton.setOnAction(e -> returnToMenu());
 
         startDeployPhase();
     }
@@ -157,17 +168,15 @@ public class GameScreen extends Screen {
             return;
         }
         Robot next = robotsToPlace.peek();
-        objectiveShortLabel.setText("Siguiente: " + next.getModelName()
-                + " – Clic en zona verde");
-        String pending = robotsToPlace.stream()
-                .map(Robot::getModelName).collect(Collectors.joining("\n"));
+        objectiveShortLabel.setText("Siguiente: " + next.getModelName() + " – Clic en zona verde");
+        String pending = robotsToPlace.stream().map(Robot::getModelName).collect(Collectors.joining("\n"));
         infoDetailsLabel.setText("Robots pendientes:\n" + pending);
     }
 
     private void handleDeployClick(Hexagon hex) {
         boolean isP1 = (deployingPlayer == game.getP1());
-        boolean validZone = isP1 ? hex.isDeployZoneP1() : hex.isDeployZoneP2();
-        if (!validZone) {
+        boolean valid = isP1 ? hex.isDeployZoneP1() : hex.isDeployZoneP2();
+        if (!valid) {
             addLogMessage("Casilla fuera de la zona de despliegue.");
             return;
         }
@@ -175,15 +184,15 @@ public class GameScreen extends Screen {
             addLogMessage("Casilla ya ocupada.");
             return;
         }
+
         Robot robot = robotsToPlace.poll();
         if (robot == null)
             return;
 
         hex.setOccupant(robot);
         robot.setPosition(hex);
-        addLogMessage(deployingPlayer.getName() + " despliega "
-                + robot.getModelName() + " en ("
-                + hex.getQ() + "," + hex.getR() + ").");
+        addLogMessage(deployingPlayer.getName() + " despliega " + robot.getModelName()
+                + " en (" + hex.getQ() + "," + hex.getR() + ").");
         updateDeployHud();
         highlightDeployZones();
 
@@ -207,6 +216,19 @@ public class GameScreen extends Screen {
         game.setPhase(GamePhase.COMBAT);
         selectedRobot = null;
         selectionMode = SelectionMode.NONE;
+
+        // Registrar base de cada jugador para BaseCaptureVC
+        for (Hexagon[] row : game.getMap().getGrid()) {
+            for (Hexagon hex : row) {
+                if (hex == null)
+                    continue;
+                if (hex.isBaseP1())
+                    game.getP1().setBaseLocation(hex);
+                if (hex.isBaseP2())
+                    game.getP2().setBaseLocation(hex);
+            }
+        }
+
         hexRenderer.setHighlightedHexes(new HashSet<>());
         hexRenderer.setMoveHighlightedHexes(new HashSet<>());
         hexRenderer.setAttackHighlightedHexes(new HashSet<>());
@@ -226,12 +248,11 @@ public class GameScreen extends Screen {
                     + " – " + game.getCurrentPlayer().getName().toUpperCase());
         }
         objectiveShortLabel.setText("Objetivo: Eliminar enemigos o conquistar su base.");
-        if (selectedRobot == null) {
+        if (selectedRobot == null)
             infoDetailsLabel.setText("Selecciona un robot tuyo para actuar.");
-        }
     }
 
-    // ── Dispatcher de clics ───────────────────────────────────────────────────
+    // ── Dispatcher ────────────────────────────────────────────────────────────
 
     private void onHexClicked(Hexagon hex) {
         if (game.getPhase() == GamePhase.DEPLOYING) {
@@ -241,13 +262,6 @@ public class GameScreen extends Screen {
         }
     }
 
-    /**
-     * Máquina de estados de combate:
-     * MOVE + clic en casilla azul → moveMove()
-     * ATTACK + clic en casilla naranja → executeAttack()
-     * Clic en robot propio → seleccionar / ciclar modo
-     * Clic en enemigo / vacío → info / deseleccionar
-     */
     private void handleCombatClick(Hexagon hex) {
         Player cur = game.getCurrentPlayer();
 
@@ -263,11 +277,10 @@ public class GameScreen extends Screen {
         if (hex.isOccupied()) {
             Robot robot = hex.getOccupant();
             if (robot.getOwner() == cur) {
-                if (robot == selectedRobot) {
+                if (robot == selectedRobot)
                     cycleModes();
-                } else {
+                else
                     selectRobot(robot);
-                }
             } else {
                 clearSelection();
                 infoDetailsLabel.setText(robot.getModelName() + " [ENEMIGO]\nHP: "
@@ -277,7 +290,6 @@ public class GameScreen extends Screen {
             }
             return;
         }
-
         clearSelection();
         showTerrainInfo(hex);
     }
@@ -301,11 +313,10 @@ public class GameScreen extends Screen {
     }
 
     private void cycleModes() {
-        if (selectionMode == SelectionMode.MOVE && !selectedRobot.isUsedAttack()) {
+        if (selectionMode == SelectionMode.MOVE && !selectedRobot.isUsedAttack())
             enterAttackMode();
-        } else {
+        else
             clearSelection();
-        }
     }
 
     private void enterMoveMode() {
@@ -314,8 +325,8 @@ public class GameScreen extends Screen {
         hexRenderer.setMoveHighlightedHexes(reachable);
         hexRenderer.setAttackHighlightedHexes(new HashSet<>());
         hexRenderer.render(game.getMap());
-        addLogMessage(selectedRobot.getModelName() + " – MOVER ("
-                + reachable.size() + " casillas). Clic de nuevo → modo ataque.");
+        addLogMessage(selectedRobot.getModelName() + " – MOVER (" + reachable.size()
+                + " casillas). Clic de nuevo → modo ataque.");
     }
 
     private void enterAttackMode() {
@@ -324,12 +335,10 @@ public class GameScreen extends Screen {
         hexRenderer.setMoveHighlightedHexes(new HashSet<>());
         hexRenderer.setAttackHighlightedHexes(targets);
         hexRenderer.render(game.getMap());
-        if (targets.isEmpty()) {
-            addLogMessage(selectedRobot.getModelName() + " – ATACAR. Sin objetivos en rango.");
-        } else {
-            addLogMessage(selectedRobot.getModelName() + " – ATACAR. "
-                    + targets.size() + " objetivo(s) en rango (naranja). Clic para atacar.");
-        }
+        addLogMessage(targets.isEmpty()
+                ? selectedRobot.getModelName() + " – ATACAR. Sin objetivos en rango."
+                : selectedRobot.getModelName() + " – ATACAR. " + targets.size()
+                        + " objetivo(s) en rango (naranja). Clic para atacar.");
     }
 
     // ── Ejecución de acciones ─────────────────────────────────────────────────
@@ -338,11 +347,10 @@ public class GameScreen extends Screen {
         String name = selectedRobot.getModelName();
         selectedRobot.move(hex);
         addLogMessage(name + " se mueve a (" + hex.getQ() + "," + hex.getR() + ").");
-        if (!selectedRobot.isUsedAttack()) {
+        if (!selectedRobot.isUsedAttack())
             enterAttackMode();
-        } else {
+        else
             clearSelection();
-        }
     }
 
     private void executeAttack(Hexagon targetHex) {
@@ -356,21 +364,21 @@ public class GameScreen extends Screen {
         selectedRobot.attack(target, game.getMap());
         int damage = hpBefore - target.getCurrentHp();
 
-        if (damage > 0) {
-            addLogMessage("💥 " + selectedRobot.getModelName()
-                    + " → " + target.getModelName()
-                    + ": " + damage + " daño. HP: "
-                    + target.getCurrentHp() + "/" + target.getMaxHp());
-        } else {
-            addLogMessage(selectedRobot.getModelName()
-                    + " ataca a " + target.getModelName() + " pero no causa daño.");
-        }
+        addLogMessage(damage > 0
+                ? "💥 " + selectedRobot.getModelName() + " → " + target.getModelName()
+                        + ": " + damage + " daño. HP: " + target.getCurrentHp() + "/" + target.getMaxHp()
+                : selectedRobot.getModelName() + " ataca a " + target.getModelName() + " pero no causa daño.");
 
         if (target.isDestroyed()) {
             targetHex.setOccupant(null);
             addLogMessage("☠ " + target.getModelName() + " ha sido DESTRUIDO.");
         }
         clearSelection();
+
+        // Comprobar victoria por eliminación
+        Player winner = game.checkVictory();
+        if (winner != null)
+            showVictory(winner, "eliminación");
     }
 
     private Set<Hexagon> getAttackableHexes(Robot robot) {
@@ -389,13 +397,43 @@ public class GameScreen extends Screen {
         return targets;
     }
 
+    // ── Victoria ─────────────────────────────────────────────────────────────
+
+    /**
+     * Muestra el overlay de victoria / derrota.
+     * 
+     * @param winner el jugador que gana
+     * @param reason "eliminación" | "conquista de base"
+     */
+    private void showVictory(Player winner, String reason) {
+        boolean isP1 = (winner == game.getP1());
+        boolean byElimination = reason.equals("eliminación");
+
+        victoryIcon.setText(byElimination ? "🏆" : "🏴");
+        victoryTitle.setText("¡" + winner.getName().toUpperCase() + " GANA!");
+        victoryTitle.setStyle("-fx-font-size: 32px; -fx-text-fill: "
+                + (isP1 ? "#5599ff" : "#ff5555") + ";");
+        victoryReason.setText(byElimination
+                ? winner.getName() + " ha eliminado a todos los robots rivales."
+                : winner.getName() + " ha conquistado la base enemiga durante 2 turnos.");
+        victoryTurnLabel.setText("Partida resuelta en el turno " + game.getTurnCounter());
+        victoryPane.setVisible(true);
+        endTurnButton.setDisable(true);
+        addLogMessage("🏆 ¡" + winner.getName() + " gana por " + reason + "!");
+    }
+
+    private void returnToMenu() {
+        MainMenuScreen menu = MainMenuScreen.create(game.getStage(), game);
+        if (menu != null)
+            game.displayScreen(menu);
+    }
+
     // ── Paneles de información ────────────────────────────────────────────────
 
     private void updateRobotInfoPanel(Robot robot) {
         StringBuilder sb = new StringBuilder();
         sb.append(robot.getModelName()).append("\n");
-        sb.append("HP: ").append(robot.getCurrentHp())
-                .append("/").append(robot.getMaxHp()).append("\n");
+        sb.append("HP: ").append(robot.getCurrentHp()).append("/").append(robot.getMaxHp()).append("\n");
         sb.append("Mov: ").append(robot.getMovementPoints()).append(" MP");
         if (robot.isUsedMovement())
             sb.append(" ✓");
@@ -445,7 +483,7 @@ public class GameScreen extends Screen {
         }
     }
 
-    // ── Métodos públicos de HUD ───────────────────────────────────────────────
+    // ── Métodos HUD ───────────────────────────────────────────────────────────
 
     public void showOverlayMessage(String title, String message) {
         overlayTitle.setText(title);
@@ -476,12 +514,15 @@ public class GameScreen extends Screen {
                     addLogMessage("Fin de turno (" + game.getCurrentPlayer().getName() + ").");
                     clearSelection();
                     game.nextTurn();
-                    // Resetear acciones de los robots del nuevo jugador activo
                     for (Robot r : game.getCurrentPlayer().getUnits()) {
                         if (!r.isDestroyed())
                             r.resetActions();
                     }
                     updateCombatHud();
+                    // Comprobar victoria por conquista de base
+                    Player winner = game.checkVictory();
+                    if (winner != null)
+                        showVictory(winner, "conquista de base");
                 }
                 break;
             default:
