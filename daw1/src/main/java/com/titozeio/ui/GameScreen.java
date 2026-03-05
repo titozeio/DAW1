@@ -1,6 +1,7 @@
 package com.titozeio.ui;
 
 import com.titozeio.engine.Game;
+import com.titozeio.engine.Hexagon;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -57,6 +58,9 @@ public class GameScreen extends Screen {
     private Stage window;
     private Scene scene;
 
+    /** Renderizador del mapa hexagonal. */
+    private HexRenderer hexRenderer;
+
     /**
      * Constructor vacío requerido por FXMLLoader.
      */
@@ -91,6 +95,13 @@ public class GameScreen extends Screen {
      * Inicializa componentes después de cargar el FXML.
      */
     private void initializeUI() {
+        // Renderizar el mapa hexagonal
+        hexRenderer = new HexRenderer(hexMapPane);
+        hexRenderer.render(game.getMap());
+
+        // Conectar clic en hexágono → panel de información
+        hexRenderer.setOnHexClick(this::onHexClicked);
+
         // Configuración inicial de textos
         updateTurnInfo();
 
@@ -111,6 +122,48 @@ public class GameScreen extends Screen {
         // Simular primer mensaje (Objetivos)
         showOverlayMessage("OBJETIVOS DEL MAPA",
                 "1. Eliminar a todos los robots enemigos.\n2. Conquistar la base rival permaneciendo en ella 2 turnos.");
+    }
+
+    /**
+     * Se llama cuando el jugador hace clic en un hexágono del mapa.
+     * Muestra la información del hexágono en el panel de info del HUD.
+     */
+    private void onHexClicked(Hexagon hex) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Casilla (").append(hex.getQ()).append(", ").append(hex.getR()).append(")\n");
+        sb.append("Terreno: ").append(terrainName(hex)).append("\n");
+        sb.append("Altura: ").append(hex.getHeight()).append("\n");
+        if (hex.isBaseP1())
+            sb.append("⚑ BASE JUGADOR 1\n");
+        if (hex.isBaseP2())
+            sb.append("⚑ BASE JUGADOR 2\n");
+        if (hex.isDeployZoneP1() && !hex.isBaseP1())
+            sb.append("Zona de despliegue J1\n");
+        if (hex.isDeployZoneP2() && !hex.isBaseP2())
+            sb.append("Zona de despliegue J2\n");
+        if (hex.isOccupied())
+            sb.append("Ocupada por: ").append(hex.getOccupant().getModelName());
+
+        infoDetailsLabel.setText(sb.toString().trim());
+        addLogMessage("Hex (" + hex.getQ() + "," + hex.getR() + ") – "
+                + terrainName(hex) + " h=" + hex.getHeight());
+    }
+
+    private static String terrainName(Hexagon hex) {
+        switch (hex.getTerrain()) {
+            case VEGETATION:
+                return "Vegetación";
+            case WATER_SHALLOW:
+                return "Agua poco profunda";
+            case WATER_DEEP:
+                return "Agua profunda";
+            default:
+                if (hex.getHeight() >= 2)
+                    return "Meseta (h2)";
+                if (hex.getHeight() == 1)
+                    return "Colina (h1)";
+                return "Normal";
+        }
     }
 
     /**
