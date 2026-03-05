@@ -32,6 +32,10 @@ public class Game {
         // RobotSelectionScreen)
         this.p1 = new Player("Jugador 1");
         this.p2 = new Player("Jugador 2");
+        this.currentPlayer = p1; // J1 tiene el primer turno de combate
+
+        // Crear el mapa inicial
+        this.map = MapFactory.createMap1();
     }
 
     public void start() {
@@ -60,7 +64,8 @@ public class Game {
 
     public void nextTurn() {
         this.turnCounter++;
-        // TODO: Alternar currentPlayer
+        // Alternar jugador activo
+        this.currentPlayer = (this.currentPlayer == p1) ? p2 : p1;
     }
 
     public Player checkVictory() {
@@ -100,6 +105,10 @@ public class Game {
 
     public int getTurnCounter() {
         return turnCounter;
+    }
+
+    public Map getMap() {
+        return map;
     }
 
     public Stage getStage() {
