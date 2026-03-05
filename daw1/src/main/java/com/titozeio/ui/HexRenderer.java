@@ -71,6 +71,12 @@ public class HexRenderer {
     /** Hexágonos resaltados actualmente (zonas de despliegue disponibles, etc.). */
     private Set<Hexagon> highlighted = new HashSet<>();
 
+    /**
+     * Hexágonos resaltados para movimiento (rango de movimiento del robot
+     * seleccionado).
+     */
+    private Set<Hexagon> moveHighlighted = new HashSet<>();
+
     // ── Constructor ───────────────────────────────────────────────────────────
     public HexRenderer(Pane pane) {
         this.pane = pane;
@@ -90,6 +96,21 @@ public class HexRenderer {
      */
     public void setHighlightedHexes(Set<Hexagon> hexes) {
         this.highlighted = (hexes != null) ? hexes : Collections.emptySet();
+    }
+
+    /**
+     * Establece los hexágonos que se resaltarán en azul (rango de movimiento).
+     */
+    public void setMoveHighlightedHexes(Set<Hexagon> hexes) {
+        this.moveHighlighted = (hexes != null) ? hexes : Collections.emptySet();
+    }
+
+    /**
+     * @return true si el hexágono está actualmente en el rango de movimiento
+     *         resaltado.
+     */
+    public boolean isMoveHighlighted(Hexagon hex) {
+        return moveHighlighted.contains(hex);
     }
 
     // ── API pública ───────────────────────────────────────────────────────────
@@ -150,11 +171,22 @@ public class HexRenderer {
             pane.getChildren().add(overlay);
         }
 
-        // 3. Overlay de resaltado (zona de despliegue activa)
+        // 3. Overlay de resaltado de despliegue (verde)
         if (highlighted.contains(hex)) {
             Polygon hl = buildHexPolygon(cx, cy, HEX_SIZE - 1);
             hl.setFill(Color.web("#00ff88", 0.28));
             hl.setStroke(Color.web("#00ff88", 0.9));
+            hl.setStrokeType(StrokeType.INSIDE);
+            hl.setStrokeWidth(2.0);
+            hl.setMouseTransparent(true);
+            pane.getChildren().add(hl);
+        }
+
+        // 3b. Overlay de rango de movimiento (azul-cian)
+        if (moveHighlighted.contains(hex)) {
+            Polygon hl = buildHexPolygon(cx, cy, HEX_SIZE - 1);
+            hl.setFill(Color.web("#00ccff", 0.22));
+            hl.setStroke(Color.web("#00aaff", 0.85));
             hl.setStrokeType(StrokeType.INSIDE);
             hl.setStrokeWidth(2.0);
             hl.setMouseTransparent(true);
