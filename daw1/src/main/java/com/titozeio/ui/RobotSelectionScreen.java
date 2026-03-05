@@ -246,7 +246,7 @@ public class RobotSelectionScreen extends Screen {
         System.out.println(p1.getName() + ": " + p1.getUnits());
         System.out.println(p2.getName() + ": " + p2.getUnits());
 
-        game.displayScreen(new GameScreen(game));
+        game.displayScreen(GameScreen.create(game));
     }
 
     // ── Screen ────────────────────────────────────────────────────────────────

@@ -1,16 +1,69 @@
+/* Estilos generales */
 .root {
     -fx-font-family: "Exo 2";
 }
 
-.label,
-.button,
-.text,
-.toggle-button,
-.radio-button,
-.check-box,
-.menu-item,
-.menu,
-.text-area,
-.text-field {
+.label, .button, .text, .text-flow, .scroll-pane {
     -fx-font-family: "Exo 2";
+}
+
+/* Paneles base Sci-fi */
+.scifi-panel {
+    -fx-background-color: rgba(11, 22, 28, 0.85);
+    -fx-border-color: #4EE2C9;
+    -fx-border-width: 1.5;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    /* -fx-effect: dropshadow(three-pass-box, rgba(78, 226, 201, 0.2), 10, 0, 0, 0); */
+}
+
+/* Botones principales (Cian) */
+.scifi-button {
+    -fx-background-color: #4EE2C9;
+    -fx-text-fill: #0B161C;
+    -fx-font-weight: bold;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+}
+
+.scifi-button:hover {
+    -fx-background-color: #ffffff;
+}
+
+.scifi-button:pressed {
+    -fx-scale-x: 0.95;
+    -fx-scale-y: 0.95;
+}
+
+/* Botones secundarios (Transparente con borde) */
+.scifi-button-outline {
+    -fx-background-color: transparent;
+    -fx-border-color: #4EE2C9;
+    -fx-border-width: 1;
+    -fx-text-fill: #4EE2C9;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+}
+
+.scifi-button-outline:hover {
+    -fx-background-color: rgba(78, 226, 201, 0.1);
+    -fx-border-color: #ffffff;
+    -fx-text-fill: #ffffff;
+}
+
+/* ScrollPane personalizado */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane .thumb {
+    -fx-background-color: #4EE2C9;
+    -fx-background-radius: 4;
+    -fx-opacity: 0.5;
 }
