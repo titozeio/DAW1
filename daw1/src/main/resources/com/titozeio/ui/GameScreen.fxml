@@ -27,13 +27,13 @@
       <!-- Capa del Mapa: Donde se renderizarán los Hexágonos -->
       <StackPane fx:id="mapContainer">
          <children>
-            <!-- El mapa se inyectará aquí desde el código -->
-            <Pane fx:id="hexMapPane" prefHeight="200.0" prefWidth="200.0" />
+      <Pane fx:id="hexMapPane" prefHeight="720.0" prefWidth="1280.0" />
          </children>
       </StackPane>
 
       <!-- Capa de HUD: Elementos de interfaz activos -->
-      <BorderPane fx:id="mainHUD" mouseTransparent="false">
+      <!-- pickOnBounds=false → los clics en el área central (vacía) pasan al mapa -->
+      <BorderPane fx:id="mainHUD" mouseTransparent="false" pickOnBounds="false">
          <top>
             <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="1280.0" spacing="20.0" style="-fx-background-color: rgba(11, 22, 28, 0.7); -fx-border-color: #4EE2C9; -fx-border-width: 0 0 1 0;" BorderPane.alignment="CENTER">
                <children>

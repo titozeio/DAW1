@@ -16,6 +16,7 @@ public class Game {
     private Player p2;
     private Player currentPlayer;
     private int turnCounter;
+    private GamePhase phase;
     private Screen currentScreen;
     private List<VictoryCondition> victoryConditions;
     private MediaPlayer mediaPlayer;
@@ -33,6 +34,7 @@ public class Game {
         this.p1 = new Player("Jugador 1");
         this.p2 = new Player("Jugador 2");
         this.currentPlayer = p1; // J1 tiene el primer turno de combate
+        this.phase = GamePhase.DEPLOYING;
 
         // Crear el mapa inicial
         this.map = MapFactory.createMap1();
@@ -109,6 +111,14 @@ public class Game {
 
     public Map getMap() {
         return map;
+    }
+
+    public GamePhase getPhase() {
+        return phase;
+    }
+
+    public void setPhase(GamePhase phase) {
+        this.phase = phase;
     }
 
     public Stage getStage() {
