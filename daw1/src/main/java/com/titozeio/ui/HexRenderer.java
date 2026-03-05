@@ -80,6 +80,16 @@ public class HexRenderer {
     /** Hexágonos resaltados para ataque (objetivos enemigos en rango). */
     private Set<Hexagon> attackHighlighted = new HashSet<>();
 
+    /**
+     * Hexágonos resaltados para skill (verde-lima = movimiento, violeta = ataque).
+     */
+    private Set<Hexagon> skillHighlighted = new HashSet<>();
+    /**
+     * true si el skill resaltado es de tipo ataque (violeta), false si es
+     * movimiento (lima).
+     */
+    private boolean skillHighlightAttack = false;
+
     // ── Constructor ───────────────────────────────────────────────────────────
     public HexRenderer(Pane pane) {
         this.pane = pane;
@@ -126,6 +136,17 @@ public class HexRenderer {
     /** @return true si el hexágono está actualmente como objetivo de ataque. */
     public boolean isAttackHighlighted(Hexagon hex) {
         return attackHighlighted.contains(hex);
+    }
+
+    /** Establece los hexágonos resaltados para usar una skill. */
+    public void setSkillHighlightedHexes(Set<Hexagon> hexes, boolean isAttackSkill) {
+        this.skillHighlighted = (hexes != null) ? hexes : Collections.emptySet();
+        this.skillHighlightAttack = isAttackSkill;
+    }
+
+    /** @return true si el hexágono está en el rango de uso de skill. */
+    public boolean isSkillHighlighted(Hexagon hex) {
+        return skillHighlighted.contains(hex);
     }
 
     // ── API pública ───────────────────────────────────────────────────────────
@@ -213,6 +234,19 @@ public class HexRenderer {
             Polygon hl = buildHexPolygon(cx, cy, HEX_SIZE - 1);
             hl.setFill(Color.web("#ff4400", 0.25));
             hl.setStroke(Color.web("#ff6600", 0.9));
+            hl.setStrokeType(StrokeType.INSIDE);
+            hl.setStrokeWidth(2.5);
+            hl.setMouseTransparent(true);
+            pane.getChildren().add(hl);
+        }
+
+        // 3d. Overlay de skill activa (lima=movimiento, violeta=ataque)
+        if (skillHighlighted.contains(hex)) {
+            String fill = skillHighlightAttack ? "#cc44ff" : "#aaff00";
+            String stroke = skillHighlightAttack ? "#dd88ff" : "#ccff44";
+            Polygon hl = buildHexPolygon(cx, cy, HEX_SIZE - 2);
+            hl.setFill(Color.web(fill, 0.28));
+            hl.setStroke(Color.web(stroke, 0.95));
             hl.setStrokeType(StrokeType.INSIDE);
             hl.setStrokeWidth(2.5);
             hl.setMouseTransparent(true);

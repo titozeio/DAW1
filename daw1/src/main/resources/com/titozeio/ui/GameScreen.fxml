@@ -111,6 +111,11 @@
                   <!-- Acciones de Juego -->
                   <VBox alignment="BOTTOM_CENTER" prefHeight="160.0" prefWidth="220.0" spacing="10.0">
                      <children>
+                        <Button fx:id="skillButton" mnemonicParsing="false" prefHeight="40.0" prefWidth="220.0" styleClass="scifi-button-outline" text="SKILL">
+                           <font>
+                              <Font name="Exo 2 Bold" size="13.0" />
+                           </font>
+                        </Button>
                         <Button fx:id="endTurnButton" mnemonicParsing="false" prefHeight="50.0" prefWidth="220.0" styleClass="scifi-button" text="FINALIZAR TURNO">
                            <font>
                               <Font name="Exo 2 Bold" size="16.0" />
