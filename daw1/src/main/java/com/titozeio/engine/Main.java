@@ -24,6 +24,8 @@ public class Main extends Application {
         this.game = new Game(primaryStage);
         this.game.start();
 
+        // Another comment to test a merge, done locally
+
         primaryStage.show();
     }
 

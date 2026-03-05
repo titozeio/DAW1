@@ -55,6 +55,7 @@ public class Robot {
      * @param target hexágono destino.
      */
     public void move(Hexagon target) {
+        // test comment
         if (usedMovement) {
             System.out.println(modelName + " ya ha usado su movimiento este turno.");
             return;
