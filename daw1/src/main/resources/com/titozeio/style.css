@@ -1,0 +1,19 @@
+@font-face {
+    font-family: 'Exo 2';
+    src: url('fonts/Exo2-Regular.ttf');
+}
+
+.root {
+    -fx-font-family: 'Exo 2';
+    font-family: 'Exo 2';
+}
+
+.button {
+    -fx-font-family: 'Exo 2';
+    font-family: 'Exo 2';
+}
+
+.label {
+    -fx-font-family: 'Exo 2';
+    font-family: 'Exo 2';
+}
