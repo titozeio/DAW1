@@ -1065,6 +1065,24 @@ v1:
 humanoid military mech, heavy armored knight style robot, industrial design, battletech inspired mech, plasma energy sword, mechanical joints, armored torso, realistic metal textures, cinematic lighting, futuristic battlefield, concept art
 v2:
 A detailed concept art illustration for a giant robot named 'Saber Prime' from a turn-based strategy game, inspired by the aesthetics described in GDD.md and ADD.md. The image is a stylized technical drawing and a dramatic combat pose, presented on a dark, textured background like brushed metal and digital circuitry patterns, reminiscent of a blueprint and a dynamic art piece. Saber Prime, a large, agile-looking mecha, stands centrally in a dynamic battle-ready pose on a cracked concrete and metal urban combat zone, with ruins of a futuristic city and a glowing energy grid in the background, all bathed in cool blue and orange atmospheric light from distant fires and artificial lights. The robot's armor is a composite of cobalt blue, matte grey, polished chrome, and white plates, with glowing neon blue energy vents, lines, and accents running across its frame, matching the descriptions of a Vanguard Nexus unit. Its right arm holds a large, dual-pronged plasma sword, a 'Saber Energy Blade', which crackles with intense blue energy, and its left arm is integrated with a multi-layered shield projector displaying hexagonal energy fields. Backpack-mounted thrusters are visible, with internal components highlighted, and shoulder-mounted missile pods are partially deployed. Detailed cutaway views and call-outs flank the main illustration, with text and lines connecting to parts like 'NEXUS-VANGUARD ARMOR PLATING', 'NEON-CORE REACTOR INTAKE', 'HYPER-AGILITY ACTUATORS', 'INTEGRATED SHIELD GENERATOR', and 'SABER ENERGY BLADE EMITTER'. A scale diagram in the bottom right corner shows Saber Prime next to smaller standard units and infantry. At the top left, a title block reads "UNIT CONCEPT: SABER PRIME", "CLASSIFICATION: VANGUARD", "FACTION: VANGUARD NEXUS", with a stylized faction logo. The overall style is a mix of digital painting, technical illustration, and graphic design, with a high level of detail, strong lines, and atmospheric effects, resembling high-end game concept art. The lighting is dramatic, highlighting the different textures and glowing elements.
+v3: 
+High-detail concept art sheet of a giant combat mech named "Saber Prime" for a turn-based strategy game. Battletech-inspired industrial military mech design. The image combines a dramatic combat pose with a technical concept sheet layout on a dark brushed-metal background with subtle blueprint grid lines.
+
+Saber Prime is a humanoid heavy combat mech with thick armor plates, hydraulic joints, visible actuators, and reinforced mechanical limbs. The mech stands in a battle-ready pose on a cracked industrial battlefield. Its right arm wields a large dual-pronged plasma sword emitting intense blue energy, while its left arm integrates a defensive shield generator.
+
+The armor design is military and industrial: matte steel gray armor plates with cobalt blue accents and worn metal edges. Mechanical details include heat vents, armor bolts, piston systems, and backpack thrusters.
+
+Around the main illustration are technical call-outs and small cutaway diagrams pointing to labeled components such as:
+"ARMOR PLATING", "PLASMA SWORD EMITTER", "SHIELD GENERATOR", "HYDRAULIC ACTUATORS", and "THRUSTER SYSTEM".
+
+A small scale comparison diagram in the corner shows the mech next to infantry and vehicles.
+
+At the top, a title block reads:
+"UNIT CONCEPT – SABER PRIME"
+"CLASS: ASSAULT MECH"
+
+Style: high-end AAA game concept art, digital painting mixed with technical mech illustration, cinematic lighting, realistic metal textures, battletech style mech design.
+
 
 ```
 
