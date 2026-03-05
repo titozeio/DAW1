@@ -24,6 +24,38 @@
   - [5.1 Paleta de UI](#51-paleta-de-ui)
   - [5.2 Tipografía](#52-tipografía)
   - [5.3 Estilo de paneles](#53-estilo-de-paneles)
+  - [5.4 Indicadores](#54-indicadores)
+    - [Barra de vida (HP)](#barra-de-vida-hp)
+    - [Robot seleccionado](#robot-seleccionado)
+    - [Robots agotados](#robots-agotados)
+- [6. Efectos Visuales](#6-efectos-visuales)
+  - [Daño](#daño)
+  - [Habilidades](#habilidades)
+- [7. Animaciones](#7-animaciones)
+- [8. Asset List Inicial (MVP)](#8-asset-list-inicial-mvp)
+  - [Robots](#robots)
+  - [Terrenos](#terrenos)
+  - [UI](#ui)
+  - [Efectos](#efectos)
+- [9. Limitaciones del MVP](#9-limitaciones-del-mvp)
+- [10. Design Language (Lenguaje de Diseño)](#10-design-language-lenguaje-de-diseño)
+  - [10.1 Filosofía general](#101-filosofía-general)
+  - [10.2 Categorías de Silueta](#102-categorías-de-silueta)
+    - [1. Mechs tipo "Tanque con patas"](#1-mechs-tipo-tanque-con-patas)
+    - [2. Mechs semi-humanoides](#2-mechs-semi-humanoides)
+    - [3. Mechs humanoides](#3-mechs-humanoides)
+  - [10.3 Shape Language (Lenguaje de formas)](#103-shape-language-lenguaje-de-formas)
+    - [Formas cuadradas / rectangulares](#formas-cuadradas--rectangulares)
+    - [Formas angulares](#formas-angulares)
+    - [Formas estilizadas](#formas-estilizadas)
+  - [10.4 Detalles industriales](#104-detalles-industriales)
+- [11. Concept Descriptions de Robots](#11-concept-descriptions-de-robots)
+  - [11.1 Saber Prime](#111-saber-prime)
+  - [11.2 Bullseye](#112-bullseye)
+  - [11.3 Bulwark](#113-bulwark)
+  - [11.4 Scout](#114-scout)
+  - [11.5 Death Knight](#115-death-knight)
+  - [11.6 Ice Age](#116-ice-age)
 
 ---
 
@@ -303,4 +335,530 @@ Características:
 Los paneles de la interfaz son **semi transparentes** para no ocultar el mapa.
 
 Ejemplo visual:
+background: rgba(0,0,0,0.4)
+border: 1px solid rgba(78,226,201,0.4)
 
+
+Características:
+
+- bordes suaves
+- iluminación sutil
+- estilo tecnológico
+
+---
+
+## 5.4 Indicadores
+
+### Barra de vida (HP)
+
+Cada robot tiene una barra de vida segmentada.
+
+- cada segmento representa **1 HP**
+
+Colores:
+
+- verde → HP alto
+- amarillo → HP medio
+- rojo → HP crítico
+
+---
+
+### Robot seleccionado
+
+Un robot seleccionado se resalta mediante:
+
+- halo turquesa
+- contorno luminoso
+- ligera iluminación
+
+---
+
+### Robots agotados
+
+Cuando un robot ha usado todas sus acciones:
+
+- el modelo se oscurece
+- aparece un overlay gris
+- no puede volver a seleccionarse
+
+---
+
+# 6. Efectos Visuales
+
+Los efectos visuales deben ser **claros y breves**, sin interferir con la lectura táctica.
+
+Ejemplos:
+
+| Arma             | Efecto                 |
+| ---------------- | ---------------------- |
+| Cañón automático | destellos rápidos      |
+| Cañón plasma     | rayo energético        |
+| Sable de plasma  | corte luminoso         |
+| Misiles          | explosión              |
+| Rayo congelador  | efecto criogénico azul |
+
+---
+
+## Daño
+
+Cuando un robot recibe daño:
+
+- aparece un número flotante
+- breve flash rojo
+- ligera sacudida del robot
+
+---
+
+## Habilidades
+
+Cada habilidad tiene **un color característico** para facilitar su identificación.
+
+| Skill                 | Color      |
+| --------------------- | ---------- |
+| Retropropulsores      | azul       |
+| Sable de plasma       | naranja    |
+| Misiles teledirigidos | amarillo   |
+| Rayo congelador       | azul claro |
+
+---
+
+# 7. Animaciones
+
+Principios de animación:
+
+- rápidas
+- claras
+- contundentes
+
+Duración recomendada:
+
+**0.3 – 0.7 segundos**
+
+Evitar animaciones largas que ralenticen el ritmo del juego.
+
+---
+
+# 8. Asset List Inicial (MVP)
+
+## Robots
+
+Sprites o modelos de:
+
+- Saber Prime
+- Bullseye
+- Bulwark
+- Scout
+- Death Knight
+- Ice Age
+
+---
+
+## Terrenos
+
+Tiles para:
+
+- terreno normal
+- vegetación
+- agua
+- niveles de altura
+
+---
+
+## UI
+
+Elementos necesarios:
+
+- botones
+- paneles
+- barras de HP
+- iconos
+- resaltado de selección
+
+---
+
+## Efectos
+
+- disparos
+- explosiones
+- impactos
+- números de daño
+- efectos de habilidades
+
+---
+
+# 9. Limitaciones del MVP
+
+Para el **MVP**, el apartado artístico se simplifica para priorizar el desarrollo del gameplay.
+
+Características previstas:
+
+- estilo **2D estilizado**
+- sprites relativamente simples
+- animaciones mínimas
+- prioridad absoluta en **legibilidad del tablero**
+
+En futuras versiones se podrían incluir:
+
+- animaciones más complejas
+- modelos 3D
+- efectos avanzados de partículas
+- destrucción parcial del terreno
+- mayor variedad de mapas.
+
+
+
+
+# 10. Design Language (Lenguaje de Diseño)
+
+El diseño de los robots de **Devastation AI Wars 1** está fuertemente inspirado en el estilo de **mechs militares industriales**, con una clara influencia de universos como *Battletech* y, en menor medida, *Pacific Rim*.
+
+El objetivo es que los robots se perciban como **máquinas de guerra funcionales**, no como personajes estilizados o heroicos.
+
+El lenguaje de diseño se basa en los siguientes principios.
+
+---
+
+## 10.1 Filosofía general
+
+Los robots deben parecer:
+
+- diseñados por ingenieros militares
+- funcionales y utilitarios
+- robustos y pesados
+- pensados exclusivamente para el combate
+
+Elementos comunes:
+
+- placas de blindaje gruesas
+- juntas mecánicas visibles
+- pistones hidráulicos
+- armas integradas en el chasis
+- sensores ópticos en lugar de "caras"
+
+Evitar:
+
+- diseños demasiado estilizados
+- proporciones exageradamente humanas
+- estética demasiado "anime"
+
+---
+
+## 10.2 Categorías de Silueta
+
+Para mantener variedad visual, los robots se dividen en **tres grandes categorías de diseño**.
+
+### 1. Mechs tipo "Tanque con patas"
+
+Inspirados en diseños clásicos de Battletech como:
+
+- Catapult
+- Marauder
+- Cicada
+
+Características:
+
+- torso ancho o alargado
+- brazos opcionales o reemplazados por armas
+- cabinas integradas en el torso
+- estructura muy robusta
+
+Sensación visual:
+
+**máquina de guerra pesada**
+
+---
+
+### 2. Mechs semi-humanoides
+
+Inspirados en:
+
+- Enforcer
+- Shadow Hawk
+
+Características:
+
+- brazos funcionales
+- piernas robustas
+- torso con ligera forma humana
+- cabeza pequeña o sensor principal
+
+Sensación visual:
+
+**equilibrio entre máquina y forma humanoide**
+
+---
+
+### 3. Mechs humanoides
+
+Inspirados en:
+
+- Phoenix Hawk
+- Black Knight
+
+Características:
+
+- silueta claramente humanoide
+- cabeza definida
+- brazos completos
+- armas empuñadas o integradas
+
+Sensación visual:
+
+**caballero mecánico futurista**
+
+---
+
+## 10.3 Shape Language (Lenguaje de formas)
+
+El lenguaje de formas ayuda a transmitir el rol táctico de cada robot.
+
+### Formas cuadradas / rectangulares
+
+Transmiten:
+
+- resistencia
+- estabilidad
+- blindaje
+
+Se usan para:
+
+- robots defensivos
+- robots pesados
+
+---
+
+### Formas angulares
+
+Transmiten:
+
+- agresividad
+- tecnología avanzada
+- potencia ofensiva
+
+Se usan para:
+
+- robots de ataque
+
+---
+
+### Formas estilizadas
+
+Transmiten:
+
+- velocidad
+- agilidad
+- precisión
+
+Se usan para:
+
+- robots ligeros
+- exploradores
+
+---
+
+## 10.4 Detalles industriales
+
+Para reforzar la estética militar:
+
+Elementos visuales frecuentes:
+
+- paneles de mantenimiento
+- ventilaciones térmicas
+- disipadores de calor
+- cables externos
+- pistones hidráulicos
+- actuadores en las articulaciones
+
+Desgaste visual opcional:
+
+- rayones en la pintura
+- marcas de impacto
+- metal expuesto
+
+---
+
+# 11. Concept Descriptions de Robots
+
+Esta sección describe el **concepto visual de cada robot**, sirviendo como guía para ilustraciones, sprites o modelos.
+
+---
+
+## 11.1 Saber Prime
+
+**Tipo de silueta:** Humanoide
+
+Inspiración:
+
+- caballeros mecánicos
+- mechs humanoides clásicos
+
+Concepto visual:
+
+Saber Prime es un robot de diseño relativamente antiguo, pensado originalmente para ser **pilotado por humanos**, antes de que las IA dominaran el combate.
+
+Su diseño es **claramente humanoide**, con proporciones equilibradas y una estructura robusta.
+
+Características visuales:
+
+- cabeza pequeña con sensor óptico
+- torso blindado
+- brazos completos
+- generador del sable de plasma integrado en el brazo
+
+El sable de plasma debe sentirse como su **arma icónica**.
+
+Sensación visual:
+
+**caballero mecánico veterano**
+
+---
+
+## 11.2 Bullseye
+
+**Tipo de silueta:** Tanque con patas
+
+Inspiración:
+
+- mechs de artillería
+- plataformas de disparo móviles
+
+Concepto visual:
+
+Bullseye es un robot diseñado exclusivamente para **ataque a distancia**.
+
+En lugar de brazos convencionales, sus extremidades superiores han sido sustituidas por **dos enormes cañones automáticos rotatorios**.
+
+Características visuales:
+
+- torso compacto
+- cañones integrados como brazos
+- sensores avanzados
+- piernas relativamente ligeras
+
+Sensación visual:
+
+**plataforma de artillería móvil**
+
+---
+
+## 11.3 Bulwark
+
+**Tipo de silueta:** Tanque con patas
+
+Inspiración:
+
+- mechs de soporte pesado
+- máquinas industriales
+
+Concepto visual:
+
+Bulwark es un robot extremadamente robusto, diseñado para **soporte y supervivencia en combate prolongado**.
+
+Su estructura es:
+
+- ancha
+- pesada
+- blindada
+
+Características visuales:
+
+- torso masivo
+- blindaje muy grueso
+- brazo utilitario con herramientas de reparación
+- módulos de nanobots integrados
+
+Sensación visual:
+
+**muro móvil**
+
+---
+
+## 11.4 Scout
+
+**Tipo de silueta:** Semi-humanoide
+
+Inspiración:
+
+- mechs de reconocimiento
+- unidades ligeras
+
+Concepto visual:
+
+Scout es un robot ligero diseñado para **movilidad extrema y exploración del campo de batalla**.
+
+Su estructura es:
+
+- delgada
+- ágil
+- ligera
+
+Características visuales:
+
+- piernas largas
+- retropropulsores en la espalda
+- cañón automático integrado en el brazo
+- sensores avanzados
+
+Sensación visual:
+
+**depredador rápido**
+
+---
+
+## 11.5 Death Knight
+
+**Tipo de silueta:** Humanoide pesado
+
+Inspiración:
+
+- caballeros mecánicos
+- mechs de asalto
+
+Concepto visual:
+
+Death Knight es un robot intimidante diseñado para **combate cuerpo a cuerpo**.
+
+Su estructura es:
+
+- muy robusta
+- pesada
+- agresiva
+
+Características visuales:
+
+- blindaje negro
+- hombros anchos
+- martillo gigantesco
+- retropropulsores en las piernas
+
+Sensación visual:
+
+**bruto de asalto**
+
+---
+
+## 11.6 Ice Age
+
+**Tipo de silueta:** Semi-humanoide angular
+
+Inspiración:
+
+- mechs tecnológicos
+- plataformas de armamento especializado
+
+Concepto visual:
+
+Ice Age tiene un diseño **muy angular y agresivo**, con placas de blindaje en forma de cuña.
+
+Su arma principal es un **rifle criogénico pesado**, sostenido con ambos brazos.
+
+Características visuales:
+
+- armadura azul y blanca
+- rifle largo
+- lanzamisiles en los hombros
+- sensores térmicos
+
+Sensación visual:
+
+**francotirador tecnológico**
