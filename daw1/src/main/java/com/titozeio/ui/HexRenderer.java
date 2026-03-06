@@ -2,13 +2,20 @@ package com.titozeio.ui;
 
 import com.titozeio.engine.Hexagon;
 import com.titozeio.engine.Map;
+import com.titozeio.engine.Robot;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Consumer;
 
 /**
@@ -61,6 +68,28 @@ public class HexRenderer {
      */
     private Consumer<Hexagon> onHexClick;
 
+    /** Hexágonos resaltados actualmente (zonas de despliegue disponibles, etc.). */
+    private Set<Hexagon> highlighted = new HashSet<>();
+
+    /**
+     * Hexágonos resaltados para movimiento (rango de movimiento del robot
+     * seleccionado).
+     */
+    private Set<Hexagon> moveHighlighted = new HashSet<>();
+
+    /** Hexágonos resaltados para ataque (objetivos enemigos en rango). */
+    private Set<Hexagon> attackHighlighted = new HashSet<>();
+
+    /**
+     * Hexágonos resaltados para skill (verde-lima = movimiento, violeta = ataque).
+     */
+    private Set<Hexagon> skillHighlighted = new HashSet<>();
+    /**
+     * true si el skill resaltado es de tipo ataque (violeta), false si es
+     * movimiento (lima).
+     */
+    private boolean skillHighlightAttack = false;
+
     // ── Constructor ───────────────────────────────────────────────────────────
     public HexRenderer(Pane pane) {
         this.pane = pane;
@@ -72,6 +101,52 @@ public class HexRenderer {
      */
     public void setOnHexClick(Consumer<Hexagon> handler) {
         this.onHexClick = handler;
+    }
+
+    /**
+     * Establece los hexágonos que se resaltarán en verde (ej: zonas de despliegue).
+     * Llamar antes de render() para que el efecto se aplique.
+     */
+    public void setHighlightedHexes(Set<Hexagon> hexes) {
+        this.highlighted = (hexes != null) ? hexes : Collections.emptySet();
+    }
+
+    /**
+     * Establece los hexágonos que se resaltarán en azul (rango de movimiento).
+     */
+    public void setMoveHighlightedHexes(Set<Hexagon> hexes) {
+        this.moveHighlighted = (hexes != null) ? hexes : Collections.emptySet();
+    }
+
+    /**
+     * @return true si el hexágono está actualmente en el rango de movimiento
+     *         resaltado.
+     */
+    public boolean isMoveHighlighted(Hexagon hex) {
+        return moveHighlighted.contains(hex);
+    }
+
+    /**
+     * Establece los hexágonos que se resaltarán en naranja (objetivos de ataque).
+     */
+    public void setAttackHighlightedHexes(Set<Hexagon> hexes) {
+        this.attackHighlighted = (hexes != null) ? hexes : Collections.emptySet();
+    }
+
+    /** @return true si el hexágono está actualmente como objetivo de ataque. */
+    public boolean isAttackHighlighted(Hexagon hex) {
+        return attackHighlighted.contains(hex);
+    }
+
+    /** Establece los hexágonos resaltados para usar una skill. */
+    public void setSkillHighlightedHexes(Set<Hexagon> hexes, boolean isAttackSkill) {
+        this.skillHighlighted = (hexes != null) ? hexes : Collections.emptySet();
+        this.skillHighlightAttack = isAttackSkill;
+    }
+
+    /** @return true si el hexágono está en el rango de uso de skill. */
+    public boolean isSkillHighlighted(Hexagon hex) {
+        return skillHighlighted.contains(hex);
     }
 
     // ── API pública ───────────────────────────────────────────────────────────
@@ -132,12 +207,58 @@ public class HexRenderer {
             pane.getChildren().add(overlay);
         }
 
-        // 3. Indicador de altura (triángulos ascendentes, semi-transparentes)
+        // 3. Overlay de resaltado de despliegue (verde)
+        if (highlighted.contains(hex)) {
+            Polygon hl = buildHexPolygon(cx, cy, HEX_SIZE - 1);
+            hl.setFill(Color.web("#00ff88", 0.28));
+            hl.setStroke(Color.web("#00ff88", 0.9));
+            hl.setStrokeType(StrokeType.INSIDE);
+            hl.setStrokeWidth(2.0);
+            hl.setMouseTransparent(true);
+            pane.getChildren().add(hl);
+        }
+
+        // 3b. Overlay de rango de movimiento (azul-cian)
+        if (moveHighlighted.contains(hex)) {
+            Polygon hl = buildHexPolygon(cx, cy, HEX_SIZE - 1);
+            hl.setFill(Color.web("#00ccff", 0.22));
+            hl.setStroke(Color.web("#00aaff", 0.85));
+            hl.setStrokeType(StrokeType.INSIDE);
+            hl.setStrokeWidth(2.0);
+            hl.setMouseTransparent(true);
+            pane.getChildren().add(hl);
+        }
+
+        // 3c. Overlay de objetivo de ataque (naranja-rojo)
+        if (attackHighlighted.contains(hex)) {
+            Polygon hl = buildHexPolygon(cx, cy, HEX_SIZE - 1);
+            hl.setFill(Color.web("#ff4400", 0.25));
+            hl.setStroke(Color.web("#ff6600", 0.9));
+            hl.setStrokeType(StrokeType.INSIDE);
+            hl.setStrokeWidth(2.5);
+            hl.setMouseTransparent(true);
+            pane.getChildren().add(hl);
+        }
+
+        // 3d. Overlay de skill activa (lima=movimiento, violeta=ataque)
+        if (skillHighlighted.contains(hex)) {
+            String fill = skillHighlightAttack ? "#cc44ff" : "#aaff00";
+            String stroke = skillHighlightAttack ? "#dd88ff" : "#ccff44";
+            Polygon hl = buildHexPolygon(cx, cy, HEX_SIZE - 2);
+            hl.setFill(Color.web(fill, 0.28));
+            hl.setStroke(Color.web(stroke, 0.95));
+            hl.setStrokeType(StrokeType.INSIDE);
+            hl.setStrokeWidth(2.5);
+            hl.setMouseTransparent(true);
+            pane.getChildren().add(hl);
+        }
+
+        // 4. Indicador de altura (triángulos ascendentes, semi-transparentes)
         if (hex.getHeight() > 0) {
             addHeightLabel(cx, cy, hex.getHeight());
         }
 
-        // 4. Borde luminoso en bases
+        // 5. Borde luminoso en bases
         if (hex.isBaseP1() || hex.isBaseP2()) {
             Polygon rim = buildHexPolygon(cx, cy, HEX_SIZE);
             rim.setFill(Color.TRANSPARENT);
@@ -149,6 +270,11 @@ public class HexRenderer {
             rim.setStrokeWidth(2.5);
             rim.setMouseTransparent(true);
             pane.getChildren().add(rim);
+        }
+
+        // 6. Token del robot (si hay un ocupante)
+        if (hex.isOccupied()) {
+            renderRobotToken(cx, cy, hex.getOccupant());
         }
     }
 
@@ -180,6 +306,85 @@ public class HexRenderer {
         label.setY(cy + 4);
         label.setMouseTransparent(true);
         pane.getChildren().add(label);
+    }
+
+    /**
+     * Dibuja el token del robot sobre el hexágono.
+     * El token es un círculo de color del equipo con las iniciales del modelo
+     * y una barra de HP debajo.
+     */
+    private void renderRobotToken(double cx, double cy, Robot robot) {
+        boolean isP1 = robot.getOwner() != null && robot.getOwner().getName().equals("Jugador 1");
+        Color baseColor = isP1 ? Color.web("#2255bb") : Color.web("#bb2222");
+        Color glowColor = isP1 ? Color.web("#88bbff", 0.8) : Color.web("#ff8888", 0.8);
+        double radius = HEX_SIZE * 0.45;
+
+        // Sombra / halo exterior
+        javafx.scene.shape.Circle halo = new javafx.scene.shape.Circle(cx, cy, radius + 3);
+        halo.setFill(glowColor);
+        halo.setMouseTransparent(true);
+        pane.getChildren().add(halo);
+
+        // Círculo base del token
+        javafx.scene.shape.Circle circle = new javafx.scene.shape.Circle(cx, cy, radius);
+        circle.setFill(baseColor);
+        circle.setStroke(Color.WHITE);
+        circle.setStrokeWidth(1.5);
+        circle.setMouseTransparent(true);
+        pane.getChildren().add(circle);
+
+        // Iniciales del modelo (2 caracteres)
+        String initials = getInitials(robot.getModelName());
+        Text nameText = new Text(initials);
+        nameText.setFont(Font.font("Exo 2", FontWeight.BOLD, 11));
+        nameText.setFill(Color.WHITE);
+        nameText.setTextAlignment(TextAlignment.CENTER);
+        nameText.setX(cx - nameText.getLayoutBounds().getWidth() / 2.0);
+        nameText.setY(cy + 4);
+        nameText.setMouseTransparent(true);
+        pane.getChildren().add(nameText);
+
+        // Barra de HP debajo del token
+        renderHpBar(cx, cy + radius + 5, robot);
+    }
+
+    private void renderHpBar(double cx, double barY, Robot robot) {
+        int hp = robot.getCurrentHp();
+        int maxHp = robot.getMaxHp();
+        double barW = HEX_SIZE * 0.9;
+        double barH = 5.0;
+
+        // Fondo de la barra
+        Rectangle bg = new Rectangle(cx - barW / 2.0, barY, barW, barH);
+        bg.setFill(Color.web("#220000"));
+        bg.setArcWidth(3);
+        bg.setArcHeight(3);
+        bg.setMouseTransparent(true);
+        pane.getChildren().add(bg);
+
+        // Segmentos de HP
+        double segW = (barW - (maxHp - 1)) / maxHp;
+        for (int i = 0; i < hp; i++) {
+            double segX = cx - barW / 2.0 + i * (segW + 1);
+            Color segColor = (hp > maxHp * 0.5) ? Color.web("#44dd44")
+                    : (hp > maxHp * 0.25) ? Color.web("#dddd22")
+                            : Color.web("#dd2222");
+            Rectangle seg = new Rectangle(segX, barY, segW, barH);
+            seg.setFill(segColor);
+            seg.setMouseTransparent(true);
+            pane.getChildren().add(seg);
+        }
+    }
+
+    /** Devuelve 2 iniciales del nombre del modelo. */
+    private static String getInitials(String modelName) {
+        String[] words = modelName.trim().split("\\s+");
+        if (words.length >= 2) {
+            return ("" + words[0].charAt(0) + words[1].charAt(0)).toUpperCase();
+        } else if (modelName.length() >= 2) {
+            return modelName.substring(0, 2).toUpperCase();
+        }
+        return modelName.toUpperCase();
     }
 
     // ── Conversión de coordenadas ─────────────────────────────────────────────
