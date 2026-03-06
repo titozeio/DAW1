@@ -32,20 +32,39 @@ jobs:
         working-directory: daw1
         run: mvn -B -DskipTests clean package
 
-      - name: Build native Windows installer (no Java required)
+      - name: Create launch-game-jar.bat
+        shell: pwsh
+        run: |
+          @'
+          @echo off
+          setlocal
+          cd /d %~dp0
+
+          if not exist "daw1-1.0-SNAPSHOT-all.jar" (
+            echo No se encontro daw1-1.0-SNAPSHOT-all.jar en esta carpeta.
+            echo Coloca este .bat junto al .jar y vuelve a ejecutar.
+            pause
+            exit /b 1
+          )
+
+          java --enable-native-access=ALL-UNNAMED -jar "daw1-1.0-SNAPSHOT-all.jar"
+          '@ | Set-Content "daw1/target/launch-game-jar.bat"
+
+      - name: Build native Windows app-image (no Java required)
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force "daw1/target/dist" | Out-Null
           jpackage `
-            --type exe `
+            --type app-image `
             --name "DAW1" `
             --input "daw1/target" `
             --main-jar "daw1-1.0-SNAPSHOT-all.jar" `
-            --main-class "com.titozeio.engine.Main" `
+            --main-class "com.titozeio.engine.Launcher" `
             --dest "daw1/target/dist" `
             --vendor "titozeio" `
             --app-version "1.0.${{ github.run_number }}" `
             --java-options "--enable-native-access=ALL-UNNAMED"
+          Compress-Archive -Path "daw1/target/dist/DAW1/*" -DestinationPath "daw1/target/dist/DAW1-app-image-windows.zip" -Force
 
       - name: Upload binary artifact
         uses: actions/upload-artifact@v4
@@ -53,8 +72,8 @@ jobs:
           name: daw1-windows-binary-${{ github.sha }}
           path: |
             daw1/target/daw1-1.0-SNAPSHOT-all.jar
-            daw1/target/daw1-1.0-SNAPSHOT.jar
-            daw1/target/dist/*.exe
+            daw1/target/launch-game-jar.bat
+            daw1/target/dist/DAW1-app-image-windows.zip
           if-no-files-found: error
 
       - name: Publish GitHub Release (main only)
@@ -66,6 +85,6 @@ jobs:
           body: |
             Build generated automatically from main.
             Commit: ${{ github.sha }}
-          artifacts: "daw1/target/daw1-1.0-SNAPSHOT-all.jar,daw1/target/daw1-1.0-SNAPSHOT.jar,daw1/target/dist/*.exe"
+          artifacts: "daw1/target/daw1-1.0-SNAPSHOT-all.jar,daw1/target/launch-game-jar.bat,daw1/target/dist/DAW1-app-image-windows.zip"
           artifactErrorsFailBuild: true
           generateReleaseNotes: true
