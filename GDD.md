@@ -390,14 +390,14 @@ Un boceto o descripción del único mapa que tendrá el prototipo.
 
 - **Ice Age**:
     - **Modelo**: Ice Age.
-    - **Descripción**: Especialista en control técnico con un chasis industrial robusto tipo Battletech pero con una cabeza visora de alta tecnología. Sus sensores oculares brillan con un rojo gélido. Su arma principal es un rifle criogénico industrial que ventila nitrógeno líquido constantemente. Es un robot intimidante y preciso en tonos blanco ártico y azul marino.
+    - **Descripción**: Especialista en control técnico con una silueta estilizada y angular. Su cabeza cuenta con un visor cibernético de una sola línea horizontal (estilo Robocop) que emite una luz azul intensa con efecto lens flare. Su arma principal es un rifle criogénico de alta tecnología que dispara ráfagas de nitrógeno líquido. Es un robot preciso, letal y con una estética que mezcla lo gótico-técnico con lo ártico.
     - **HP**: 10.
     - **Movimiento**: 4.
     - **Armas**:
         - Nombre: Misiles de racimo
         - Alcance: 6.  
         - Daño: 4.
-        - Descripción: Lanzamisiles de hombro integrados en cajas cuadradas industriales.
+        - Descripción: Lanzamisiles de hombro integrados de perfil bajo.
     - **Skills**: Rayo congelador.
 
 ### Dirección visual canónica para concept art (vinculante)

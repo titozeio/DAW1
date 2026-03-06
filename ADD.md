@@ -876,13 +876,13 @@ Su arma principal es un **rifle criogénico pesado**, sostenido con ambos brazos
 Características visuales:
 
 - armadura blanco ártico y azul marino
-- rifle criogénico industrial masivo con ventilación de nitrógeno
-- lanzamisiles de hombro en cajas cuadradas (estilo industrial)
-- cabeza visora de alta tecnología con sensores rojos
+- rifle criogénico técnico de alta precisión con tubos de refrigeración
+- lanzamisiles de hombro compactos
+- casco técnico con visor de línea horizontal única (estilo Robocop) en azul intenso
 
 Sensación visual:
 
-**unidad de control industrial técnico**
+**unidad de operaciones especiales árticas técnica**
 
 # 12. Silhouette Guide (Guía de Siluetas)
 
@@ -1034,8 +1034,8 @@ Paleta:
 
 - blanco ártico (base)
 - azul marino oscuro (acentos)
-- sensores rojo gélido con lens flare
-- efectos de escarcha acumulada sobre el metal
+- sensores AZUL INTENSO con lens flare
+- línea de visor horizontal única
 
 Sensación:
 
@@ -1160,7 +1160,7 @@ Scout — concept sheet front/3-4/back, agile recon, digitigrade legs, blue plas
 
 Death Knight — concept sheet front/3-4/back, gothic assault, Black Knight Elden Ring armor, Mazinger mouth vents, MASSIVE rocket hammer, heel thrusters, NO back thrusters, monochromatic black/gray, red eyes + lens flare.
 
-Ice Age — concept sheet front/3-4/back, industrial technical, boxy Battletech chassis, technical visor head, red eyes, white/navy palette, frost effects.
+Ice Age — concept sheet front/3-4/back, industrial technical, streamlined angular frame, technical Robocop-style horizontal visor head, blue glowing sensor line, white/navy palette, frost effects.
 ```
 
 ---
