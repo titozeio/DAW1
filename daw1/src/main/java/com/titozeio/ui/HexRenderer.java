@@ -16,7 +16,9 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -60,8 +62,8 @@ public class HexRenderer {
     // ── Borde de los hexágonos ────────────────────────────────────────────────
     private static final Color C_STROKE = Color.web("#0a1008", 0.6);
     private static final double STROKE_WIDTH = 1.2;
-    /** Sprite temporal para pruebas de token de robot en mapa. */
-    private static final Image ROBOT_TEST_SPRITE = loadRobotTestSprite();
+    /** Cache de sprites cargados por nombre de modelo de robot. */
+    private static final java.util.Map<String, Image> ROBOT_SPRITE_CACHE = new HashMap<>();
 
     // ── Estado interno ────────────────────────────────────────────────────────
     /** Pane objetivo donde se dibujan los nodos. */
@@ -314,15 +316,15 @@ public class HexRenderer {
 
     /**
      * Dibuja el token del robot sobre el hexágono.
-     * Temporalmente usa un sprite único de prueba para todos los robots
-     * y mantiene la barra de HP debajo.
+     * Intenta cargar el sprite específico del modelo y, si no existe, usa fallback.
      */
     private void renderRobotToken(double cx, double cy, Robot robot) {
         double spriteSize = HEX_SIZE * 1.8;
         double yOffset = HEX_SIZE * 0.15;
+        Image sprite = resolveRobotSprite(robot);
 
-        if (ROBOT_TEST_SPRITE != null) {
-            ImageView spriteView = new ImageView(ROBOT_TEST_SPRITE);
+        if (sprite != null) {
+            ImageView spriteView = new ImageView(sprite);
             spriteView.setFitWidth(spriteSize);
             spriteView.setFitHeight(spriteSize);
             spriteView.setPreserveRatio(true);
@@ -344,11 +346,44 @@ public class HexRenderer {
         renderHpBar(cx, cy + HEX_SIZE * 0.55, robot);
     }
 
-    private static Image loadRobotTestSprite() {
-        var resource = HexRenderer.class.getResource("/com/titozeio/sprites/saberprime.png");
-        if (resource == null)
-            return null;
-        return new Image(resource.toExternalForm());
+    private static Image resolveRobotSprite(Robot robot) {
+        String key = robot.getModelName();
+        if (ROBOT_SPRITE_CACHE.containsKey(key)) {
+            return ROBOT_SPRITE_CACHE.get(key);
+        }
+
+        List<String> candidates = spriteCandidatesFor(robot.getModelName());
+        for (String candidate : candidates) {
+            var resource = HexRenderer.class.getResource("/com/titozeio/sprites/" + candidate + ".png");
+            if (resource != null) {
+                Image image = new Image(resource.toExternalForm());
+                ROBOT_SPRITE_CACHE.put(key, image);
+                return image;
+            }
+        }
+
+        ROBOT_SPRITE_CACHE.put(key, null);
+        return null;
+    }
+
+    private static List<String> spriteCandidatesFor(String modelName) {
+        String normalized = modelName == null ? "" : modelName.trim().toLowerCase();
+        switch (normalized) {
+            case "victory saber":
+                return List.of("saberprime", "death_knight", "scout");
+            case "death knight":
+                return List.of("death_knight", "saberprime", "scout");
+            case "scout":
+                return List.of("scout", "saberprime", "death_knight");
+            case "bullseye":
+                return List.of("bullseye", "saberprime", "death_knight", "scout");
+            case "bulwark":
+                return List.of("bulwark", "saberprime", "death_knight", "scout");
+            case "ice age":
+                return List.of("ice_age", "saberprime", "death_knight", "scout");
+            default:
+                return List.of("saberprime", "death_knight", "scout");
+        }
     }
 
     private void renderHpBar(double cx, double barY, Robot robot) {
