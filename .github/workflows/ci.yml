@@ -28,6 +28,16 @@ jobs:
         working-directory: daw1
         run: mvn -B verify
 
+      - name: Upload test and coverage reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: daw1-test-report-${{ github.sha }}
+          path: |
+            daw1/target/surefire-reports/**
+            daw1/target/site/jacoco/**
+          if-no-files-found: warn
+
       - name: Build executable JAR
         working-directory: daw1
         run: mvn -B -DskipTests clean package
