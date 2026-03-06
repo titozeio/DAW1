@@ -330,7 +330,7 @@ Un boceto o descripción del único mapa que tendrá el prototipo.
 
 - **Saber Prime**:
     - **Modelo**: Saber Prime.
-    - **Descripción**: Un robot de otra época, con aspecto bastante humanoide, anterior a las DAW1, pensado para ser pilotado por un humano y reconvertido a uso por la IA. Suele ser subestimado, pero cuando es capaz de cargar su temible sable de plasma, no te conviene estar enfrente suyo.
+    - **Descripción**: Un robot de otra época, con aspecto bastante humanoide, anterior a las DAW1, pensado para ser pilotado por un humano y reconvertido a uso por la IA. Suele ser subestimado, pero cuando es capaz de cargar su temible sable de plasma, no te conviene estar enfrente suyo. Visualmente usa una paleta azul oscuro con acentos rojos.
     - **HP**: 12.
     - **Movimiento**: 4.
     - **Armas**:
@@ -354,7 +354,7 @@ Un boceto o descripción del único mapa que tendrá el prototipo.
   
 - **Bulwark**:
     - **Modelo**: Bulwark.
-    - **Descripción**: Bulwark, también conocido como DOC en el terreno de combate, es un robot muy resistente, no hace mucho daño y es lento, pero su capacidad para recuperar robots aliados lo convierte en una pieza clave del equipo.
+    - **Descripción**: Bulwark, también conocido como DOC en el terreno de combate, es un robot muy resistente, no hace mucho daño y es lento, pero su capacidad para recuperar robots aliados lo convierte en una pieza clave del equipo. Su acabado visual usa camuflaje verde oliva con luces técnicas cyan.
     - **HP**: 15.
     - **Movimiento**: 4.
     - **Armas**:
@@ -366,7 +366,7 @@ Un boceto o descripción del único mapa que tendrá el prototipo.
 
 - **Scout**:
     - **Modelo**: Scout.
-    - **Descripción**: Un robot pequeño y ágil, diseñado para explorar el terreno y detectar enemigos. No tiene mucho blindaje, pero su movilidad, gracias a su velocidad y a los retropropulsores en su espalda, y su temible cañón automático, lo convierten en una pieza clave del equipo.
+    - **Descripción**: Un robot pequeño y ágil, diseñado para explorar el terreno y detectar enemigos. No tiene mucho blindaje, pero su movilidad, gracias a su velocidad y a los retropropulsores en su espalda, y su temible cañón automático, lo convierten en una pieza clave del equipo. Su pintura usa camuflaje marrón y verde.
     - **HP**: 7.
     - **Movimiento**: 5.
     - **Armas**:
@@ -378,7 +378,7 @@ Un boceto o descripción del único mapa que tendrá el prototipo.
 
 - **Death Knight**:
     - **Modelo**: Death Knight.
-    - **Descripción**: Su color negro de camuflaje nocturno, combinado con su aspecto de mole con un martillo gigante, le hacen valedor de su apelativo. Es un robot lento, pero muy resistente y con un gran ataque cuerpo a cuerpo. No conviene subestimarlo, ya que a pesar de su lentitud, cuando activa sus retropropulsores, puede desplazarse rápidamente por el campo de batalla. 
+    - **Descripción**: Su color de acero oscuro (dark steel) con acentos carmesí, combinado con su aspecto de mole con un martillo gigante, le hacen valedor de su apelativo. Es un robot lento, pero muy resistente y con un gran ataque cuerpo a cuerpo. No conviene subestimarlo, ya que a pesar de su lentitud, cuando activa sus retropropulsores, puede desplazarse rápidamente por el campo de batalla. 
     - **HP**: 13.
     - **Movimiento**: 3.
     - **Armas**:
@@ -399,6 +399,17 @@ Un boceto o descripción del único mapa que tendrá el prototipo.
         - Daño: 4.
         - Descripción: Tiene dos afustes de misiles en los hombros, que disparan misiles de racimo. Tienen muy buen alcance, pero fallan la mita de ellos, por lo que su daño no es tan temible.
     - **Skills**: Rayo congelador.
+
+### Dirección visual canónica para concept art (vinculante)
+
+- No usar insignias de facción ni emblemas inventados hasta que las facciones estén definidas.
+- Estética objetivo: mecha militar-industrial tipo Battletech/Pacific Rim.
+- Acabado visual obligatorio: uso realista, suciedad técnica, rayones, marcas de impacto y metal expuesto en zonas de desgaste.
+- Evitar acabados inmaculados o demasiado “de showroom”.
+- Mantener coherencia estricta arma-mano:
+  - Saber Prime: sable de plasma en mano derecha y arma de plasma/láser en mano izquierda.
+  - Bullseye: brazos convertidos en cañones automáticos.
+  - Death Knight: martillo a dos manos, sin arma secundaria.
 
 
 # 6. Interfaz (UI/HUD)

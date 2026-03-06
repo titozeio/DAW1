@@ -71,7 +71,12 @@
   - [13.6 Ice Age](#136-ice-age)
 - [14. Concept Art Prompts](#14-concept-art-prompts)
   - [14.1 Saber Prime](#141-saber-prime)
-  - [--TODO--](#--todo--)
+  - [14.2 Bullseye](#142-bullseye)
+  - [14.3 Bulwark](#143-bulwark)
+  - [14.4 Scout](#144-scout)
+  - [14.5 Death Knight](#145-death-knight)
+  - [14.6 Ice Age](#146-ice-age)
+  - [14.7 Gemini Quick Prompts (1 línea)](#147-gemini-quick-prompts-1-línea)
 - [15. Futuras ampliaciones del apartado artístico](#15-futuras-ampliaciones-del-apartado-artístico)
 
 ---
@@ -947,6 +952,8 @@ Principios:
 - base metálica
 - acentos tecnológicos
 - colores funcionales
+- sin insignias de facción (hasta definir facciones)
+- desgaste visible (rayones, marcas de impacto, suciedad técnica, metal expuesto)
 
 ---
 
@@ -954,9 +961,10 @@ Principios:
 
 Paleta:
 
-- acero oscuro
-- detalles plateados
-- energía naranja del sable
+- azul oscuro (base principal)
+- rojo oscuro/carmesí (acentos)
+- metal expuesto en bordes
+- emisión energética del sable de plasma
 
 Sensación:
 
@@ -968,9 +976,9 @@ Sensación:
 
 Paleta:
 
-- gris industrial
-- rojo oscuro
-- marcas de advertencia
+- camuflaje gris oscuro + verde oliva
+- metal industrial ennegrecido
+- acentos mínimos funcionales (sin emblemas)
 
 Sensación:
 
@@ -982,9 +990,9 @@ Sensación:
 
 Paleta:
 
-- verde militar
-- gris acero
-- luces médicas o técnicas
+- camuflaje verde oliva (base)
+- gris acero en articulaciones
+- luces técnicas cyan
 
 Sensación:
 
@@ -996,9 +1004,9 @@ Sensación:
 
 Paleta:
 
-- gris claro
-- azul tecnológico
-- detalles de sensores
+- camuflaje marrón y verde
+- metal ligero con zonas desgastadas
+- luces/sensores discretos
 
 Sensación:
 
@@ -1010,8 +1018,8 @@ Sensación:
 
 Paleta:
 
-- negro mate
-- rojo oscuro
+- dark steel (acero oscuro)
+- acentos crimson
 - metal expuesto
 
 Sensación:
@@ -1051,11 +1059,110 @@ Estilo base recomendado:
 - heavy armor
 - battletech inspired
 - cinematic lighting
+- weathered paint, scratches, impact marks, exposed metal
+- no faction insignias, no logos, no decals inventados
 
 ---
 
 ## 14.1 Saber Prime
---TODO--
+
+```text
+Hard-surface mecha concept art sheet, strict canon.
+Robot: Saber Prime. Old-generation humanoid mech retrofitted for AI combat.
+Mandatory: plasma saber in RIGHT hand, compact plasma/laser firearm in LEFT hand.
+Silhouette: heroic humanoid, balanced proportions, robust torso.
+Palette: dark navy blue base, red accents, worn metal edges.
+Style: Battletech/Pacific Rim military-industrial, heavy use wear and tear.
+No faction insignias, no logos, no extra weapons, no hand swap.
+Output: full body front / 3-4 / back, neutral pose, clean background.
+```
+
+## 14.2 Bullseye
+
+```text
+Hard-surface mecha concept art sheet, strict canon.
+Robot: Bullseye. Fast glass-cannon artillery platform.
+Mandatory: both arms replaced with integrated automatic cannons.
+Silhouette: compact torso, long mobile legs, precision hunter profile.
+Palette: dark gray + olive green camouflage, weathered paint and exposed metal.
+Style: Battletech/Pacific Rim military-industrial with realistic combat wear.
+No faction insignias, no logos, no extra melee weapon, no shoulder sword.
+Output: full body front / 3-4 / back, neutral pose, clean background.
+```
+
+## 14.3 Bulwark
+
+```text
+Hard-surface mecha concept art sheet, strict canon.
+Robot: Bulwark. Heavy support and survival unit.
+Mandatory: right shoulder laser cannon, visible repair nanobot utility modules.
+Silhouette: broad, bulky, armored, slow but stable.
+Palette: olive green camouflage, steel gray joints, cyan technical lights.
+Style: Battletech/Pacific Rim military-industrial, scratched armor, impact marks.
+No faction insignias, no logos, no agile assassin proportions.
+Output: full body front / 3-4 / back, neutral pose, clean background.
+```
+
+## 14.4 Scout
+
+```text
+Hard-surface mecha concept art sheet, strict canon.
+Robot: Scout. Lightweight recon and rapid flanking unit.
+Mandatory: automatic cannon integrated in right arm, back retro-thrusters.
+Silhouette: slim, agile, long legs, compact torso.
+Palette: brown + green camouflage, light metallic wear.
+Style: Battletech/Pacific Rim military-industrial with realistic dirt and scratches.
+No faction insignias, no logos, no heavy tank silhouette.
+Output: full body front / 3-4 / back, neutral pose, clean background.
+```
+
+## 14.5 Death Knight
+
+```text
+Hard-surface mecha concept art sheet, strict canon.
+Robot: Death Knight. Brutal close-range assault mech.
+Mandatory: giant two-handed propelled war hammer, leg turbo propulsion modules.
+Silhouette: heavy humanoid, wide shoulders, intimidating mass.
+Palette: dark steel base with crimson accents, exposed metal in high-contact zones.
+Style: Battletech/Pacific Rim military-industrial, heavy combat weathering.
+No faction insignias, no logos, no secondary ranged weapon.
+Output: full body front / 3-4 / back, neutral pose, clean background.
+```
+
+## 14.6 Ice Age
+
+```text
+Hard-surface mecha concept art sheet, strict canon.
+Robot: Ice Age. Angular aggressive control unit.
+Mandatory: two-handed cryo rifle, shoulder cluster missile launchers.
+Silhouette: angular semi-humanoid, tactical medium frame.
+Palette: white + light blue + dark blue.
+Style: Battletech/Pacific Rim military-industrial, realistic weathering and chipped paint.
+No faction insignias, no logos, no extra melee weapons.
+Output: full body front / 3-4 / back, neutral pose, clean background.
+```
+
+## 14.7 Gemini Quick Prompts (1 línea)
+
+Formato recomendado para Gemini:
+
+- Usa estos prompts para iteración rápida.
+- Si uno funciona, pasa después a la versión larga (14.1–14.6) para pulir.
+
+```text
+Saber Prime — concept sheet front/3-4/back, humanoid veteran mech, plasma saber RIGHT hand + compact plasma/laser firearm LEFT hand, dark navy + red accents, Battletech/Pacific Rim industrial style, heavy combat wear, no faction insignias/logos, no extra weapons, no hand swap.
+
+Bullseye — concept sheet front/3-4/back, artillery glass-cannon mech, both arms are integrated automatic cannons, compact torso and mobile legs, dark gray + olive camouflage, industrial military wear and exposed metal, no insignias/logos, no melee weapon.
+
+Bulwark — concept sheet front/3-4/back, heavy support tank-like mech, right shoulder laser cannon + visible nanobot repair modules, broad bulky silhouette, olive camouflage + steel gray joints + cyan technical lights, strong weathering, no insignias/logos.
+
+Scout — concept sheet front/3-4/back, lightweight recon mech, right-arm automatic cannon + back retro-thrusters, slim agile long-leg silhouette, brown/green camouflage, realistic scratches and dirt, no insignias/logos, no heavy armor look.
+
+Death Knight — concept sheet front/3-4/back, heavy assault humanoid, giant two-handed propelled war hammer + leg turbo modules, wide-shoulder intimidating silhouette, dark steel + crimson accents, intense battle wear, no insignias/logos, no secondary ranged weapon.
+
+Ice Age — concept sheet front/3-4/back, angular semi-humanoid control mech, two-handed cryo rifle + shoulder cluster missiles, white/light-blue/dark-blue palette, industrial military style with chipped paint and impact marks, no insignias/logos, no extra melee weapons.
+```
+
 ---
 
 # 15. Futuras ampliaciones del apartado artístico
