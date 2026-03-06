@@ -42,32 +42,18 @@ jobs:
         working-directory: daw1
         run: mvn -B -DskipTests clean package
 
-      - name: Create launch-game-jar.bat
-        shell: pwsh
-        run: |
-          @'
-          @echo off
-          setlocal
-          cd /d %~dp0
-
-          if not exist "daw1-1.0-SNAPSHOT-all.jar" (
-            echo No se encontro daw1-1.0-SNAPSHOT-all.jar en esta carpeta.
-            echo Coloca este .bat junto al .jar y vuelve a ejecutar.
-            pause
-            exit /b 1
-          )
-
-          java --enable-native-access=ALL-UNNAMED -jar "daw1-1.0-SNAPSHOT-all.jar"
-          '@ | Set-Content "daw1/target/launch-game-jar.bat"
-
       - name: Build native Windows app-image (no Java required)
         shell: pwsh
         run: |
+          if (Test-Path "daw1/target/dist") { Remove-Item "daw1/target/dist" -Recurse -Force }
+          if (Test-Path "daw1/target/jpackage-input") { Remove-Item "daw1/target/jpackage-input" -Recurse -Force }
           New-Item -ItemType Directory -Force "daw1/target/dist" | Out-Null
+          New-Item -ItemType Directory -Force "daw1/target/jpackage-input" | Out-Null
+          Copy-Item "daw1/target/daw1-1.0-SNAPSHOT-all.jar" "daw1/target/jpackage-input/"
           jpackage `
             --type app-image `
             --name "DAW1" `
-            --input "daw1/target" `
+            --input "daw1/target/jpackage-input" `
             --main-jar "daw1-1.0-SNAPSHOT-all.jar" `
             --main-class "com.titozeio.engine.Launcher" `
             --dest "daw1/target/dist" `
@@ -79,22 +65,20 @@ jobs:
       - name: Upload binary artifact
         uses: actions/upload-artifact@v4
         with:
-          name: daw1-windows-binary-${{ github.sha }}
-          path: |
-            daw1/target/daw1-1.0-SNAPSHOT-all.jar
-            daw1/target/launch-game-jar.bat
-            daw1/target/dist/DAW1-app-image-windows.zip
+          name: daw1-windows-latest-binary
+          path: daw1/target/dist/DAW1-app-image-windows.zip
           if-no-files-found: error
 
       - name: Publish GitHub Release (main only)
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: ncipollo/release-action@v1
         with:
-          tag: build-${{ github.run_number }}
-          name: Build #${{ github.run_number }}
+          tag: latest-main
+          name: Latest Main Build
           body: |
             Build generated automatically from main.
             Commit: ${{ github.sha }}
-          artifacts: "daw1/target/daw1-1.0-SNAPSHOT-all.jar,daw1/target/launch-game-jar.bat,daw1/target/dist/DAW1-app-image-windows.zip"
+          artifacts: "daw1/target/dist/DAW1-app-image-windows.zip"
+          allowUpdates: true
           artifactErrorsFailBuild: true
           generateReleaseNotes: true
