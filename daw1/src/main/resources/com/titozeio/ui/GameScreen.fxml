@@ -18,7 +18,7 @@
    <children>
       
       <!-- Fondo base (textura o rejilla scifi) -->
-      <ImageView fitHeight="720.0" fitWidth="1280.0" opacity="0.3" pickOnBounds="true">
+      <ImageView fx:id="battlefieldBg" fitHeight="720.0" fitWidth="1280.0" opacity="1.0" pickOnBounds="true">
          <image>
             <Image url="@../images/bg1.png" />
          </image>
