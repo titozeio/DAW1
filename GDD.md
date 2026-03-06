@@ -330,86 +330,86 @@ Un boceto o descripción del único mapa que tendrá el prototipo.
 
 - **Saber Prime**:
     - **Modelo**: Saber Prime.
-    - **Descripción**: Un robot de otra época, con aspecto bastante humanoide, anterior a las DAW1, pensado para ser pilotado por un humano y reconvertido a uso por la IA. Suele ser subestimado, pero cuando es capaz de cargar su temible sable de plasma, no te conviene estar enfrente suyo. Visualmente usa una paleta azul oscuro con acentos rojos.
+    - **Descripción**: Un robot de vanguardia con una silueta heroica y atlética, inspirado en la estética clásica de los grandes mechas pero con tecnología militar moderna. Su casco evoca el estilo icónico de la serie "Victory Saber". Su presencia en el campo de batalla inspira respeto, especialmente cuando desenvaina su imponente sable de energía chisporroteante. Visualmente usa una paleta azul real vibrante con acentos rojos y metal expuesto.
     - **HP**: 12.
     - **Movimiento**: 4.
     - **Armas**:
         - Nombre: Cañón de plasma.
         - Alcance: 3.  
         - Daño: 3.
-        - Descripción: Cañón de plasma. Poco efectivo y de corto alcance.
-    - **Skills**: Sable de plasma.
+        - Descripción: Cañón de plasma compacto montado en el brazo izquierdo. Poco efectivo y de corto alcance.
+    - **Skills**: Sable de plasma (hoja de energía pura y chisporroteante).
   
 - **Bullseye**:
     - **Modelo**: Bullseye.
-    - **Descripción**: También conocido en el terreno de combate como "Glass Cannon" (Cañón de cristal), es un robot muy rápido y con un gran alcance de ataque, además de una puntería infalible cuando carga sus misiles, pero con muy poco blindaje.
+    - **Descripción**: También conocido en el terreno de combate como "Glass Cannon" (Cañón de cristal). Es un robot de artillería móvil con un sensor óptico central de color rojo intenso que proyecta un destello letal. Muy rápido y con gran alcance, pero con blindaje ligero y visiblemente desgastado por el combate.
     - **HP**: 6.
     - **Movimiento**: 5.
     - **Armas**:
         - Nombre: Doble cañón automático.
         - Alcance: 4.  
         - Daño: 5.
-        - Descripción: En lugar de brazos, Bullseye cuenta con dos cañones automáticos que hacen bastante daño a un alcance importante.
+        - Descripción: Brazos integrados convertidos en cañones automáticos rotatorios.
     - **Skills**: Misiles teledirigidos.
   
 - **Bulwark**:
     - **Modelo**: Bulwark.
-    - **Descripción**: Bulwark, también conocido como DOC en el terreno de combate, es un robot muy resistente, no hace mucho daño y es lento, pero su capacidad para recuperar robots aliados lo convierte en una pieza clave del equipo. Su acabado visual usa camuflaje verde oliva con luces técnicas cyan.
+    - **Descripción**: Bulwark, también conocido como DOC en el terreno de combate, es un robot extremadamente robusto y pesado. Su estructura masiva y su capacidad de reparación mediante nanobots lo convierten en el muro infranqueable del equipo. Su acabado visual usa camuflaje verde oliva con luces técnicas cyan.
     - **HP**: 15.
     - **Movimiento**: 4.
     - **Armas**:
         - Nombre: Cañón laser.
         - Alcance: 3.  
         - Daño: 3.
-        - Descripción: Cañón laser montado en el hombro derecho. Poco efectivo y de corto alcance.    
+        - Descripción: Cañón laser montado en el hombro derecho.    
     - **Skills**: Nanobots reparadores.
 
 - **Scout**:
     - **Modelo**: Scout.
-    - **Descripción**: Un robot pequeño y ágil, diseñado para explorar el terreno y detectar enemigos. No tiene mucho blindaje, pero su movilidad, gracias a su velocidad y a los retropropulsores en su espalda, y su temible cañón automático, lo convierten en una pieza clave del equipo. Su pintura usa camuflaje marrón y verde.
+    - **Descripción**: Un robot ligero de reconocimiento con piernas digitígradas que le permiten una agilidad asombrosa. Su cabeza cuenta con un array multisensor cian. Equipado con potentes retropropulsores de plasma azul en la espalda, es capaz de flanquear posiciones enemigas en segundos. Su pintura usa camuflaje táctico marrón y verde.
     - **HP**: 7.
     - **Movimiento**: 5.
     - **Armas**:
         - Nombre: Cañón automático.
         - Alcance: 5.  
         - Daño: 5.
-        - Descripción: Su brazo derecho es un cañón automático de gran alcance y potencia.  
+        - Descripción: Cañón automático de alta precisión integrado en el brazo derecho.  
     - **Skills**: Retropropulsores.
 
 - **Death Knight**:
     - **Modelo**: Death Knight.
-    - **Descripción**: Su color de acero oscuro (dark steel) con acentos carmesí, combinado con su aspecto de mole con un martillo gigante, le hacen valedor de su apelativo. Es un robot lento, pero muy resistente y con un gran ataque cuerpo a cuerpo. No conviene subestimarlo, ya que a pesar de su lentitud, cuando activa sus retropropulsores, puede desplazarse rápidamente por el campo de batalla. 
+    - **Descripción**: Una mole de asalto con una armadura medieval-gótica pesada inspirada en los caballeros oscuros. Su esquema de color es monocromático: negro obsidiana y gris carbón, resaltado únicamente por sus ojos de un rojo intenso con efecto lens flare. Carece de propulsores en la espalda; toda su potencia de empuje reside en los talones de sus pies sobredimensionados y en su martillo gigante propulsado. 
     - **HP**: 13.
     - **Movimiento**: 3.
     - **Armas**:
         - Nombre: Martillo propulsado.
         - Alcance: 1.  
         - Daño: 8.
-        - Descripción: Porta un martillo gigante a dos manos, que le impide llevar ningún otro arma. El martillo tiene retropropulsores que le permiten golpear con una fuerza devastadora. 
-    - **Skills**: turbo propulsores.
+        - Descripción: Martillo masivo a dos manos con múltiples motores de cohete en ignición activa. 
+    - **Skills**: turbo propulsores (integrados en los talones).
 
 - **Ice Age**:
     - **Modelo**: Ice Age.
-    - **Descripción**: Con un diseño muy angular y agresivo, azul y blanco,  Ice Age parece no preocuparse por el camuflaje. Su arma favorita es un rifle de rayo congelador que porta con ambos brazos, y necesita recargarse tras cada uso. Pero no conviene subestimarlo: mientras se carga su rifle, puede usar sus misiles de racimo, que tienen un alcance considerable.
+    - **Descripción**: Especialista en control técnico con un chasis industrial robusto tipo Battletech pero con una cabeza visora de alta tecnología. Sus sensores oculares brillan con un rojo gélido. Su arma principal es un rifle criogénico industrial que ventila nitrógeno líquido constantemente. Es un robot intimidante y preciso en tonos blanco ártico y azul marino.
     - **HP**: 10.
     - **Movimiento**: 4.
     - **Armas**:
         - Nombre: Misiles de racimo
         - Alcance: 6.  
         - Daño: 4.
-        - Descripción: Tiene dos afustes de misiles en los hombros, que disparan misiles de racimo. Tienen muy buen alcance, pero fallan la mita de ellos, por lo que su daño no es tan temible.
+        - Descripción: Lanzamisiles de hombro integrados en cajas cuadradas industriales.
     - **Skills**: Rayo congelador.
 
 ### Dirección visual canónica para concept art (vinculante)
 
-- No usar insignias de facción ni emblemas inventados hasta que las facciones estén definidas.
-- Estética objetivo: mecha militar-industrial tipo Battletech/Pacific Rim.
-- Acabado visual obligatorio: uso realista, suciedad técnica, rayones, marcas de impacto y metal expuesto en zonas de desgaste.
-- Evitar acabados inmaculados o demasiado “de showroom”.
+- Estética objetivo: mecha militar-industrial tipo Battletech pero con toques de diseño heroico o gótico según el modelo.
+- Acabado visual obligatorio: uso de ojos/sensores rojos con efecto lens flare para acentuar la naturaleza de la IA.
+- Desgaste realista: suciedad técnica, rayones, marcas de impacto y metal expuesto.
 - Mantener coherencia estricta arma-mano:
-  - Saber Prime: sable de plasma en mano derecha y arma de plasma/láser en mano izquierda.
-  - Bullseye: brazos convertidos en cañones automáticos.
-  - Death Knight: martillo a dos manos, sin arma secundaria.
+  - Saber Prime: sable de plasma (energía pura) en mano derecha.
+  - Bullseye: brazos-cañón.
+  - Death Knight: gran martillo a dos manos, sin propulsores dorsales.
+  - Scout: piernas digitígradas y retropropulsores de plasma azul.
 
 
 # 6. Interfaz (UI/HUD)

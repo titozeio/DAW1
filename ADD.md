@@ -716,19 +716,15 @@ Inspiración:
 
 Concepto visual:
 
-Saber Prime es un robot de diseño relativamente antiguo, pensado originalmente para ser **pilotado por humanos**, antes de que las IA dominaran el combate.
-
-Su diseño es **claramente humanoide**, con proporciones equilibradas y una estructura robusta. Sensación heroica al verlo.
+Saber Prime es un robot de vanguardia con una silueta heroica y atlética, inspirado en la estética clásica de los grandes mechas pero con tecnología militar moderna.
 
 Características visuales:
 
-- cabeza pequeña con sensor óptico
-- torso blindado
-- brazos completos
-- sable de plasma enorme sujeto por la mano derecha.
-- Cañón de plasma en la mano izquierda.
-
-El sable de plasma debe sentirse como su **arma icónica**.
+- Cabeza inspirada en el estilo icónico de "Victory Saber" (antenas/máscara).
+- Torso blindado estilizado (menos 'bulky').
+- Brazos completos y atléticos.
+- Sable de plasma de energía pura y chisporroteante en la mano derecha.
+- Cañón de plasma compacto en la mano izquierda.
 
 Sensación visual:
 
@@ -754,9 +750,9 @@ En lugar de brazos convencionales, sus extremidades superiores han sido sustitui
 Características visuales:
 
 - torso compacto
-- cañones integrados como brazos
-- sensores avanzados
-- piernas relativamente ligeras
+- cañón automático principal y ópticas de precisión
+- sensor óptico central de color ROJO INTENSO con efecto lens flare
+- piernas relativamente ligeras y móviles
 
 Sensación visual:
 
@@ -817,14 +813,14 @@ Su estructura es:
 
 Características visuales:
 
-- piernas largas
-- retropropulsores en la espalda
-- cañón automático integrado en el brazo
-- sensores avanzados
+- piernas largas de estilo digitígrado
+- retropropulsores de plasma azul en la espalda
+- cañón automático integrado en el brazo derecho
+- array multisensor cian en la cabeza
 
 Sensación visual:
 
-**depredador rápido**
+**depredador rápido y tecnológico**
 
 ---
 
@@ -849,14 +845,16 @@ Su estructura es:
 
 Características visuales:
 
-- blindaje negro
-- hombros anchos
-- martillo gigantesco
-- retropropulsores en las piernas
+- blindaje negro obsidiana y gris carbón (monocromático)
+- silueta medieval-gótica (inspirada en Black Knight de Elden Ring)
+- cabeza híbrida con boca tipo Mazinger (rejilla horizontal) y sin cuernos laterales
+- ojos/sensores rojo intenso con lens flare
+- pies sobredimensionados con retropropulsores integrados en los TALONES
+- martillo gigantesco con motores de cohete activos
 
 Sensación visual:
 
-**bruto de asalto**
+**mole de asalto gótica**
 
 ---
 
@@ -877,14 +875,14 @@ Su arma principal es un **rifle criogénico pesado**, sostenido con ambos brazos
 
 Características visuales:
 
-- armadura azul y blanca
-- rifle largo
-- lanzamisiles en los hombros
-- sensores térmicos
+- armadura blanco ártico y azul marino
+- rifle criogénico industrial masivo con ventilación de nitrógeno
+- lanzamisiles de hombro en cajas cuadradas (estilo industrial)
+- cabeza visora de alta tecnología con sensores rojos
 
 Sensación visual:
 
-**francotirador tecnológico**
+**unidad de control industrial técnico**
 
 # 12. Silhouette Guide (Guía de Siluetas)
 
@@ -961,10 +959,11 @@ Principios:
 
 Paleta:
 
-- azul oscuro (base principal)
-- rojo oscuro/carmesí (acentos)
-- metal expuesto en bordes
-- emisión energética del sable de plasma
+- azul real vibrante (base principal)
+- rojo vibrante (acentos)
+- metal expuesto y arañazos de veteranía
+- energía pura chisporroteante (sable)
+- ojos/sensores rojos con lens flare
 
 Sensación:
 
@@ -977,8 +976,8 @@ Sensación:
 Paleta:
 
 - camuflaje gris oscuro + verde oliva
-- metal industrial ennegrecido
-- acentos mínimos funcionales (sin emblemas)
+- metal industrial ennegrecido y muy desgastado
+- OJO CENTRAL ROJO INTENSO con lens flare
 
 Sensación:
 
@@ -1018,9 +1017,10 @@ Sensación:
 
 Paleta:
 
-- dark steel (acero oscuro)
-- acentos crimson
-- metal expuesto
+- negro obsidiana y gris carbón (monocromático)
+- NO USAR ROJO en armadura
+- ojos/sensores rojo intenso con lens flare
+- fuego naranja de los propulsores (martillo y talones)
 
 Sensación:
 
@@ -1032,9 +1032,10 @@ Sensación:
 
 Paleta:
 
-- blanco
-- azul claro
-- azul oscuro
+- blanco ártico (base)
+- azul marino oscuro (acentos)
+- sensores rojo gélido con lens flare
+- efectos de escarcha acumulada sobre el metal
 
 Sensación:
 
@@ -1068,12 +1069,11 @@ Estilo base recomendado:
 
 ```text
 Hard-surface mecha concept art sheet, strict canon.
-Robot: Saber Prime. Old-generation humanoid mech retrofitted for AI combat.
-Mandatory: plasma saber in RIGHT hand, compact plasma/laser firearm in LEFT hand.
-Silhouette: heroic humanoid, balanced proportions, robust torso.
-Palette: dark navy blue base, red accents, worn metal edges.
-Style: Battletech/Pacific Rim military-industrial, heavy use wear and tear.
-No faction insignias, no logos, no extra weapons, no hand swap.
+Robot: Saber Prime. Vanguard humanoid mech with heroic/athletic silhouette.
+Mandatory: crackling energy plasma saber in RIGHT hand, 'Victory Saber' inspired head.
+Palette: VIBRANT royal blue base, red accents, battle-worn edges.
+Sensors: Glowing red eyes with lens flare.
+Style: Battletech/Pacific Rim military-industrial, heroic anime influence.
 Output: full body front / 3-4 / back, neutral pose, clean background.
 ```
 
@@ -1081,12 +1081,11 @@ Output: full body front / 3-4 / back, neutral pose, clean background.
 
 ```text
 Hard-surface mecha concept art sheet, strict canon.
-Robot: Bullseye. Fast glass-cannon artillery platform.
-Mandatory: both arms replaced with integrated automatic cannons.
-Silhouette: compact torso, long mobile legs, precision hunter profile.
-Palette: dark gray + olive green camouflage, weathered paint and exposed metal.
-Style: Battletech/Pacific Rim military-industrial with realistic combat wear.
-No faction insignias, no logos, no extra melee weapon, no shoulder sword.
+Robot: Bullseye. Glass-cannon artillery platform.
+Mandatory: centralized VIBRANT RED optic sensor with lens flare.
+Silhouette: compact torso, integrated automatic cannons as arms.
+Palette: dark gray + olive camouflage, heavy industrial weathering.
+Style: Battletech military-industrial, realistic battle damage.
 Output: full body front / 3-4 / back, neutral pose, clean background.
 ```
 
@@ -1120,12 +1119,13 @@ Output: full body front / 3-4 / back, neutral pose, clean background.
 
 ```text
 Hard-surface mecha concept art sheet, strict canon.
-Robot: Death Knight. Brutal close-range assault mech.
-Mandatory: giant two-handed propelled war hammer, leg turbo propulsion modules.
-Silhouette: heavy humanoid, wide shoulders, intimidating mass.
-Palette: dark steel base with crimson accents, exposed metal in high-contact zones.
-Style: Battletech/Pacific Rim military-industrial, heavy combat weathering.
-No faction insignias, no logos, no secondary ranged weapon.
+Robot: Death Knight. Medieval-gothic assault mech.
+Mandatory: giant two-handed propelled war hammer, rocket thrusters in HEELS, no back thrusters.
+Silhouette: Elden Ring 'Black Knight' inspired plate armor, massive shoulders.
+Face: Hybrid Mazinger style (vents/crest), NO horns.
+Sensors: Glowing red eyes/slots with lens flare.
+Palette: Monochromatic obsidian black and charcoal gray. Heavy battle damage.
+Style: Cinematic military-industrial with dark fantasy silhouette.
 Output: full body front / 3-4 / back, neutral pose, clean background.
 ```
 
@@ -1150,17 +1150,17 @@ Formato recomendado para Gemini:
 - Si uno funciona, pasa después a la versión larga (14.1–14.6) para pulir.
 
 ```text
-Saber Prime — concept sheet front/3-4/back, humanoid veteran mech, plasma saber RIGHT hand + compact plasma/laser firearm LEFT hand, dark navy + red accents, Battletech/Pacific Rim industrial style, heavy combat wear, no faction insignias/logos, no extra weapons, no hand swap.
+Saber Prime — concept sheet front/3-4/back, heroic humanoid, Victory Saber head, vibrant royal blue + red, crackling plasma saber, red eyes + lens flare, industrial veteran wear.
 
-Bullseye — concept sheet front/3-4/back, artillery glass-cannon mech, both arms are integrated automatic cannons, compact torso and mobile legs, dark gray + olive camouflage, industrial military wear and exposed metal, no insignias/logos, no melee weapon.
+Bullseye — concept sheet front/3-4/back, artillery glass-cannon, arm-cannons, VIBRANT RED central eye with lens flare, olive/gray camo, heavy weathering.
 
-Bulwark — concept sheet front/3-4/back, heavy support tank-like mech, right shoulder laser cannon + visible nanobot repair modules, broad bulky silhouette, olive camouflage + steel gray joints + cyan technical lights, strong weathering, no insignias/logos.
+Bulwark — concept sheet front/3-4/back, heavy support tank, right shoulder laser, bulky silhouette, olive camo + cyan tech lights, worn armor.
 
-Scout — concept sheet front/3-4/back, lightweight recon mech, right-arm automatic cannon + back retro-thrusters, slim agile long-leg silhouette, brown/green camouflage, realistic scratches and dirt, no insignias/logos, no heavy armor look.
+Scout — concept sheet front/3-4/back, agile recon, digitigrade legs, blue plasma back thrusters, cyan sensor head, forest/desert camo.
 
-Death Knight — concept sheet front/3-4/back, heavy assault humanoid, giant two-handed propelled war hammer + leg turbo modules, wide-shoulder intimidating silhouette, dark steel + crimson accents, intense battle wear, no insignias/logos, no secondary ranged weapon.
+Death Knight — concept sheet front/3-4/back, gothic assault, Black Knight Elden Ring armor, Mazinger mouth vents, MASSIVE rocket hammer, heel thrusters, NO back thrusters, monochromatic black/gray, red eyes + lens flare.
 
-Ice Age — concept sheet front/3-4/back, angular semi-humanoid control mech, two-handed cryo rifle + shoulder cluster missiles, white/light-blue/dark-blue palette, industrial military style with chipped paint and impact marks, no insignias/logos, no extra melee weapons.
+Ice Age — concept sheet front/3-4/back, industrial technical, boxy Battletech chassis, technical visor head, red eyes, white/navy palette, frost effects.
 ```
 
 ---
