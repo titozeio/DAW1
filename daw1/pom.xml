@@ -97,6 +97,11 @@
             <version>0.0.8</version>
             <configuration>
                 <mainClass>com.titozeio.engine.Main</mainClass>
+                <launcher>daw1</launcher>
+                <jlinkZipName>daw1</jlinkZipName>
+                <stripDebug>true</stripDebug>
+                <noHeaderFiles>true</noHeaderFiles>
+                <noManPages>true</noManPages>
             </configuration>
         </plugin>
       </plugins>
@@ -108,7 +113,35 @@
         <version>0.0.8</version>
         <configuration>
           <mainClass>com.titozeio.engine.Main</mainClass>
+          <launcher>daw1</launcher>
+          <jlinkZipName>daw1</jlinkZipName>
+          <stripDebug>true</stripDebug>
+          <noHeaderFiles>true</noHeaderFiles>
+          <noManPages>true</noManPages>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.5.2</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+              <shadedArtifactAttached>true</shadedArtifactAttached>
+              <shadedClassifierName>all</shadedClassifierName>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>com.titozeio.engine.Main</mainClass>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
