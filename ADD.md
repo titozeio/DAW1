@@ -77,6 +77,7 @@
   - [14.5 Death Knight](#145-death-knight)
   - [14.6 Ice Age](#146-ice-age)
   - [14.7 Gemini Quick Prompts (1 línea)](#147-gemini-quick-prompts-1-línea)
+  - [14.8 Prompt UI Kit (Gemini)](#148-prompt-ui-kit-gemini)
 - [15. Futuras ampliaciones del apartado artístico](#15-futuras-ampliaciones-del-apartado-artístico)
 
 ---
@@ -1163,6 +1164,57 @@ Death Knight — concept sheet front/3-4/back, gothic assault, Black Knight Elde
 Ice Age — concept sheet front/3-4/back, industrial technical, streamlined angular frame, technical Robocop-style horizontal visor head, blue glowing sensor line, white/navy palette, frost effects.
 ```
 
+## 14.8 Prompt UI Kit (Gemini)
+
+Prompt recomendado para generar un kit completo de UI coherente con DAW1:
+
+```text
+Generate a complete UI kit for a turn-based tactical mech game (JavaFX desktop, 16:9), focused on clarity and military-industrial style.
+
+STYLE DIRECTION:
+- Clean modern UI, not pixel art
+- Military-industrial sci-fi, inspired by Battletech/Pacific Rim interfaces
+- Functional, readable, tactical
+- Subtle wear on frames/panels (light scratches), but keep text areas clean
+- No faction insignias, no random logos, no placeholder gibberish text
+
+COLOR / MATERIAL:
+- Dark graphite and steel base panels
+- Cyan/teal accents for interactive elements
+- Orange/red for warnings and enemy states
+- Green/yellow/red HP states
+- High contrast and accessibility-first readability
+
+DELIVERABLE (single coherent UI kit):
+1. Primary buttons: normal, hover, pressed, disabled
+2. Secondary buttons and icon buttons (pause, end turn, skill)
+3. Panel system: card panel, HUD panel, modal/overlay panel, tooltip panel
+4. Labels and badges: turn indicator, objective badge, cooldown badge, selected state badge
+5. Bars/meters: HP bar segmented, cooldown bar, progress bar
+6. Tabs and list items for combat log
+7. Hex highlight overlays (movement, attack, skill) with clear distinct colors
+8. Selection frames for robot cards (normal/selected/disabled)
+9. Window background plates and separators/dividers
+10. End-of-match victory modal with title, reason, turn number
+
+LAYOUT PREVIEWS TO INCLUDE:
+- Main menu screen mockup
+- Robot selection screen mockup (cards + description panel + confirm button)
+- Combat screen HUD mockup (top turn/objective, right info panel, bottom combat log, map overlays)
+- Victory popup mockup
+
+TECHNICAL CONSTRAINTS:
+- Flat/semi-flat assets suitable for slicing in JavaFX
+- Export-friendly, no baked perspective distortion in UI components
+- Consistent spacing system (8px grid feel)
+- Components reusable and modular
+- IMPORTANT: most image generators do not handle transparency well. Do NOT use transparent backgrounds. Place all UI assets over a single uniform chroma background color (#00FF00), with no gradients and no background shadows, so elements can be cut out easily.
+
+OUTPUT FORMAT:
+- Clean UI kit sheet + 3 screen mockups
+- Background must stay solid chroma green (#00FF00) across all outputs
+- Resolution target: 1920x1080 reference
+```
 ---
 
 # 15. Futuras ampliaciones del apartado artístico
@@ -1175,3 +1227,4 @@ En versiones futuras del proyecto el apartado artístico podría ampliarse con:
 - efectos visuales más complejos
 - animaciones avanzadas
 - destrucción del entorno
+
