@@ -1,6 +1,7 @@
 package com.titozeio.engine;
 
-import com.titozeio.ui.MainMenuScreen;
+import com.titozeio.enums.RobotTemplate;
+import com.titozeio.ui.GameScreen;
 import com.titozeio.ui.Screen;
 import com.titozeio.victory.BaseCaptureVC;
 import com.titozeio.victory.EliminationVC;
@@ -10,6 +11,7 @@ import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Game {
 
@@ -47,10 +49,30 @@ public class Game {
     }
 
     public void start() {
-        startMusic();
-        // Carga y muestra la pantalla inicial
-        MainMenuScreen mainMenu = MainMenuScreen.create(this.stage, this);
-        displayScreen(mainMenu);
+        // Música desactivada temporalmente para acelerar pruebas.
+        assignRandomTeams();
+        displayScreen(GameScreen.create(this));
+    }
+
+    /**
+     * Asigna equipos aleatorios (3 robots por jugador) para pruebas rápidas.
+     * Se usa todo el pool de robots del MVP: 6 en total (3 y 3).
+     */
+    private void assignRandomTeams() {
+        p1.getUnits().clear();
+        p2.getUnits().clear();
+
+        List<RobotTemplate> pool = new ArrayList<>(List.of(RobotTemplate.values()));
+        Collections.shuffle(pool);
+
+        for (int i = 0; i < pool.size(); i++) {
+            RobotTemplate template = pool.get(i);
+            if (i < 3) {
+                p1.addUnit(template.createRobot(p1));
+            } else {
+                p2.addUnit(template.createRobot(p2));
+            }
+        }
     }
 
     private void startMusic() {

@@ -3,6 +3,8 @@ package com.titozeio.ui;
 import com.titozeio.engine.Hexagon;
 import com.titozeio.engine.Map;
 import com.titozeio.engine.Robot;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
@@ -58,6 +60,8 @@ public class HexRenderer {
     // ── Borde de los hexágonos ────────────────────────────────────────────────
     private static final Color C_STROKE = Color.web("#0a1008", 0.6);
     private static final double STROKE_WIDTH = 1.2;
+    /** Sprite temporal para pruebas de token de robot en mapa. */
+    private static final Image ROBOT_TEST_SPRITE = loadRobotTestSprite();
 
     // ── Estado interno ────────────────────────────────────────────────────────
     /** Pane objetivo donde se dibujan los nodos. */
@@ -310,42 +314,41 @@ public class HexRenderer {
 
     /**
      * Dibuja el token del robot sobre el hexágono.
-     * El token es un círculo de color del equipo con las iniciales del modelo
-     * y una barra de HP debajo.
+     * Temporalmente usa un sprite único de prueba para todos los robots
+     * y mantiene la barra de HP debajo.
      */
     private void renderRobotToken(double cx, double cy, Robot robot) {
-        boolean isP1 = robot.getOwner() != null && robot.getOwner().getName().equals("Jugador 1");
-        Color baseColor = isP1 ? Color.web("#2255bb") : Color.web("#bb2222");
-        Color glowColor = isP1 ? Color.web("#88bbff", 0.8) : Color.web("#ff8888", 0.8);
-        double radius = HEX_SIZE * 0.45;
+        double spriteSize = HEX_SIZE * 1.8;
+        double yOffset = HEX_SIZE * 0.15;
 
-        // Sombra / halo exterior
-        javafx.scene.shape.Circle halo = new javafx.scene.shape.Circle(cx, cy, radius + 3);
-        halo.setFill(glowColor);
-        halo.setMouseTransparent(true);
-        pane.getChildren().add(halo);
+        if (ROBOT_TEST_SPRITE != null) {
+            ImageView spriteView = new ImageView(ROBOT_TEST_SPRITE);
+            spriteView.setFitWidth(spriteSize);
+            spriteView.setFitHeight(spriteSize);
+            spriteView.setPreserveRatio(true);
+            spriteView.setSmooth(true);
+            spriteView.setMouseTransparent(true);
+            spriteView.setX(cx - spriteSize / 2.0);
+            spriteView.setY(cy - spriteSize / 2.0 - yOffset);
+            pane.getChildren().add(spriteView);
+        } else {
+            // Fallback si no se encuentra el sprite de prueba
+            javafx.scene.shape.Circle fallback = new javafx.scene.shape.Circle(cx, cy, HEX_SIZE * 0.4);
+            fallback.setFill(Color.web("#333333"));
+            fallback.setStroke(Color.WHITE);
+            fallback.setStrokeWidth(1.0);
+            fallback.setMouseTransparent(true);
+            pane.getChildren().add(fallback);
+        }
 
-        // Círculo base del token
-        javafx.scene.shape.Circle circle = new javafx.scene.shape.Circle(cx, cy, radius);
-        circle.setFill(baseColor);
-        circle.setStroke(Color.WHITE);
-        circle.setStrokeWidth(1.5);
-        circle.setMouseTransparent(true);
-        pane.getChildren().add(circle);
+        renderHpBar(cx, cy + HEX_SIZE * 0.55, robot);
+    }
 
-        // Iniciales del modelo (2 caracteres)
-        String initials = getInitials(robot.getModelName());
-        Text nameText = new Text(initials);
-        nameText.setFont(Font.font("Exo 2", FontWeight.BOLD, 11));
-        nameText.setFill(Color.WHITE);
-        nameText.setTextAlignment(TextAlignment.CENTER);
-        nameText.setX(cx - nameText.getLayoutBounds().getWidth() / 2.0);
-        nameText.setY(cy + 4);
-        nameText.setMouseTransparent(true);
-        pane.getChildren().add(nameText);
-
-        // Barra de HP debajo del token
-        renderHpBar(cx, cy + radius + 5, robot);
+    private static Image loadRobotTestSprite() {
+        var resource = HexRenderer.class.getResource("/com/titozeio/sprites/saberprime.png");
+        if (resource == null)
+            return null;
+        return new Image(resource.toExternalForm());
     }
 
     private void renderHpBar(double cx, double barY, Robot robot) {
