@@ -29,7 +29,7 @@
      - skillCooldownText  → cooldown de la skill
 -->
 <FlowPane fx:id="cardRoot"
-          xmlns="http://javafx.com/javafx/25"
+          xmlns="http://javafx.com/javafx/21"
           xmlns:fx="http://javafx.com/fxml/1"
           fx:controller="com.titozeio.ui.RobotCardController"
           prefHeight="410.0" prefWidth="0.0"

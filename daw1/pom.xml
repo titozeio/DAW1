@@ -149,18 +149,13 @@
         <version>3.2.5</version>
         <configuration>
           <argLine>@{argLine} --enable-native-access=ALL-UNNAMED</argLine>
+          <redirectTestOutputToFile>true</redirectTestOutputToFile>
         </configuration>
       </plugin>
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
         <version>0.8.11</version>
-        <configuration>
-          <excludes>
-            <exclude>com/titozeio/ui/**</exclude>
-            <exclude>com/titozeio/engine/Main*</exclude>
-          </excludes>
-        </configuration>
         <executions>
           <execution>
             <id>prepare-agent</id>

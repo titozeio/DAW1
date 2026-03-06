@@ -22,7 +22,7 @@
    Para editar el diseño de las tarjetas → abre RobotCard.fxml en SceneBuilder.
    Para editar el resto de la pantalla → edita este archivo.
 -->
-<StackPane xmlns="http://javafx.com/javafx/25"
+<StackPane xmlns="http://javafx.com/javafx/21"
            xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="com.titozeio.ui.RobotSelectionScreen">
    <children>
