@@ -38,11 +38,13 @@ jobs:
             daw1/target/site/jacoco/**
           if-no-files-found: warn
 
-      - name: Build executable JAR
+      - name: Build executable JAR (main only)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         working-directory: daw1
         run: mvn -B -DskipTests clean package
 
-      - name: Build native Windows app-image (no Java required)
+      - name: Build native Windows app-image (no Java required) (main only)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         shell: pwsh
         run: |
           $jpackageExe = Join-Path $env:JAVA_HOME "bin\\jpackage.exe"
@@ -69,7 +71,8 @@ jobs:
           }
           Compress-Archive -Path "daw1/target/dist/DAW1/*" -DestinationPath "daw1/target/dist/DAW1-app-image-windows.zip" -Force
 
-      - name: Upload binary artifact
+      - name: Upload binary artifact (main only)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v4
         with:
           name: daw1-windows-latest-binary
