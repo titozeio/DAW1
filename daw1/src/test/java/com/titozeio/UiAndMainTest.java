@@ -122,23 +122,17 @@ class UiAndMainTest {
     }
 
     @Test
-    void launcherMainDoesNotThrowUnexpectedExceptions() {
-        // Launcher.main() llama a Main.main() que intenta lanzar JavaFX.
-        // Como el toolkit ya puede estar inicializado en el contexto de tests,
-        // solo aceptamos IllegalStateException (ya iniciado) o que no lance nada.
-        try {
-            // Ejecutar en un hilo aparte para no bloquear la suite si JavaFX intenta
-            // inicializar; capturamos la excepción conocida de "ya iniciado".
-            Launcher.main(new String[] {});
-            // Si llega aquí sin excepción en un entorno con display: correcto.
-        } catch (IllegalStateException ise) {
-            // "Toolkit already initialized" o similar: correcto en entornos de test.
-            assertTrue(ise.getMessage() == null
-                    || ise.getMessage().contains("launched")
-                    || ise.getMessage().contains("initialized")
-                    || ise.getMessage().contains("started"),
-                    "IllegalStateException inesperado: " + ise.getMessage());
-        }
+    void launcherMainMethodExistsWithCorrectSignature() throws Exception {
+        // Verificamos via reflexión que Launcher tiene un método main(String[])
+        // público y estático. No lo invocamos porque Application.launch() es
+        // bloqueante y colgaría la suite de tests.
+        java.lang.reflect.Method mainMethod = Launcher.class.getDeclaredMethod("main", String[].class);
+        assertTrue(java.lang.reflect.Modifier.isPublic(mainMethod.getModifiers()),
+                "main() debe ser public");
+        assertTrue(java.lang.reflect.Modifier.isStatic(mainMethod.getModifiers()),
+                "main() debe ser static");
+        assertEquals(void.class, mainMethod.getReturnType(),
+                "main() debe retornar void");
     }
 
 }
