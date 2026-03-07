@@ -17,6 +17,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -40,6 +42,8 @@ public class GameScreen extends Screen {
     @FXML
     private StackPane rootPane;
     @FXML
+    private ImageView battlefieldBg;
+    @FXML
     private StackPane mapContainer;
     @FXML
     private Pane hexMapPane;
@@ -47,8 +51,6 @@ public class GameScreen extends Screen {
     private Label turnLabel;
     @FXML
     private Label objectiveShortLabel;
-    @FXML
-    private Button pauseButton;
     @FXML
     private Label infoDetailsLabel;
     @FXML
@@ -126,17 +128,38 @@ public class GameScreen extends Screen {
 
     // ── Inicialización ────────────────────────────────────────────────────────
     private void initializeUI() {
+        configureBackground();
         hexRenderer = new HexRenderer(hexMapPane);
         hexRenderer.setOnHexClick(this::onHexClicked);
         hexRenderer.render(game.getMap());
 
-        pauseButton.setOnAction(e -> System.out.println("Pausa activada."));
         endTurnButton.setDisable(true);
         skillButton.setDisable(true);
         overlayAcceptButton.setOnAction(e -> overlayPane.setVisible(false));
         victoryMenuButton.setOnAction(e -> returnToMenu());
 
         startDeployPhase();
+    }
+
+    private void configureBackground() {
+        if (battlefieldBg == null) {
+            return;
+        }
+        battlefieldBg.setImage(loadBackgroundImage());
+    }
+
+    private Image loadBackgroundImage() {
+        String[] candidates = {
+                "/com/titozeio/images/bg1.jpg",
+                "/com/titozeio/images/bg2.jpg"
+        };
+        for (String path : candidates) {
+            var resource = GameScreen.class.getResource(path);
+            if (resource != null) {
+                return new Image(resource.toExternalForm());
+            }
+        }
+        return null;
     }
 
     // ── Despliegue ────────────────────────────────────────────────────────────

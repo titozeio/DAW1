@@ -3,6 +3,8 @@ package com.titozeio.ui;
 import com.titozeio.engine.Hexagon;
 import com.titozeio.engine.Map;
 import com.titozeio.engine.Robot;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
@@ -14,7 +16,9 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -58,6 +62,8 @@ public class HexRenderer {
     // ── Borde de los hexágonos ────────────────────────────────────────────────
     private static final Color C_STROKE = Color.web("#0a1008", 0.6);
     private static final double STROKE_WIDTH = 1.2;
+    /** Cache de sprites cargados por nombre de modelo de robot. */
+    private static final java.util.Map<String, Image> ROBOT_SPRITE_CACHE = new HashMap<>();
 
     // ── Estado interno ────────────────────────────────────────────────────────
     /** Pane objetivo donde se dibujan los nodos. */
@@ -191,9 +197,15 @@ public class HexRenderer {
                 onHexClick.accept(captured);
         });
 
-        // Hover visual sutil
-        base.setOnMouseEntered(e -> base.setOpacity(0.8));
-        base.setOnMouseExited(e -> base.setOpacity(1.0));
+        // Hover visual sin alterar alpha del relleno (evita que se vea el fondo).
+        base.setOnMouseEntered(e -> {
+            base.setStroke(Color.web("#bfefff", 0.95));
+            base.setStrokeWidth(STROKE_WIDTH + 0.8);
+        });
+        base.setOnMouseExited(e -> {
+            base.setStroke(C_STROKE);
+            base.setStrokeWidth(STROKE_WIDTH);
+        });
 
         pane.getChildren().add(base);
 
@@ -310,42 +322,117 @@ public class HexRenderer {
 
     /**
      * Dibuja el token del robot sobre el hexágono.
-     * El token es un círculo de color del equipo con las iniciales del modelo
-     * y una barra de HP debajo.
+     * Intenta cargar el sprite específico del modelo y, si no existe, usa fallback.
      */
     private void renderRobotToken(double cx, double cy, Robot robot) {
-        boolean isP1 = robot.getOwner() != null && robot.getOwner().getName().equals("Jugador 1");
-        Color baseColor = isP1 ? Color.web("#2255bb") : Color.web("#bb2222");
-        Color glowColor = isP1 ? Color.web("#88bbff", 0.8) : Color.web("#ff8888", 0.8);
-        double radius = HEX_SIZE * 0.45;
+        double spriteSize = HEX_SIZE * 1.8;
+        double yOffset = HEX_SIZE * 0.15;
+        Image sprite = resolveRobotSprite(robot);
 
-        // Sombra / halo exterior
-        javafx.scene.shape.Circle halo = new javafx.scene.shape.Circle(cx, cy, radius + 3);
-        halo.setFill(glowColor);
-        halo.setMouseTransparent(true);
-        pane.getChildren().add(halo);
+        if (sprite != null) {
+            ImageView spriteView = new ImageView(sprite);
+            spriteView.setFitWidth(spriteSize);
+            spriteView.setFitHeight(spriteSize);
+            spriteView.setPreserveRatio(true);
+            spriteView.setSmooth(true);
+            spriteView.setMouseTransparent(true);
+            spriteView.setX(cx - spriteSize / 2.0);
+            spriteView.setY(cy - spriteSize / 2.0 - yOffset);
+            pane.getChildren().add(spriteView);
+        } else {
+            // Fallback si no se encuentra el sprite de prueba
+            javafx.scene.shape.Circle fallback = new javafx.scene.shape.Circle(cx, cy, HEX_SIZE * 0.4);
+            fallback.setFill(Color.web("#333333"));
+            fallback.setStroke(Color.WHITE);
+            fallback.setStrokeWidth(1.0);
+            fallback.setMouseTransparent(true);
+            pane.getChildren().add(fallback);
+        }
 
-        // Círculo base del token
-        javafx.scene.shape.Circle circle = new javafx.scene.shape.Circle(cx, cy, radius);
-        circle.setFill(baseColor);
-        circle.setStroke(Color.WHITE);
-        circle.setStrokeWidth(1.5);
-        circle.setMouseTransparent(true);
-        pane.getChildren().add(circle);
+        renderHpBar(cx, cy + HEX_SIZE * 0.55, robot);
+    }
 
-        // Iniciales del modelo (2 caracteres)
-        String initials = getInitials(robot.getModelName());
-        Text nameText = new Text(initials);
-        nameText.setFont(Font.font("Exo 2", FontWeight.BOLD, 11));
-        nameText.setFill(Color.WHITE);
-        nameText.setTextAlignment(TextAlignment.CENTER);
-        nameText.setX(cx - nameText.getLayoutBounds().getWidth() / 2.0);
-        nameText.setY(cy + 4);
-        nameText.setMouseTransparent(true);
-        pane.getChildren().add(nameText);
+    private static Image resolveRobotSprite(Robot robot) {
+        String ownerSuffix = ownerSuffix(robot);
+        String key = robot.getModelName() + "|" + ownerSuffix;
+        if (ROBOT_SPRITE_CACHE.containsKey(key)) {
+            return ROBOT_SPRITE_CACHE.get(key);
+        }
 
-        // Barra de HP debajo del token
-        renderHpBar(cx, cy + radius + 5, robot);
+        List<String> candidates = spriteCandidatesFor(robot.getModelName(), ownerSuffix);
+        for (String candidate : candidates) {
+            var resource = HexRenderer.class.getResource("/com/titozeio/sprites/" + candidate + ".png");
+            if (resource != null) {
+                Image image = new Image(resource.toExternalForm());
+                ROBOT_SPRITE_CACHE.put(key, image);
+                return image;
+            }
+        }
+
+        ROBOT_SPRITE_CACHE.put(key, null);
+        return null;
+    }
+
+    private static String ownerSuffix(Robot robot) {
+        if (robot == null || robot.getOwner() == null || robot.getOwner().getName() == null) {
+            return "";
+        }
+        String ownerName = robot.getOwner().getName().trim().toLowerCase().replace(" ", "");
+        if (ownerName.contains("jugador1") || ownerName.contains("player1") || ownerName.contains("p1")
+                || ownerName.endsWith("1")) {
+            return "_p1";
+        }
+        if (ownerName.contains("jugador2") || ownerName.contains("player2") || ownerName.contains("p2")
+                || ownerName.endsWith("2")) {
+            return "_p2";
+        }
+        return "";
+    }
+
+    private static List<String> spriteCandidatesFor(String modelName, String ownerSuffix) {
+        String normalized = modelName == null ? "" : modelName.trim().toLowerCase();
+        switch (normalized) {
+            case "victory saber":
+                return withFallbacks("saberprime", ownerSuffix);
+            case "death knight":
+                return withFallbacks("death_knight", ownerSuffix);
+            case "scout":
+                return withFallbacks("scout", ownerSuffix);
+            case "bullseye":
+                return withFallbacks("bullseye", ownerSuffix);
+            case "bulwark":
+                return withFallbacks("bulwark", ownerSuffix, "Bulwark");
+            case "ice age":
+                return withFallbacks("ice_age", ownerSuffix);
+            default:
+                return withFallbacks("saberprime", ownerSuffix);
+        }
+    }
+
+    private static List<String> withFallbacks(String primaryBase, String ownerSuffix) {
+        return withFallbacks(primaryBase, ownerSuffix, primaryBase);
+    }
+
+    private static List<String> withFallbacks(String primaryBase, String ownerSuffix, String altPrimaryBase) {
+        if (ownerSuffix == null || ownerSuffix.isBlank()) {
+            return List.of(
+                    primaryBase,
+                    altPrimaryBase,
+                    "saberprime",
+                    "death_knight",
+                    "scout");
+        }
+        return List.of(
+                primaryBase + ownerSuffix,
+                altPrimaryBase + ownerSuffix,
+                primaryBase,
+                altPrimaryBase,
+                "saberprime" + ownerSuffix,
+                "death_knight" + ownerSuffix,
+                "scout" + ownerSuffix,
+                "saberprime",
+                "death_knight",
+                "scout");
     }
 
     private void renderHpBar(double cx, double barY, Robot robot) {
