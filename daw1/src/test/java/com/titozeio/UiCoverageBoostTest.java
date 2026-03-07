@@ -233,7 +233,6 @@ class UiCoverageBoostTest {
         set(s, "hexMapPane", new Pane());
         set(s, "turnLabel", new Label());
         set(s, "objectiveShortLabel", new Label());
-        set(s, "pauseButton", new Button());
         set(s, "infoDetailsLabel", new Label());
         set(s, "logScrollPane", new ScrollPane());
         set(s, "combatLogContent", new VBox());

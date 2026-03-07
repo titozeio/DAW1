@@ -114,6 +114,11 @@ public class Game {
     private void playThemeTrack(MusicTheme theme, int trackNumber) {
         stopCurrentMusic();
 
+        // Evitar inicialización de audio en entornos sin interfaz gráfica o sin soporte
+        if (stage == null || !isAudioSupported()) {
+            return;
+        }
+
         String path = getTrackPath(theme, trackNumber);
         var resource = getClass().getResource(path);
         if (resource == null) {
@@ -194,9 +199,21 @@ public class Game {
             volumeFadeTimeline = null;
         }
         if (mediaPlayer != null) {
-            mediaPlayer.stop();
-            mediaPlayer.dispose();
+            try {
+                mediaPlayer.stop();
+                mediaPlayer.dispose();
+            } catch (Exception ignored) {
+            }
             mediaPlayer = null;
+        }
+    }
+
+    private boolean isAudioSupported() {
+        try {
+            // Verificamos si la plataforma soporta MEDIA de forma segura
+            return javafx.application.Platform.isSupported(javafx.application.ConditionalFeature.MEDIA);
+        } catch (Exception e) {
+            return false;
         }
     }
 
