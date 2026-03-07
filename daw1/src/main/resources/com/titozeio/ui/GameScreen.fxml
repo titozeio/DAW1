@@ -20,7 +20,7 @@
       <!-- Fondo base (textura o rejilla scifi) -->
       <ImageView fx:id="battlefieldBg" fitHeight="720.0" fitWidth="1280.0" opacity="1.0" pickOnBounds="true">
          <image>
-            <Image url="@../images/bg1.png" />
+            <Image url="@../images/bg2.jpg" />
          </image>
       </ImageView>
 

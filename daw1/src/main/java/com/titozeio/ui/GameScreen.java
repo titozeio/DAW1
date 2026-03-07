@@ -150,9 +150,8 @@ public class GameScreen extends Screen {
 
     private Image loadBackgroundImage() {
         String[] candidates = {
-                "/com/titozeio/images/bg2.png",
-                "/com/titozeio/images/bg2.jpg",
-                "/com/titozeio/images/bg1.png"
+                "/com/titozeio/images/bg1.jpg",
+                "/com/titozeio/images/bg2.jpg"
         };
         for (String path : candidates) {
             var resource = GameScreen.class.getResource(path);
