@@ -197,9 +197,15 @@ public class HexRenderer {
                 onHexClick.accept(captured);
         });
 
-        // Hover visual sutil
-        base.setOnMouseEntered(e -> base.setOpacity(0.8));
-        base.setOnMouseExited(e -> base.setOpacity(1.0));
+        // Hover visual sin alterar alpha del relleno (evita que se vea el fondo).
+        base.setOnMouseEntered(e -> {
+            base.setStroke(Color.web("#bfefff", 0.95));
+            base.setStrokeWidth(STROKE_WIDTH + 0.8);
+        });
+        base.setOnMouseExited(e -> {
+            base.setStroke(C_STROKE);
+            base.setStrokeWidth(STROKE_WIDTH);
+        });
 
         pane.getChildren().add(base);
 
@@ -347,12 +353,13 @@ public class HexRenderer {
     }
 
     private static Image resolveRobotSprite(Robot robot) {
-        String key = robot.getModelName();
+        String ownerSuffix = ownerSuffix(robot);
+        String key = robot.getModelName() + "|" + ownerSuffix;
         if (ROBOT_SPRITE_CACHE.containsKey(key)) {
             return ROBOT_SPRITE_CACHE.get(key);
         }
 
-        List<String> candidates = spriteCandidatesFor(robot.getModelName());
+        List<String> candidates = spriteCandidatesFor(robot.getModelName(), ownerSuffix);
         for (String candidate : candidates) {
             var resource = HexRenderer.class.getResource("/com/titozeio/sprites/" + candidate + ".png");
             if (resource != null) {
@@ -366,24 +373,66 @@ public class HexRenderer {
         return null;
     }
 
-    private static List<String> spriteCandidatesFor(String modelName) {
+    private static String ownerSuffix(Robot robot) {
+        if (robot == null || robot.getOwner() == null || robot.getOwner().getName() == null) {
+            return "";
+        }
+        String ownerName = robot.getOwner().getName().trim().toLowerCase().replace(" ", "");
+        if (ownerName.contains("jugador1") || ownerName.contains("player1") || ownerName.contains("p1")
+                || ownerName.endsWith("1")) {
+            return "_p1";
+        }
+        if (ownerName.contains("jugador2") || ownerName.contains("player2") || ownerName.contains("p2")
+                || ownerName.endsWith("2")) {
+            return "_p2";
+        }
+        return "";
+    }
+
+    private static List<String> spriteCandidatesFor(String modelName, String ownerSuffix) {
         String normalized = modelName == null ? "" : modelName.trim().toLowerCase();
         switch (normalized) {
             case "victory saber":
-                return List.of("saberprime", "death_knight", "scout");
+                return withFallbacks("saberprime", ownerSuffix);
             case "death knight":
-                return List.of("death_knight", "saberprime", "scout");
+                return withFallbacks("death_knight", ownerSuffix);
             case "scout":
-                return List.of("scout", "saberprime", "death_knight");
+                return withFallbacks("scout", ownerSuffix);
             case "bullseye":
-                return List.of("bullseye", "saberprime", "death_knight", "scout");
+                return withFallbacks("bullseye", ownerSuffix);
             case "bulwark":
-                return List.of("bulwark", "saberprime", "death_knight", "scout");
+                return withFallbacks("bulwark", ownerSuffix, "Bulwark");
             case "ice age":
-                return List.of("ice_age", "saberprime", "death_knight", "scout");
+                return withFallbacks("ice_age", ownerSuffix);
             default:
-                return List.of("saberprime", "death_knight", "scout");
+                return withFallbacks("saberprime", ownerSuffix);
         }
+    }
+
+    private static List<String> withFallbacks(String primaryBase, String ownerSuffix) {
+        return withFallbacks(primaryBase, ownerSuffix, primaryBase);
+    }
+
+    private static List<String> withFallbacks(String primaryBase, String ownerSuffix, String altPrimaryBase) {
+        if (ownerSuffix == null || ownerSuffix.isBlank()) {
+            return List.of(
+                    primaryBase,
+                    altPrimaryBase,
+                    "saberprime",
+                    "death_knight",
+                    "scout");
+        }
+        return List.of(
+                primaryBase + ownerSuffix,
+                altPrimaryBase + ownerSuffix,
+                primaryBase,
+                altPrimaryBase,
+                "saberprime" + ownerSuffix,
+                "death_knight" + ownerSuffix,
+                "scout" + ownerSuffix,
+                "saberprime",
+                "death_knight",
+                "scout");
     }
 
     private void renderHpBar(double cx, double barY, Robot robot) {

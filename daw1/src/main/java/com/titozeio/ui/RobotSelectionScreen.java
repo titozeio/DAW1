@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import com.titozeio.engine.Game;
@@ -215,6 +216,28 @@ public class RobotSelectionScreen extends Screen {
         }
     }
 
+    /**
+     * Salta la selección manual y reparte equipos aleatorios (3 robots por jugador).
+     */
+    @FXML
+    public void handleSkipAction() {
+        List<RobotTemplate> pool = new ArrayList<>(Arrays.asList(RobotTemplate.values()));
+        Collections.shuffle(pool);
+
+        player1Templates.clear();
+        player2Templates.clear();
+
+        for (int i = 0; i < pool.size(); i++) {
+            if (i < MAX_ROBOTS_PER_PLAYER) {
+                player1Templates.add(pool.get(i));
+            } else {
+                player2Templates.add(pool.get(i));
+            }
+        }
+
+        transitionToCombatScreen();
+    }
+
     private boolean isSelectionComplete() {
         return player1Templates.size() == MAX_ROBOTS_PER_PLAYER
                 && player2Templates.size() == MAX_ROBOTS_PER_PLAYER;
@@ -233,6 +256,10 @@ public class RobotSelectionScreen extends Screen {
         // Obtener los jugadores ya creados en Game
         Player p1 = game.getP1();
         Player p2 = game.getP2();
+
+        // Limpieza defensiva por si ya venían equipos cargados.
+        p1.getUnits().clear();
+        p2.getUnits().clear();
 
         // Instanciar los robots reales con su owner y añadirlos al equipo
         for (RobotTemplate t : player1Templates) {
