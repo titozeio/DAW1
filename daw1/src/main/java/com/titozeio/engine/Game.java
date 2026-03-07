@@ -1,12 +1,18 @@
 package com.titozeio.engine;
 
 import com.titozeio.ui.MainMenuScreen;
+import com.titozeio.ui.GameScreen;
 import com.titozeio.ui.Screen;
 import com.titozeio.victory.BaseCaptureVC;
 import com.titozeio.victory.EliminationVC;
 import com.titozeio.victory.VictoryCondition;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.PauseTransition;
+import javafx.animation.Timeline;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
 import javafx.stage.Stage;
 import java.util.List;
 import java.util.ArrayList;
@@ -22,9 +28,24 @@ public class Game {
     private Screen currentScreen;
     private List<VictoryCondition> victoryConditions;
     private MediaPlayer mediaPlayer;
+    private Timeline volumeFadeTimeline;
+    private PauseTransition fadeOutTrigger;
+    private MusicTheme currentMusicTheme;
+    private int currentTrackNumber = 1;
 
     // Referencia a la ventana de JavaFX
     private Stage stage;
+
+    private enum MusicTheme {
+        MENU("menu"),
+        BATTLE("battle");
+
+        private final String prefix;
+
+        MusicTheme(String prefix) {
+            this.prefix = prefix;
+        }
+    }
 
     public Game(Stage stage) {
         this.stage = stage;
@@ -47,25 +68,7 @@ public class Game {
     }
 
     public void start() {
-        // Música desactivada temporalmente para acelerar pruebas.
         displayScreen(MainMenuScreen.create(stage, this));
-    }
-
-    private void startMusic() {
-        try {
-            var resource = getClass().getResource("/com/titozeio/sounds/song.mp3");
-            if (resource != null) {
-                Media media = new Media(resource.toExternalForm());
-                mediaPlayer = new MediaPlayer(media);
-                mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-                mediaPlayer.play();
-                System.out.println("Música iniciada correctamente.");
-            } else {
-                System.err.println("No se encontró el archivo de música: /com/titozeio/sounds/song.mp3");
-            }
-        } catch (Exception e) {
-            System.err.println("Error al reproducir música: " + e.getMessage());
-        }
     }
 
     public void nextTurn() {
@@ -95,8 +98,106 @@ public class Game {
     }
 
     public void displayScreen(Screen screen) {
+        updateMusicForScreen(screen);
         this.currentScreen = screen;
         this.currentScreen.display();
+    }
+
+    private void updateMusicForScreen(Screen screen) {
+        MusicTheme targetTheme = (screen instanceof GameScreen) ? MusicTheme.BATTLE : MusicTheme.MENU;
+        if (mediaPlayer != null && currentMusicTheme == targetTheme) {
+            return;
+        }
+        playThemeTrack(targetTheme, 1);
+    }
+
+    private void playThemeTrack(MusicTheme theme, int trackNumber) {
+        stopCurrentMusic();
+
+        String path = getTrackPath(theme, trackNumber);
+        var resource = getClass().getResource(path);
+        if (resource == null) {
+            if (trackNumber != 1) {
+                playThemeTrack(theme, 1);
+            } else {
+                System.err.println("No se encontró música para el tema '" + theme.prefix + "' en: " + path);
+            }
+            return;
+        }
+
+        try {
+            Media media = new Media(resource.toExternalForm());
+            mediaPlayer = new MediaPlayer(media);
+            currentMusicTheme = theme;
+            currentTrackNumber = trackNumber;
+
+            mediaPlayer.setOnReady(() -> {
+                mediaPlayer.setVolume(0.0);
+                mediaPlayer.play();
+                fadeVolume(0.0, 1.0, Duration.seconds(2));
+                scheduleFadeOutBeforeEnd();
+            });
+
+            mediaPlayer.setOnEndOfMedia(() -> {
+                int next = resolveNextTrackNumber(theme, currentTrackNumber);
+                playThemeTrack(theme, next);
+            });
+        } catch (Exception e) {
+            System.err.println("Error al reproducir música (" + path + "): " + e.getMessage());
+        }
+    }
+
+    private int resolveNextTrackNumber(MusicTheme theme, int currentNumber) {
+        int next = currentNumber + 1;
+        String nextPath = getTrackPath(theme, next);
+        return getClass().getResource(nextPath) != null ? next : 1;
+    }
+
+    private String getTrackPath(MusicTheme theme, int trackNumber) {
+        return "/com/titozeio/sounds/" + theme.prefix + trackNumber + ".mp3";
+    }
+
+    private void scheduleFadeOutBeforeEnd() {
+        if (mediaPlayer == null) {
+            return;
+        }
+        Duration total = mediaPlayer.getTotalDuration();
+        Duration fadeDuration = Duration.seconds(2);
+        if (total == null || total.isUnknown() || total.lessThanOrEqualTo(fadeDuration)) {
+            return;
+        }
+        fadeOutTrigger = new PauseTransition(total.subtract(fadeDuration));
+        fadeOutTrigger.setOnFinished(e -> fadeVolume(mediaPlayer.getVolume(), 0.0, fadeDuration));
+        fadeOutTrigger.play();
+    }
+
+    private void fadeVolume(double from, double to, Duration duration) {
+        if (mediaPlayer == null) {
+            return;
+        }
+        if (volumeFadeTimeline != null) {
+            volumeFadeTimeline.stop();
+        }
+        volumeFadeTimeline = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(mediaPlayer.volumeProperty(), from)),
+                new KeyFrame(duration, new KeyValue(mediaPlayer.volumeProperty(), to)));
+        volumeFadeTimeline.play();
+    }
+
+    private void stopCurrentMusic() {
+        if (fadeOutTrigger != null) {
+            fadeOutTrigger.stop();
+            fadeOutTrigger = null;
+        }
+        if (volumeFadeTimeline != null) {
+            volumeFadeTimeline.stop();
+            volumeFadeTimeline = null;
+        }
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.dispose();
+            mediaPlayer = null;
+        }
     }
 
     public void handleInput(Object event) {

@@ -51,11 +51,6 @@
                         </Label>
                      </children>
                   </VBox>
-                  <Button fx:id="pauseButton" mnemonicParsing="false" styleClass="scifi-button-outline" text="PAUSA">
-                     <font>
-                        <Font name="Exo 2 Medium" size="14.0" />
-                     </font>
-                  </Button>
                </children>
                <padding>
                   <Insets left="20.0" right="20.0" />

@@ -52,8 +52,6 @@ public class GameScreen extends Screen {
     @FXML
     private Label objectiveShortLabel;
     @FXML
-    private Button pauseButton;
-    @FXML
     private Label infoDetailsLabel;
     @FXML
     private ScrollPane logScrollPane;
@@ -135,7 +133,6 @@ public class GameScreen extends Screen {
         hexRenderer.setOnHexClick(this::onHexClicked);
         hexRenderer.render(game.getMap());
 
-        pauseButton.setOnAction(e -> System.out.println("Pausa activada."));
         endTurnButton.setDisable(true);
         skillButton.setDisable(true);
         overlayAcceptButton.setOnAction(e -> overlayPane.setVisible(false));
