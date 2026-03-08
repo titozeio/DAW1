@@ -23,16 +23,23 @@
     -fx-text-fill: #0B161C;
     -fx-font-weight: bold;
     -fx-background-radius: 4;
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
+    -fx-padding: 0;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
     -fx-cursor: hand;
 }
 
 .scifi-button:hover {
     -fx-background-color: #ffffff;
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
+    -fx-padding: 0;
 }
 
 .scifi-button:pressed {
-    -fx-scale-x: 0.95;
-    -fx-scale-y: 0.95;
+    -fx-background-color: #d8fff7;
 }
 
 /* Botones secundarios (Transparente con borde) */
@@ -43,13 +50,39 @@
     -fx-text-fill: #4EE2C9;
     -fx-border-radius: 4;
     -fx-background-radius: 4;
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
+    -fx-padding: 0;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
     -fx-cursor: hand;
 }
 
 .scifi-button-outline:hover {
     -fx-background-color: rgba(78, 226, 201, 0.1);
     -fx-border-color: #ffffff;
+    -fx-border-width: 1;
     -fx-text-fill: #ffffff;
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
+    -fx-padding: 0;
+}
+
+.scifi-button-outline:pressed {
+    -fx-background-color: rgba(78, 226, 201, 0.2);
+}
+
+/* Botones del MainMenu: fijar tipografia por id para evitar diferencias de skin */
+#playButton {
+    -fx-font-family: "Exo 2 Regular";
+    -fx-font-size: 28px;
+    -fx-font-weight: 700;
+}
+
+#settingsButton {
+    -fx-font-family: "Exo 2 Regular";
+    -fx-font-size: 22px;
+    -fx-font-weight: 600;
 }
 
 /* ScrollPane personalizado */
