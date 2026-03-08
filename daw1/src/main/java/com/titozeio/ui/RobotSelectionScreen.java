@@ -31,6 +31,7 @@ import java.util.List;
 public class RobotSelectionScreen extends Screen {
     private static final int MAX_ROBOTS_PER_PLAYER = 3;
 
+    // Campos legacy conservados para compatibilidad con tests/reflexión
     @FXML
     private Label fixedInstructionsLabel;
     @FXML
@@ -45,6 +46,7 @@ public class RobotSelectionScreen extends Screen {
     private Text descWeaponText;
     @FXML
     private Text descSkillText;
+
     @FXML
     private ImageView conceptImageView;
     @FXML
@@ -119,7 +121,7 @@ public class RobotSelectionScreen extends Screen {
     private List<RobotTemplate> availableTemplates;
     private List<RobotTemplate> player1Templates;
     private List<RobotTemplate> player2Templates;
-    private boolean isPlayer2Turn;
+    private boolean isPlayer2Turn = true;
     private int currentIndex;
 
     private Stage stage;
@@ -139,6 +141,7 @@ public class RobotSelectionScreen extends Screen {
             ctrl.enforceUppercaseText(root);
             ctrl.initButtonSounds(root);
             ctrl.initializeData();
+            ctrl.isPlayer2Turn = true;
             ctrl.refreshView();
             ctrl.showTurnOverlay();
             return ctrl;
@@ -153,16 +156,8 @@ public class RobotSelectionScreen extends Screen {
         this.availableTemplates = new ArrayList<>(Arrays.asList(RobotTemplate.values()));
         this.player1Templates = new ArrayList<>();
         this.player2Templates = new ArrayList<>();
-        this.isPlayer2Turn = true;
+        this.isPlayer2Turn = false;
         this.currentIndex = 0;
-        if (fixedInstructionsLabel != null) {
-            fixedInstructionsLabel.setVisible(false);
-            fixedInstructionsLabel.setManaged(false);
-        }
-        if (turnInstructionsLabel != null) {
-            turnInstructionsLabel.setVisible(false);
-            turnInstructionsLabel.setManaged(false);
-        }
     }
 
     // Compatibilidad con tests antiguos que invocan initializeData(List) por
@@ -171,16 +166,13 @@ public class RobotSelectionScreen extends Screen {
         this.availableTemplates = new ArrayList<>(allTemplates);
         this.player1Templates = new ArrayList<>();
         this.player2Templates = new ArrayList<>();
-        this.isPlayer2Turn = true;
+        this.isPlayer2Turn = false;
         this.currentIndex = 0;
     }
 
     // Compatibilidad con tests antiguos (sin uso en la nueva UI)
     private void refreshRobotCards() {
         refreshView();
-        if (descriptionPane != null) {
-            descriptionPane.setVisible(false);
-        }
     }
 
     // Compatibilidad con tests antiguos (selección por tarjeta)
@@ -188,25 +180,6 @@ public class RobotSelectionScreen extends Screen {
         int idx = availableTemplates.indexOf(template);
         if (idx >= 0) {
             currentIndex = idx;
-        }
-        if (descriptionPane != null) {
-            descriptionPane.setVisible(true);
-        }
-        if (confirmButton != null) {
-            confirmButton.setDisable(false);
-            confirmButton.setOpacity(1.0);
-        }
-        Robot sample = template.createRobot(null);
-        Weapon weapon = sample.getWeapon();
-        Skill skill = sample.getSkill();
-        if (descRobotText != null) {
-            descRobotText.setText(sample.getDescription());
-        }
-        if (descWeaponText != null) {
-            descWeaponText.setText(weapon.getName() + ": " + weapon.getDescription());
-        }
-        if (descSkillText != null) {
-            descSkillText.setText(skill != null ? skill.getName() + ": " + skill.getDescription() : "Sin skill");
         }
         refreshView();
     }
@@ -286,12 +259,7 @@ public class RobotSelectionScreen extends Screen {
     }
 
     private void updateTurnLabel() {
-        if (turnInstructionsLabel == null) {
-            return;
-        }
-        String jugador = isPlayer2Turn ? "Jugador 2" : "Jugador 1";
-        int elegidos = isPlayer2Turn ? player2Templates.size() : player1Templates.size();
-        turnInstructionsLabel.setText(jugador + ", elige robot (" + elegidos + "/" + MAX_ROBOTS_PER_PLAYER + ")");
+        // En la nueva UI el turno se muestra principalmente en el overlay
     }
 
     private void updateArrowsAvailability() {

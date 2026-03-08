@@ -149,15 +149,8 @@ class UiCoverageBoostTest {
     @Test
     void robotSelectionInternalFlowCoverage() throws Exception {
         RobotSelectionScreen s = new RobotSelectionScreen();
-        set(s, "fixedInstructionsLabel", new Label());
-        set(s, "turnInstructionsLabel", new Label());
-        set(s, "availableRobotsPane", new FlowPane());
         FlowPane desc = new FlowPane();
         desc.setVisible(false);
-        set(s, "descriptionPane", desc);
-        set(s, "descRobotText", new Text());
-        set(s, "descWeaponText", new Text());
-        set(s, "descSkillText", new Text());
         set(s, "confirmButton", new Button());
 
         Method init = RobotSelectionScreen.class.getDeclaredMethod("initializeData", List.class);
@@ -183,7 +176,6 @@ class UiCoverageBoostTest {
         onCard.setAccessible(true);
         onCard.invoke(s, RobotTemplate.BULLSEYE, card);
 
-        assertTrue(((FlowPane) get(s, "descriptionPane")).isVisible());
         Button confirm = (Button) get(s, "confirmButton");
         assertFalse(confirm.isDisable());
 
@@ -192,13 +184,6 @@ class UiCoverageBoostTest {
 
         TestGame tg = new TestGame();
         RobotSelectionScreen s2 = new RobotSelectionScreen();
-        set(s2, "fixedInstructionsLabel", new Label());
-        set(s2, "turnInstructionsLabel", new Label());
-        set(s2, "availableRobotsPane", new FlowPane());
-        set(s2, "descriptionPane", new FlowPane());
-        set(s2, "descRobotText", new Text());
-        set(s2, "descWeaponText", new Text());
-        set(s2, "descSkillText", new Text());
         set(s2, "confirmButton", new Button());
         set(s2, "game", tg);
         set(s2, "player1Templates", new ArrayList<>(List.of(
