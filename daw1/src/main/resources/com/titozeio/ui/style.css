@@ -184,3 +184,22 @@
     -fx-background-radius: 4;
     -fx-opacity: 0.5;
 }
+
+/* Marcos reutilizables (concepts/retratos) */
+.robot-frame {
+    -fx-background-color: rgba(128, 128, 128, 0);
+    -fx-border-color: #3C4648;
+    -fx-border-width: 2;
+    -fx-border-style: solid;
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
+}
+
+.robot-frame-portrait {
+    -fx-padding: 4;
+}
+
+.robot-frame-concept {
+    -fx-background-color: transparent;
+    -fx-padding: 6;
+}

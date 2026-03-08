@@ -272,6 +272,8 @@ public class RobotSelectionScreen extends Screen {
 
     @FXML
     public void handleDismissTurnOverlay() {
+        if (turnOverlay == null)
+            return;
         turnOverlay.setVisible(false);
         turnOverlay.setManaged(false);
     }
