@@ -537,6 +537,14 @@ public class RobotSelectionScreen extends Screen {
         String jugador = isPlayer2Turn ? "P2" : "P1";
         turnOverlayLabel.setText("Turno de elegir robot: " + jugador);
 
+        if (!Screen.areAnimationsEnabled()) {
+            turnOverlay.setVisible(true);
+            turnOverlay.setManaged(true);
+            turnOverlay.setOpacity(1.0);
+            turnOverlay.setMouseTransparent(false);
+            return;
+        }
+
         // Pequeño delay para que el evento de clic del botón anterior
         // se haya descartado antes de que el overlay sea visible e interactivo.
         PauseTransition delay = new PauseTransition(Duration.millis(120));

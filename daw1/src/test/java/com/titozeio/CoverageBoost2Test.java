@@ -50,6 +50,7 @@ class CoverageBoost2Test {
         } catch (IllegalStateException ignored) {
             // ya inicializado
         }
+        Screen.setAnimationsEnabled(false);
     }
 
     // =========================================================================

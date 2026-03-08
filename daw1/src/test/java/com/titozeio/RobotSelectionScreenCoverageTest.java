@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.titozeio.engine.Game;
 import com.titozeio.enums.RobotTemplate;
 import com.titozeio.ui.RobotSelectionScreen;
+import com.titozeio.ui.Screen;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ class RobotSelectionScreenCoverageTest {
         }
         assertTrue(startupLatch.await(15, TimeUnit.SECONDS),
                 "JavaFX toolkit no se inicializó a tiempo");
+        Screen.setAnimationsEnabled(false);
     }
 
     @Test

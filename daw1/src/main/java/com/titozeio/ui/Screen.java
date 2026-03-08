@@ -15,6 +15,16 @@ import javafx.util.Duration;
  */
 public abstract class Screen {
 
+    private static boolean animationsEnabled = true;
+
+    public static void setAnimationsEnabled(boolean enabled) {
+        animationsEnabled = enabled;
+    }
+
+    public static boolean areAnimationsEnabled() {
+        return animationsEnabled;
+    }
+
     /** Muestra el contenido de la pantalla en consola/interfaz. */
     public abstract void display();
 
@@ -86,6 +96,12 @@ public abstract class Screen {
     protected static void fadeInNode(Node node, double millis) {
         if (node == null)
             return;
+        if (!animationsEnabled) {
+            node.setOpacity(1.0);
+            node.setVisible(true);
+            node.setManaged(true);
+            return;
+        }
         node.setOpacity(0.0);
         node.setVisible(true);
         node.setManaged(true);
@@ -105,6 +121,12 @@ public abstract class Screen {
     protected static void fadeOutNode(Node node, double millis) {
         if (node == null)
             return;
+        if (!animationsEnabled) {
+            node.setOpacity(0.0);
+            node.setVisible(false);
+            node.setManaged(false);
+            return;
+        }
         FadeTransition ft = new FadeTransition(Duration.millis(millis), node);
         ft.setFromValue(node.getOpacity());
         ft.setToValue(0.0);
