@@ -170,6 +170,7 @@ public class GameScreen extends Screen {
             ctrl.window = game.getStage();
             ctrl.scene = new Scene(root, 1280, 720);
             ctrl.applyGlobalStyle(ctrl.scene);
+            ctrl.enforceUppercaseText(root);
             ctrl.initButtonSounds(root);
             ctrl.initializeUI();
             return ctrl;
@@ -994,7 +995,7 @@ public class GameScreen extends Screen {
         }
         logScrollPane.setManaged(logExpanded);
         logScrollPane.setVisible(logExpanded);
-        logToggleButton.setText(logExpanded ? "▲" : "▼");
+        logToggleButton.setText(logExpanded ? "-" : "+");
         if (logPanelBox != null) {
             logPanelBox.setAlignment(javafx.geometry.Pos.BOTTOM_LEFT);
             double h = logExpanded ? 200.0 : 36.0;

@@ -45,6 +45,7 @@ public class MainMenuScreen extends Screen {
             controller.game = game;
             controller.scene = new Scene(root, 1280, 720);
             controller.applyGlobalStyle(controller.scene);
+            controller.enforceUppercaseText(root);
             controller.initButtonSounds(root);
             return controller;
         } catch (IOException e) {

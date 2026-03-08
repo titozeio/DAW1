@@ -19,52 +19,62 @@
 
 /* Paneles base Sci-fi */
 .scifi-panel {
-    -fx-background-color: rgba(56, 70, 79, 0.85);
-    -fx-border-color: #6CFDF6;
-    -fx-border-width: 3;
-    -fx-background-radius: 6;
-    -fx-border-radius: 6;
-    /* -fx-effect: dropshadow(three-pass-box, rgba(78, 226, 201, 0.2), 10, 0, 0, 0); */
+    -fx-background-color: rgba(14, 25, 31, 0.60);
+    -fx-border-color: #3C4648;
+    -fx-border-width: 1;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-effect: innershadow(three-pass-box, rgba(255,255,255,0.12), 3, 0.0, 0, 0);
 }
 
 /* Botones principales (Cian) */
 .scifi-button {
-    -fx-background-color: rgba(44, 100, 117, 0.8);
-    -fx-border-color: #7AEBF1;
+    -fx-background-color: #0B191C;
+    -fx-border-color: #384347;
     -fx-border-width: 1;
     -fx-text-fill: #EAFBFF;
     -fx-font-weight: bold;
-    -fx-background-radius: 4;
-    -fx-border-radius: 4;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
     -fx-background-insets: 0;
     -fx-border-insets: 0;
     -fx-padding: 0;
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
     -fx-cursor: hand;
+    -fx-effect: null;
+    -fx-opacity: 1.0;
 }
 
 .scifi-button:hover {
-    -fx-background-color: #357589;
-    -fx-border-color: #9CF6FB;
+    -fx-background-color: #0A1821;
+    -fx-border-color: #F7F5E9;
     -fx-background-insets: 0;
     -fx-border-insets: 0;
     -fx-padding: 0;
+    -fx-effect: dropshadow(gaussian, rgba(245, 220, 142, 0.85), 6, 0.35, 0, 0);
 }
 
 .scifi-button:pressed {
-    -fx-background-color: #244F5E;
-    -fx-border-color: #62D9E0;
+    -fx-background-color: #204850;
+    -fx-border-color: #779090;
+    -fx-effect: null;
+}
+
+.scifi-button:disabled {
+    -fx-background-color: #0B191C;
+    -fx-border-color: #384347;
+    -fx-opacity: 0.5;
 }
 
 /* Botones secundarios (Transparente con borde) */
 .scifi-button-outline {
-    -fx-background-color: rgba(91, 79, 47, 0.6);
-    -fx-border-color: #D1B792;
+    -fx-background-color: #2A2111;
+    -fx-border-color: #8A6A24;
     -fx-border-width: 1;
-    -fx-text-fill: #D1B792;
-    -fx-border-radius: 4;
-    -fx-background-radius: 4;
+    -fx-text-fill: #F3D48A;
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
     -fx-background-insets: 0;
     -fx-border-insets: 0;
     -fx-padding: 0;
@@ -74,17 +84,71 @@
 }
 
 .scifi-button-outline:hover {
-    -fx-background-color: rgba(91, 79, 47, 0.8);
-    -fx-border-color: #D1B792;
+    -fx-background-color: #352A14;
+    -fx-border-color: #F4D9A3;
     -fx-border-width: 1;
-    -fx-text-fill: #D1B792;
+    -fx-text-fill: #F7E4B8;
     -fx-background-insets: 0;
     -fx-border-insets: 0;
     -fx-padding: 0;
+    -fx-effect: dropshadow(gaussian, rgba(244, 217, 163, 0.85), 6, 0.35, 0, 0);
 }
 
 .scifi-button-outline:pressed {
-    -fx-background-color: rgba(91, 79, 47, 1.0);
+    -fx-background-color: #5A4316;
+    -fx-border-color: #BB8612;
+    -fx-text-fill: #FFE7A9;
+    -fx-effect: null;
+}
+
+.scifi-button-outline:disabled {
+    -fx-background-color: #2A2111;
+    -fx-border-color: #8A6A24;
+    -fx-opacity: 0.5;
+}
+
+/* Boton SKILL dinamico por tipo */
+.skill-button-base {
+    -fx-border-width: 1;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
+    -fx-padding: 0;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-cursor: hand;
+    -fx-text-fill: #EAFBFF;
+}
+
+.skill-button-move {
+    -fx-background-color: #1B3A4E;
+    -fx-border-color: #57C0EF;
+}
+
+.skill-button-move:hover {
+    -fx-background-color: #214A63;
+    -fx-border-color: #8BD6F5;
+}
+
+.skill-button-attack {
+    -fx-background-color: #4A1D1D;
+    -fx-border-color: #EF6A6A;
+}
+
+.skill-button-attack:hover {
+    -fx-background-color: #632525;
+    -fx-border-color: #F28F8F;
+}
+
+.skill-button-heal {
+    -fx-background-color: #1B4028;
+    -fx-border-color: #6EDC8B;
+}
+
+.skill-button-heal:hover {
+    -fx-background-color: #245536;
+    -fx-border-color: #95E8AB;
 }
 
 /* Botones del MainMenu: fijar tipografia por id para evitar diferencias de skin */
@@ -98,6 +162,11 @@
     -fx-font-family: "Exo 2 Regular";
     -fx-font-size: 22px;
     -fx-font-weight: 600;
+}
+
+#confirmButton, #randomFinishButton {
+    -fx-font-size: 26px;
+    -fx-font-weight: 700;
 }
 
 /* ScrollPane personalizado */

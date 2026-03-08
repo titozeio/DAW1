@@ -17,6 +17,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -135,6 +136,7 @@ public class RobotSelectionScreen extends Screen {
             ctrl.game = game;
             ctrl.scene = new Scene(root, 1280, 720);
             ctrl.applyGlobalStyle(ctrl.scene);
+            ctrl.enforceUppercaseText(root);
             ctrl.initButtonSounds(root);
             ctrl.initializeData();
             ctrl.refreshView();
@@ -318,6 +320,7 @@ public class RobotSelectionScreen extends Screen {
                 statRangeValueLabel.setText("-");
             if (skillTitleLabel != null)
                 skillTitleLabel.setText("SKILL");
+            updateSkillTitleFont();
             if (skillTypeValueLabel != null)
                 skillTypeValueLabel.setText("-");
             if (skillCooldownValueLabel != null)
@@ -351,6 +354,7 @@ public class RobotSelectionScreen extends Screen {
         if (skill != null) {
             if (skillTitleLabel != null)
                 skillTitleLabel.setText(skill.getName());
+            updateSkillTitleFont();
             if (skillTypeValueLabel != null)
                 skillTypeValueLabel.setText(String.valueOf(skill.getType()));
             if (skillCooldownValueLabel != null)
@@ -362,6 +366,7 @@ public class RobotSelectionScreen extends Screen {
         } else {
             if (skillTitleLabel != null)
                 skillTitleLabel.setText("Sin skill");
+            updateSkillTitleFont();
             if (skillTypeValueLabel != null)
                 skillTypeValueLabel.setText("-");
             if (skillCooldownValueLabel != null)
@@ -376,6 +381,23 @@ public class RobotSelectionScreen extends Screen {
             descRobotLabel.setText(sample.getDescription());
         if (descWeaponLabel != null)
             descWeaponLabel.setText(weapon.getDescription());
+    }
+
+    private void updateSkillTitleFont() {
+        if (skillTitleLabel == null) {
+            return;
+        }
+        String txt = skillTitleLabel.getText();
+        int len = txt == null ? 0 : txt.length();
+        double size = 24.0;
+        if (len > 22) {
+            size = 16.0;
+        } else if (len > 16) {
+            size = 18.0;
+        } else if (len > 12) {
+            size = 20.0;
+        }
+        skillTitleLabel.setFont(Font.font("Exo 2 Regular", size));
     }
 
     private String formatSkillStats(Skill skill) {

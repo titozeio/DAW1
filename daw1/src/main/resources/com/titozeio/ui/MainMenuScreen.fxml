@@ -20,7 +20,7 @@
          </image>
       </ImageView>
 
-      <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" spacing="110.0" style="-fx-background-color: rgba(0, 0, 0, 0.4); -fx-background-radius: 15; -fx-border-color: rgba(78,226,201,0.35); -fx-border-radius: 15;">
+      <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" spacing="110.0">
          <children>
             <ImageView fx:id="titleImageView" fitWidth="600.0" pickOnBounds="true" preserveRatio="true">
                <image>
