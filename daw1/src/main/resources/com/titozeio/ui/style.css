@@ -236,3 +236,57 @@
 .nav-arrow-button:disabled {
     -fx-opacity: 0.6;
 }
+
+/* Popup info (GameScreen): forzar mismo estilo que boton principal */
+#overlayAcceptButton {
+    -fx-font-family: "Exo 2";
+    -fx-font-size: 14px;
+    -fx-background-color: #0B191C;
+    -fx-border-color: #384347;
+    -fx-border-width: 1;
+    -fx-text-fill: #EAFBFF;
+    -fx-font-weight: bold;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
+    -fx-padding: 0;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-cursor: hand;
+    -fx-effect: null;
+    -fx-opacity: 1.0;
+}
+
+#overlayAcceptButton:hover {
+    -fx-font-family: "Exo 2";
+    -fx-font-size: 14px;
+    -fx-background-color: #0A1821;
+    -fx-border-color: #F7F5E9;
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
+    -fx-padding: 0;
+    -fx-effect: dropshadow(gaussian, rgba(245, 220, 142, 0.85), 6, 0.35, 0, 0);
+}
+
+#overlayAcceptButton:pressed {
+    -fx-font-family: "Exo 2";
+    -fx-font-size: 14px;
+    -fx-background-color: #204850;
+    -fx-border-color: #779090;
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
+    -fx-padding: 0;
+    -fx-effect: null;
+}
+
+#overlayAcceptButton:disabled {
+    -fx-font-family: "Exo 2";
+    -fx-font-size: 14px;
+    -fx-background-color: #0B191C;
+    -fx-border-color: #384347;
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
+    -fx-padding: 0;
+    -fx-opacity: 0.5;
+}
