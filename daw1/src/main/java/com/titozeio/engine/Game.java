@@ -32,6 +32,8 @@ public class Game {
     private PauseTransition fadeOutTrigger;
     private MusicTheme currentMusicTheme;
     private int currentTrackNumber = 1;
+    private boolean musicEnabled = true;
+    private boolean sfxEnabled = true;
 
     // Referencia a la ventana de JavaFX
     private Stage stage;
@@ -104,6 +106,11 @@ public class Game {
     }
 
     private void updateMusicForScreen(Screen screen) {
+        if (!musicEnabled) {
+            stopCurrentMusic();
+            return;
+        }
+
         MusicTheme targetTheme = (screen instanceof GameScreen) ? MusicTheme.BATTLE : MusicTheme.MENU;
         if (mediaPlayer != null && currentMusicTheme == targetTheme) {
             return;
@@ -260,5 +267,28 @@ public class Game {
 
     public Stage getStage() {
         return stage;
+    }
+
+    public boolean isMusicEnabled() {
+        return musicEnabled;
+    }
+
+    public void setMusicEnabled(boolean musicEnabled) {
+        this.musicEnabled = musicEnabled;
+        if (!musicEnabled) {
+            stopCurrentMusic();
+            return;
+        }
+        if (currentScreen != null) {
+            updateMusicForScreen(currentScreen);
+        }
+    }
+
+    public boolean isSfxEnabled() {
+        return sfxEnabled;
+    }
+
+    public void setSfxEnabled(boolean sfxEnabled) {
+        this.sfxEnabled = sfxEnabled;
     }
 }

@@ -1,14 +1,26 @@
 package com.titozeio.ui;
 
+import com.titozeio.engine.Game;
+import com.titozeio.engine.Player;
+import com.titozeio.engine.Robot;
+import com.titozeio.enums.RobotTemplate;
+import com.titozeio.model.Weapon;
+import com.titozeio.skills.Skill;
+import javafx.animation.PauseTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,29 +28,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import com.titozeio.engine.Game;
-import com.titozeio.engine.Player;
-import com.titozeio.engine.Robot;
-import com.titozeio.enums.RobotTemplate;
-import com.titozeio.model.Weapon;
-import com.titozeio.skills.Skill;
-
-/**
- * Controlador de RobotSelectionScreen.fxml.
- *
- * Gestiona el turno de selección de robots:
- * 1. Carga una tarjeta RobotCard.fxml por cada template disponible.
- * 2. El jugador activo hace clic en una tarjeta → se resalta,
- * aparecen las descripciones y se activa el botón Confirmar.
- * 3. Puede explorar otras tarjetas sin confirmar.
- * 4. Al pulsar Confirmar, se registra la elección y se pasa el turno.
- * 5. Cuando cada jugador tiene MAX_ROBOTS_PER_PLAYER robots → combat.
- */
 public class RobotSelectionScreen extends Screen {
-
     private static final int MAX_ROBOTS_PER_PLAYER = 3;
 
-    // ── Referencias FXML ──────────────────────────────────────────────────────
     @FXML
     private Label fixedInstructionsLabel;
     @FXML
@@ -54,44 +46,101 @@ public class RobotSelectionScreen extends Screen {
     @FXML
     private Text descSkillText;
     @FXML
+    private ImageView conceptImageView;
+    @FXML
+    private Label statHpValueLabel;
+    @FXML
+    private Label statMoveValueLabel;
+    @FXML
+    private Label statDamageValueLabel;
+    @FXML
+    private Label statRangeValueLabel;
+    @FXML
+    private Label skillTitleLabel;
+    @FXML
+    private Label skillTypeValueLabel;
+    @FXML
+    private Label skillCooldownValueLabel;
+    @FXML
+    private Label skillStatsValueLabel;
+    @FXML
+    private Label descRobotLabel;
+    @FXML
+    private Label descWeaponLabel;
+    @FXML
+    private Label descSkillLabel;
+    @FXML
     private Button confirmButton;
+    @FXML
+    private Button prevRobotButton;
+    @FXML
+    private Button nextRobotButton;
+    @FXML
+    private ImageView p1Slot1Image;
+    @FXML
+    private ImageView p1Slot2Image;
+    @FXML
+    private ImageView p1Slot3Image;
+    @FXML
+    private ImageView p2Slot1Image;
+    @FXML
+    private ImageView p2Slot2Image;
+    @FXML
+    private ImageView p2Slot3Image;
+    @FXML
+    private Label p1Slot1Name;
+    @FXML
+    private Label p1Slot2Name;
+    @FXML
+    private Label p1Slot3Name;
+    @FXML
+    private Label p2Slot1Name;
+    @FXML
+    private Label p2Slot2Name;
+    @FXML
+    private Label p2Slot3Name;
+    @FXML
+    private StackPane p1Slot1Frame;
+    @FXML
+    private StackPane p1Slot2Frame;
+    @FXML
+    private StackPane p1Slot3Frame;
+    @FXML
+    private StackPane p2Slot1Frame;
+    @FXML
+    private StackPane p2Slot2Frame;
+    @FXML
+    private StackPane p2Slot3Frame;
+    @FXML
+    private StackPane turnOverlay;
+    @FXML
+    private Label turnOverlayLabel;
 
-    // ── Estado interno ────────────────────────────────────────────────────────
     private List<RobotTemplate> availableTemplates;
     private List<RobotTemplate> player1Templates;
     private List<RobotTemplate> player2Templates;
     private boolean isPlayer2Turn;
-
-    /** Template sobre el que el jugador hizo clic pero aún no confirmó. */
-    private RobotTemplate pendingTemplate;
-    /** Controlador de la tarjeta actualmente resaltada. */
-    private RobotCardController highlightedCardCtrl;
+    private int currentIndex;
 
     private Stage stage;
     private Game game;
     private Scene scene;
 
-    // ── Constructor vacío para FXMLLoader ────────────────────────────────────
-    public RobotSelectionScreen() {
-    }
-
-    // ── Factory ───────────────────────────────────────────────────────────────
     public static RobotSelectionScreen create(Stage window, Game game) {
         try {
             FXMLLoader loader = new FXMLLoader(
-                    RobotSelectionScreen.class.getResource(
-                            "/com/titozeio/ui/RobotSelectionScreen.fxml"));
+                    RobotSelectionScreen.class.getResource("/com/titozeio/ui/RobotSelectionScreen.fxml"));
             Parent root = loader.load();
             RobotSelectionScreen ctrl = loader.getController();
             ctrl.stage = window;
             ctrl.game = game;
             ctrl.scene = new Scene(root, 1280, 720);
             ctrl.applyGlobalStyle(ctrl.scene);
-
-            ctrl.initializeData(new ArrayList<>(Arrays.asList(RobotTemplate.values())));
-            ctrl.refreshRobotCards();
-            ctrl.updateTurnLabel();
-
+            ctrl.enforceUppercaseText(root);
+            ctrl.initButtonSounds(root);
+            ctrl.initializeData();
+            ctrl.refreshView();
+            ctrl.showTurnOverlay();
             return ctrl;
         } catch (IOException e) {
             System.err.println("Error al cargar RobotSelectionScreen.fxml: " + e.getMessage());
@@ -100,191 +149,401 @@ public class RobotSelectionScreen extends Screen {
         }
     }
 
-    // ── Inicialización interna ────────────────────────────────────────────────
+    private void initializeData() {
+        this.availableTemplates = new ArrayList<>(Arrays.asList(RobotTemplate.values()));
+        this.player1Templates = new ArrayList<>();
+        this.player2Templates = new ArrayList<>();
+        this.isPlayer2Turn = true;
+        this.currentIndex = 0;
+        if (fixedInstructionsLabel != null) {
+            fixedInstructionsLabel.setVisible(false);
+            fixedInstructionsLabel.setManaged(false);
+        }
+        if (turnInstructionsLabel != null) {
+            turnInstructionsLabel.setVisible(false);
+            turnInstructionsLabel.setManaged(false);
+        }
+    }
+
+    // Compatibilidad con tests antiguos que invocan initializeData(List) por
+    // reflexión
     private void initializeData(List<RobotTemplate> allTemplates) {
         this.availableTemplates = new ArrayList<>(allTemplates);
         this.player1Templates = new ArrayList<>();
         this.player2Templates = new ArrayList<>();
         this.isPlayer2Turn = true;
-        this.pendingTemplate = null;
-        this.highlightedCardCtrl = null;
+        this.currentIndex = 0;
     }
 
-    // ── Generación de tarjetas ────────────────────────────────────────────────
-
-    /**
-     * Limpia el panel y carga una tarjeta RobotCard.fxml
-     * por cada template disponible, rellenándola con sus datos.
-     */
+    // Compatibilidad con tests antiguos (sin uso en la nueva UI)
     private void refreshRobotCards() {
-        availableRobotsPane.getChildren().clear();
-        pendingTemplate = null;
-        highlightedCardCtrl = null;
-        descriptionPane.setVisible(false);
-        confirmButton.setDisable(true);
-        confirmButton.setOpacity(0.35);
-
-        for (RobotTemplate template : availableTemplates) {
-            try {
-                FXMLLoader cardLoader = new FXMLLoader(
-                        getClass().getResource("/com/titozeio/ui/RobotCard.fxml"));
-                FlowPane cardNode = cardLoader.load();
-                RobotCardController cardCtrl = cardLoader.getController();
-
-                // Rellenar con datos reales
-                cardCtrl.setData(template);
-
-                // Registrar callback: clic en tarjeta → onCardClicked
-                cardCtrl.setOnSelect(t -> onCardClicked(t, cardCtrl));
-
-                // Conectar el clic al nodo raíz de la tarjeta
-                cardNode.setOnMouseClicked(e -> cardCtrl.handleClick());
-
-                availableRobotsPane.getChildren().add(cardNode);
-
-            } catch (IOException e) {
-                System.err.println("Error al cargar RobotCard.fxml: " + e.getMessage());
-            }
+        refreshView();
+        if (descriptionPane != null) {
+            descriptionPane.setVisible(false);
         }
     }
 
-    // ── Lógica de selección ───────────────────────────────────────────────────
-
-    /**
-     * Se ejecuta cuando el jugador hace clic en una tarjeta.
-     * Resalta la tarjeta, muestra descripciones y activa Confirmar.
-     * NO registra la elección todavía.
-     */
-    private void onCardClicked(RobotTemplate template, RobotCardController cardCtrl) {
-        // Quitar resalte anterior
-        if (highlightedCardCtrl != null) {
-            highlightedCardCtrl.setHighlighted(false);
+    // Compatibilidad con tests antiguos (selección por tarjeta)
+    private void onCardClicked(RobotTemplate template, RobotCardController ignored) {
+        int idx = availableTemplates.indexOf(template);
+        if (idx >= 0) {
+            currentIndex = idx;
         }
+        if (descriptionPane != null) {
+            descriptionPane.setVisible(true);
+        }
+        if (confirmButton != null) {
+            confirmButton.setDisable(false);
+            confirmButton.setOpacity(1.0);
+        }
+        Robot sample = template.createRobot(null);
+        Weapon weapon = sample.getWeapon();
+        Skill skill = sample.getSkill();
+        if (descRobotText != null) {
+            descRobotText.setText(sample.getDescription());
+        }
+        if (descWeaponText != null) {
+            descWeaponText.setText(weapon.getName() + ": " + weapon.getDescription());
+        }
+        if (descSkillText != null) {
+            descSkillText.setText(skill != null ? skill.getName() + ": " + skill.getDescription() : "Sin skill");
+        }
+        refreshView();
+    }
 
-        // Resaltar la nueva tarjeta
-        cardCtrl.setHighlighted(true);
-        highlightedCardCtrl = cardCtrl;
-        pendingTemplate = template;
+    @FXML
+    public void handlePrevRobotAction() {
+        if (availableTemplates.isEmpty()) {
+            return;
+        }
+        currentIndex = (currentIndex - 1 + availableTemplates.size()) % availableTemplates.size();
+        refreshView();
+    }
 
-        // Poblar panel de descripciones con datos reales desde el enum
+    @FXML
+    public void handleNextRobotAction() {
+        if (availableTemplates.isEmpty()) {
+            return;
+        }
+        currentIndex = (currentIndex + 1) % availableTemplates.size();
+        refreshView();
+    }
+
+    @FXML
+    public void handleConfirmAction() {
+        if (availableTemplates.isEmpty()) {
+            return;
+        }
+        RobotTemplate selected = availableTemplates.get(currentIndex);
+        if (isPlayer2Turn) {
+            player2Templates.add(selected);
+        } else {
+            player1Templates.add(selected);
+        }
+        availableTemplates.remove(selected);
+
+        if (isSelectionComplete()) {
+            transitionToCombatScreen();
+            return;
+        }
+        if (currentIndex >= availableTemplates.size()) {
+            currentIndex = Math.max(0, availableTemplates.size() - 1);
+        }
+        isPlayer2Turn = !isPlayer2Turn;
+        refreshView();
+        showTurnOverlay();
+    }
+
+    @FXML
+    public void handleSkipAction() {
+        List<RobotTemplate> pool = new ArrayList<>(availableTemplates);
+        Collections.shuffle(pool);
+        int p1Missing = MAX_ROBOTS_PER_PLAYER - player1Templates.size();
+        int p2Missing = MAX_ROBOTS_PER_PLAYER - player2Templates.size();
+        int idx = 0;
+        for (int i = 0; i < p1Missing && idx < pool.size(); i++) {
+            player1Templates.add(pool.get(idx++));
+        }
+        for (int i = 0; i < p2Missing && idx < pool.size(); i++) {
+            player2Templates.add(pool.get(idx++));
+        }
+        transitionToCombatScreen();
+    }
+
+    @FXML
+    public void handleDismissTurnOverlay() {
+        if (turnOverlay == null)
+            return;
+        turnOverlay.setVisible(false);
+        turnOverlay.setManaged(false);
+    }
+
+    private void refreshView() {
+        updateTurnLabel();
+        updateArrowsAvailability();
+        updateCurrentRobotInfo();
+        updateBottomTeams();
+    }
+
+    private void updateTurnLabel() {
+        if (turnInstructionsLabel == null) {
+            return;
+        }
+        String jugador = isPlayer2Turn ? "Jugador 2" : "Jugador 1";
+        int elegidos = isPlayer2Turn ? player2Templates.size() : player1Templates.size();
+        turnInstructionsLabel.setText(jugador + ", elige robot (" + elegidos + "/" + MAX_ROBOTS_PER_PLAYER + ")");
+    }
+
+    private void updateArrowsAvailability() {
+        boolean disabled = availableTemplates.size() <= 1;
+        if (prevRobotButton != null) {
+            prevRobotButton.setDisable(disabled);
+        }
+        if (nextRobotButton != null) {
+            nextRobotButton.setDisable(disabled);
+        }
+        if (confirmButton != null) {
+            confirmButton.setDisable(availableTemplates.isEmpty());
+            confirmButton.setOpacity(availableTemplates.isEmpty() ? 0.4 : 1.0);
+        }
+    }
+
+    private void updateCurrentRobotInfo() {
+        if (availableTemplates.isEmpty()) {
+            if (conceptImageView != null)
+                conceptImageView.setImage(null);
+            if (statHpValueLabel != null)
+                statHpValueLabel.setText("-");
+            if (statMoveValueLabel != null)
+                statMoveValueLabel.setText("-");
+            if (statDamageValueLabel != null)
+                statDamageValueLabel.setText("-");
+            if (statRangeValueLabel != null)
+                statRangeValueLabel.setText("-");
+            if (skillTitleLabel != null)
+                skillTitleLabel.setText("SKILL");
+            updateSkillTitleFont();
+            if (skillTypeValueLabel != null)
+                skillTypeValueLabel.setText("-");
+            if (skillCooldownValueLabel != null)
+                skillCooldownValueLabel.setText("-");
+            if (skillStatsValueLabel != null)
+                skillStatsValueLabel.setText("-");
+            if (descRobotLabel != null)
+                descRobotLabel.setText("-");
+            if (descWeaponLabel != null)
+                descWeaponLabel.setText("-");
+            if (descSkillLabel != null)
+                descSkillLabel.setText("-");
+            return;
+        }
+        RobotTemplate template = availableTemplates.get(currentIndex);
         Robot sample = template.createRobot(null);
         Weapon weapon = sample.getWeapon();
         Skill skill = sample.getSkill();
 
-        descRobotText.setText(sample.getDescription());
-        descWeaponText.setText(
-                weapon.getName() + ": " + weapon.getDescription()
-                        + " (Alcance " + weapon.getRange()
-                        + ", Daño " + weapon.getDamage() + ")");
-        descSkillText.setText(
-                skill != null
-                        ? skill.getName() + ": " + skill.getDescription()
-                                + " (Cooldown: " + skill.getCooldown() + " turnos)"
-                        : "Sin skill");
+        if (conceptImageView != null)
+            conceptImageView.setImage(loadConceptImage(template));
+        if (statHpValueLabel != null)
+            statHpValueLabel.setText(String.valueOf(sample.getMaxHp()));
+        if (statMoveValueLabel != null)
+            statMoveValueLabel.setText(String.valueOf(sample.getMovementPoints()));
+        if (statDamageValueLabel != null)
+            statDamageValueLabel.setText(String.valueOf(weapon.getDamage()));
+        if (statRangeValueLabel != null)
+            statRangeValueLabel.setText(String.valueOf(weapon.getRange()));
 
-        // Mostrar panel y activar botón
-        descriptionPane.setVisible(true);
-        confirmButton.setDisable(false);
-        confirmButton.setOpacity(1.0);
+        if (skill != null) {
+            if (skillTitleLabel != null)
+                skillTitleLabel.setText(skill.getName());
+            updateSkillTitleFont();
+            if (skillTypeValueLabel != null)
+                skillTypeValueLabel.setText(String.valueOf(skill.getType()));
+            if (skillCooldownValueLabel != null)
+                skillCooldownValueLabel.setText(String.valueOf(skill.getCooldown()));
+            if (skillStatsValueLabel != null)
+                skillStatsValueLabel.setText(formatSkillStats(skill));
+            if (descSkillLabel != null)
+                descSkillLabel.setText(skill.getDescription());
+        } else {
+            if (skillTitleLabel != null)
+                skillTitleLabel.setText("Sin skill");
+            updateSkillTitleFont();
+            if (skillTypeValueLabel != null)
+                skillTypeValueLabel.setText("-");
+            if (skillCooldownValueLabel != null)
+                skillCooldownValueLabel.setText("-");
+            if (skillStatsValueLabel != null)
+                skillStatsValueLabel.setText("-");
+            if (descSkillLabel != null)
+                descSkillLabel.setText("-");
+        }
+
+        if (descRobotLabel != null)
+            descRobotLabel.setText(sample.getDescription());
+        if (descWeaponLabel != null)
+            descWeaponLabel.setText(weapon.getDescription());
     }
 
-    /**
-     * Se ejecuta al pulsar el botón "Confirmar".
-     * Registra la selección del jugador activo y pasa el turno.
-     */
-    @FXML
-    public void handleConfirmAction() {
-        if (pendingTemplate == null)
+    private void updateSkillTitleFont() {
+        if (skillTitleLabel == null) {
             return;
-
-        if (isPlayer2Turn) {
-            player2Templates.add(pendingTemplate);
-            System.out.println("Jugador 2 elige: " + pendingTemplate);
-        } else {
-            player1Templates.add(pendingTemplate);
-            System.out.println("Jugador 1 elige: " + pendingTemplate);
         }
-
-        availableTemplates.remove(pendingTemplate);
-
-        if (isSelectionComplete()) {
-            transitionToCombatScreen();
-        } else {
-            isPlayer2Turn = !isPlayer2Turn;
-            refreshRobotCards();
-            updateTurnLabel();
+        String txt = skillTitleLabel.getText();
+        int len = txt == null ? 0 : txt.length();
+        double size = 24.0;
+        if (len > 22) {
+            size = 16.0;
+        } else if (len > 16) {
+            size = 18.0;
+        } else if (len > 12) {
+            size = 20.0;
         }
+        skillTitleLabel.setFont(Font.font("Exo 2 Regular", size));
     }
 
-    /**
-     * Salta la selección manual y reparte equipos aleatorios (3 robots por jugador).
-     */
-    @FXML
-    public void handleSkipAction() {
-        List<RobotTemplate> pool = new ArrayList<>(Arrays.asList(RobotTemplate.values()));
-        Collections.shuffle(pool);
+    private String formatSkillStats(Skill skill) {
+        List<String[]> stats = skill.getDisplayStats();
+        if (stats.isEmpty()) {
+            return "-";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (String[] stat : stats) {
+            if (sb.length() > 0) {
+                sb.append(" | ");
+            }
+            sb.append(stat[0]).append(stat[1]);
+        }
+        return sb.toString();
+    }
 
-        player1Templates.clear();
-        player2Templates.clear();
+    private Image loadConceptImage(RobotTemplate template) {
+        String file;
+        switch (template) {
+            case VICTORY_SABER:
+                file = "saberprime_concept.jpg";
+                break;
+            case BULLSEYE:
+                file = "bullseye_concep.jpg";
+                break;
+            case BULWARK:
+                file = "bulwark_concept.jpg";
+                break;
+            case SCOUT:
+                file = "scout_concept.jpg";
+                break;
+            case DEATH_KNIGHT:
+                file = "deathknight_concept.jpg";
+                break;
+            case ICE_AGE:
+                file = "iceage_concept.jpg";
+                break;
+            default:
+                return null;
+        }
+        var res = getClass().getResource("/com/titozeio/images/" + file);
+        return res == null ? null : new Image(res.toExternalForm());
+    }
 
-        for (int i = 0; i < pool.size(); i++) {
-            if (i < MAX_ROBOTS_PER_PLAYER) {
-                player1Templates.add(pool.get(i));
-            } else {
-                player2Templates.add(pool.get(i));
+    private Image loadTeamSprite(RobotTemplate template, boolean p1) {
+        String file;
+        switch (template) {
+            case VICTORY_SABER:
+                file = "face_saberprime.png";
+                break;
+            case BULLSEYE:
+                file = "face_bullseye.png";
+                break;
+            case BULWARK:
+                file = "face_bulwark.png";
+                break;
+            case SCOUT:
+                file = "face_scout.png";
+                break;
+            case DEATH_KNIGHT:
+                file = "face_deathknight.png";
+                break;
+            case ICE_AGE:
+                file = "face_iceage.png";
+                break;
+            default:
+                return null;
+        }
+        var res = getClass().getResource("/com/titozeio/sprites/" + file);
+        return res == null ? null : new Image(res.toExternalForm());
+    }
+
+    private void updateBottomTeams() {
+        if (p1Slot1Image == null || p2Slot1Image == null) {
+            return;
+        }
+        setTeamSlot(player1Templates, 0, p1Slot1Image, p1Slot1Name, p1Slot1Frame, true);
+        setTeamSlot(player1Templates, 1, p1Slot2Image, p1Slot2Name, p1Slot2Frame, true);
+        setTeamSlot(player1Templates, 2, p1Slot3Image, p1Slot3Name, p1Slot3Frame, true);
+        setTeamSlot(player2Templates, 0, p2Slot1Image, p2Slot1Name, p2Slot1Frame, false);
+        setTeamSlot(player2Templates, 1, p2Slot2Image, p2Slot2Name, p2Slot2Frame, false);
+        setTeamSlot(player2Templates, 2, p2Slot3Image, p2Slot3Name, p2Slot3Frame, false);
+    }
+
+    private void setTeamSlot(List<RobotTemplate> team, int index, ImageView image, Label name, StackPane frame,
+            boolean p1) {
+        if (index < team.size()) {
+            RobotTemplate t = team.get(index);
+            Robot sample = t.createRobot(null);
+            name.setText(sample.getModelName());
+            image.setImage(loadTeamSprite(t, p1));
+            image.setOpacity(1.0);
+            if (frame != null) {
+                frame.setOpacity(1.0);
+            }
+        } else {
+            name.setText("---");
+            image.setImage(null);
+            image.setOpacity(0.4);
+            if (frame != null) {
+                frame.setOpacity(0.3);
             }
         }
+    }
 
-        transitionToCombatScreen();
+    private void showTurnOverlay() {
+        if (turnOverlay == null || turnOverlayLabel == null) {
+            return;
+        }
+        String jugador = isPlayer2Turn ? "P2" : "P1";
+        turnOverlayLabel.setText("Turno de elegir robot: " + jugador);
+        turnOverlay.setManaged(true);
+        turnOverlay.setVisible(true);
+        PauseTransition autoHide = new PauseTransition(Duration.seconds(3));
+        autoHide.setOnFinished(e -> handleDismissTurnOverlay());
+        autoHide.play();
     }
 
     private boolean isSelectionComplete() {
-        return player1Templates.size() == MAX_ROBOTS_PER_PLAYER
-                && player2Templates.size() == MAX_ROBOTS_PER_PLAYER;
-    }
-
-    private void updateTurnLabel() {
-        if (turnInstructionsLabel == null)
-            return;
-        String jugador = isPlayer2Turn ? "Jugador 2" : "Jugador 1";
-        int elegidos = isPlayer2Turn ? player2Templates.size() : player1Templates.size();
-        turnInstructionsLabel.setText(
-                jugador + ", elige robot (" + elegidos + "/" + MAX_ROBOTS_PER_PLAYER + " elegidos)");
+        return player1Templates.size() == MAX_ROBOTS_PER_PLAYER && player2Templates.size() == MAX_ROBOTS_PER_PLAYER;
     }
 
     private void transitionToCombatScreen() {
-        // Obtener los jugadores ya creados en Game
         Player p1 = game.getP1();
         Player p2 = game.getP2();
-
-        // Limpieza defensiva por si ya venían equipos cargados.
         p1.getUnits().clear();
         p2.getUnits().clear();
-
-        // Instanciar los robots reales con su owner y añadirlos al equipo
         for (RobotTemplate t : player1Templates) {
             p1.addUnit(t.createRobot(p1));
         }
         for (RobotTemplate t : player2Templates) {
             p2.addUnit(t.createRobot(p2));
         }
-
-        System.out.println("Selección completada.");
-        System.out.println(p1.getName() + ": " + p1.getUnits());
-        System.out.println(p2.getName() + ": " + p2.getUnits());
-
         game.displayScreen(GameScreen.create(game));
     }
 
-    // ── Screen ────────────────────────────────────────────────────────────────
     @Override
     public void display() {
-        System.out.println("Mostrando RobotSelectionScreen...");
         this.stage.setScene(this.scene);
     }
 
     @Override
     public void handleInput(String input) {
-        System.out.println("Procesando entrada en RobotSelectionScreen: " + input);
+        // Sin uso
     }
 }

@@ -20,6 +20,8 @@
   - [Sistema de Coordenadas del Mapa:](#sistema-de-coordenadas-del-mapa)
   - [Arquitectura y Patrones:](#arquitectura-y-patrones)
   - [Estructura de Paquetes:](#estructura-de-paquetes)
+  - [Sistema de Audio:](#sistema-de-audio)
+  - [CI/CD (Integración Continua):](#cicd-integración-continua)
 - [4. Bucle de Juego (Game Loop)](#4-bucle-de-juego-game-loop)
 - [5. Contenido, Niveles](#5-contenido-niveles)
   - [Asset List:](#asset-list)
@@ -239,12 +241,84 @@ Para la lógica del tablero hexagonal, se utiliza un sistema de **Coordenadas Ax
 
 ## Estructura de Paquetes:
 
-- `com.titozeio.engine`: Núcleo de lógica del juego (mapa, jugadores, hexagon).
+- `com.titozeio.engine`: Núcleo de lógica del juego (mapa, jugadores, hexagon, `SoundManager`).
 - `com.titozeio.ui`: Controladores JavaFX y lógica de presentación.
 - `com.titozeio.model`: Definición de entidades (Weapon, Objective).
-- `com.titozeio.enums`: Enumerados constantes (RobotTemplate, TerrainType).
+- `com.titozeio.enums`: Enumerados constantes (RobotTemplate, TerrainType, AttackType).
 - `com.titozeio.skills`: Implementación de habilidades especiales.
 - `com.titozeio.victory`: Gestores de condiciones de victoria.
+
+## Sistema de Audio:
+
+El juego cuenta con dos capas de audio independientes:
+
+### Música de fondo
+- Gestionada por la clase `Game` mediante `javafx.scene.media.MediaPlayer`.
+- Tiene dos **temas**: `MENU` (pantallas de menú y selección) y `BATTLE` (combate).
+- Los temas cambian automáticamente al cambiar de pantalla, con **fundido de entrada y salida** (2 segundos) entre pistas.
+- Las pistas se numeran (`menu1.mp3`, `menu2.mp3`, `battle1.mp3`, etc.) y se encadenan automáticamente. Si existe una pista siguiente, se reproduce; si no, se reinicia desde la 1.
+- La reproducción de música está **desactivada en entornos sin soporte de audio** (p. ej. CI/tests headless) mediante `Platform.isSupported(ConditionalFeature.MEDIA)`.
+- Archivos en `src/main/resources/com/titozeio/sounds/`.
+
+### Efectos de sonido (SFX)
+- Gestionados por la clase estática `SoundManager` mediante `javafx.scene.media.AudioClip` (reproducción instantánea, no bloqueante).
+- Al igual que la música, es seguro en entornos headless: si no hay soporte de audio simplemente no hace nada.
+- Archivos en `src/main/resources/com/titozeio/sounds/sfx/`.
+
+#### Tabla de SFX implementados:
+
+| Archivo                        | Evento que lo dispara                                                |
+| ------------------------------ | -------------------------------------------------------------------- |
+| `mech_move.wav`                | Robot se mueve a una casilla                                         |
+| `laser_shot.wav`               | Ataque con arma tipo **ENERGY** (Victory Saber, Bulwark)             |
+| `weapon_missiles.wav`          | Ataque con arma tipo **EXPLOSIVE** (Ice Age)                         |
+| `plasma_saber.wav`             | Ataque cuerpo a cuerpo **KINETIC** de melee (Death Knight)           |
+| `mech_receive_hit.wav`         | Robot recibe daño (ataque normal o skill)                            |
+| `weapon_freezing_ray.wav`      | Skill **Rayo Congelador** (Ice Age)                                  |
+| `missile_launch.wav`           | Skill **Misiles Teledirigidos** (Bullseye)                           |
+| `weapon_plasma_saber.wav`      | Skill **Sable de Plasma** (Victory Saber)                            |
+| `repair_nanobots.wav`          | Skill **Nanobots Reparadores** (Bulwark)                             |
+| `mobility_jump_thrusters.wav`  | Skill **Retropropulsores** (Scout)                                   |
+| `mobility_hyperspeed_dash.wav` | Skill **Turbo Propulsores** (Death Knight)                           |
+| `ui_unit_select.wav`           | Seleccionar un robot propio                                          |
+| `ui_ability_ready.wav`         | Entrar en modo Skill                                                 |
+| `ui_ability_cooldown.wav`      | Skill ejecutada (entra en cooldown)                                  |
+| `ui_turn_change.wav`           | Fin de turno                                                         |
+| `ui_invalid.wav`               | Acción no reconocida en modo combate                                 |
+| `ui_hover.wav`                 | **Hover** sobre cualquier botón de cualquier pantalla (vol. 45%)     |
+| `ui_click_confirm.wav`         | **Click** en cualquier botón **habilitado** en cualquier pantalla    |
+| `ui_error.wav`                 | **Click** en cualquier botón **deshabilitado** en cualquier pantalla |
+
+#### Sistema de SFX global en botones
+
+Los tres SFX de interfaz de usuario (`ui_hover`, `ui_click_confirm`, `ui_error`) se aplican **automáticamente a todos los botones de todas las pantallas** mediante un sistema centralizado:
+
+- `SoundManager.attachButtonSounds(Button)` — adjunta los tres listeners a un botón concreto.
+- `SoundManager.attachButtonSoundsToAll(Parent)` — recorre el árbol de nodos **recursivamente** y aplica el método anterior a todo `Button` encontrado.
+- `Screen.initButtonSounds(Parent)` — método heredable de la clase base. Cada pantalla lo llama en su `create()` pasando el nodo raíz FXML.
+
+| Evento de botón                  | SFX                    | Volumen |
+| -------------------------------- | ---------------------- | ------- |
+| Hover (ratón encima)             | `ui_hover.wav`         | 45%     |
+| Click en botón **habilitado**    | `ui_click_confirm.wav` | 65%     |
+| Click en botón **deshabilitado** | `ui_error.wav`         | 50%     |
+
+Pantallas cubiertas: `MainMenuScreen`, `RobotSelectionScreen`, `GameScreen`.
+
+## CI/CD (Integración Continua):
+
+El proyecto usa **GitHub Actions** (`.github/workflows/ci.yml`) con el siguiente pipeline automático:
+
+- **Ramas monitorizadas**: `main` y `develop` (tanto en `push` como en `pull_request`).
+- **Pasos ejecutados en toda rama**:
+  1. Compilación del proyecto (`mvn verify`).
+  2. Ejecución de tests unitarios con cobertura JaCoCo (umbral mínimo del **80% de instrucciones**).
+  3. Subida de informes de test y cobertura como artefactos.
+- **Pasos exclusivos de `main`** (solo en `push` a main):
+  4. Empaquetado del JAR ejecutable (`mvn package`).
+  5. Creación de imagen nativa Windows con `jpackage` (sin necesidad de Java instalado).
+  6. Subida del binario como artefacto de GitHub Actions.
+  7. Publicación de un **GitHub Release** con el tag `latest-main`.
 
 # 4. Bucle de Juego (Game Loop)
 
@@ -258,6 +332,39 @@ Para la lógica del tablero hexagonal, se utiliza un sistema de **Coordenadas Ax
 ## Asset List:
 
 Lista de sprites, sonidos y música (importante para organizar la carpeta src/main/resources).
+
+### Música
+- Ubicación: `src/main/resources/com/titozeio/sounds/`
+- Formato: `.mp3`
+- Convención de nombre: `[tema][número].mp3` (ej: `menu1.mp3`, `battle1.mp3`)
+- Temas actuales: `menu` (menú principal + selección de robots), `battle` (combate).
+
+### Efectos de Sonido (SFX)
+- Ubicación: `src/main/resources/com/titozeio/sounds/sfx/`
+- Formato: `.wav`
+- Archivos actuales:
+
+| Archivo                        | Categoría                     |
+| ------------------------------ | ----------------------------- |
+| `mech_move.wav`                | Combate – movimiento          |
+| `mech_receive_hit.wav`         | Combate – impacto recibido    |
+| `laser_shot.wav`               | Combate – arma de energía     |
+| `plasma_saber.wav`             | Combate – melee cinético      |
+| `weapon_plasma_saber.wav`      | Skill – Sable de Plasma       |
+| `weapon_freezing_ray.wav`      | Skill – Rayo Congelador       |
+| `weapon_missiles.wav`          | Combate – arma explosiva      |
+| `missile_launch.wav`           | Skill – Misiles Teledirigidos |
+| `repair_nanobots.wav`          | Skill – Nanobots Reparadores  |
+| `mobility_jump_thrusters.wav`  | Skill – Retropropulsores      |
+| `mobility_hyperspeed_dash.wav` | Skill – Turbo Propulsores     |
+| `ui_unit_select.wav`           | UI – selección de unidad      |
+| `ui_click_confirm.wav`         | UI – confirmación             |
+| `ui_turn_change.wav`           | UI – cambio de turno          |
+| `ui_ability_ready.wav`         | UI – skill lista / activada   |
+| `ui_ability_cooldown.wav`      | UI – skill en cooldown        |
+| `ui_hover.wav`                 | UI – hover                    |
+| `ui_error.wav`                 | UI – error                    |
+| `ui_invalid.wav`               | UI – acción inválida          |
 
 ## Diseño de Nivel (mapa):
 
@@ -420,29 +527,62 @@ Un boceto o descripción del único mapa que tendrá el prototipo.
     - **Fondo**: Imagen de arte conceptual (`Splash concept.png`) que cubre toda la pantalla.
     - **Panel Central**: Un contenedor semi-transparente oscuro (`rgba(0,0,0,0.4)`) con bordes redondeados que agrupa el título y las acciones.
     - **Título**: Logotipo del juego (`title_transparent.png`) centrado en la parte superior del panel.
-    - **Acciones**: Botón de "Play" estilizado con una imagen de base personalizada (`boton_1.png`) y tipografía "Exo 2".
+    - **Acciones**: 
+        - Botón de "Play" estilizado con una imagen de base personalizada (`boton_1.png`) y tipografía "Exo 2".
+        - Botón de "Settings" estilizado con una imagen de base personalizada (`boton_1.png`) y tipografía "Exo 2". Abre el panel de settings.
+    - **Panel de settings**: Un panel (que necesita su gráfico correspondiente, mientras crear un panel default) que se abre por encima del contenido de la pantalla a modo de popup con un overlay que oscurezca todo. contiene:
+        - Toggle (icono) de musica on/off (con su texto en "Exo 2").
+        - Toggle (icono) de sfx on/off (con su texto en "Exo 2").
+        - Botón de cerrar el panel (un botón con típica aspa en x). Cuando se pulsa se cierra el popup.
+
+### Estado actual implementado (marzo 2026)
+- La UI del menú principal está resuelta con FXML + CSS (sin atlas final), manteniendo estilo sci-fi.
+- Botones principales (`Play`, `Settings`) con estilo estable en `hover/pressed` sin cambios de layout ni saltos de tamaño.
+- `Settings` se muestra como popup centrado con overlay oscuro reforzado.
+- El panel de `Settings` se ajusta al contenido (sin ocupar toda la pantalla) y usa estilos compartidos de panel en CSS.
+- Se unificaron colores/transparencias en clases CSS (`scifi-button`, `scifi-button-outline`, paneles y overlay) para facilitar iteración visual.
 
 ## Pantalla de Nueva partida (Selección de Robots):
 - **Descripción**: 
     - Los jugadores eligen su equipo de 3 robots de forma alterna. Por equilibrio competitivo, **J2 elige primero** (compensando que J1 tendrá el primer turno en combate).
-    - La pantalla utiliza un sistema de **tarjetas dinámicas** cargadas de forma independiente para cada modelo de robot disponible.
-- **Flujo de Selección**: 
-    1. El jugador activo hace clic en una tarjeta para inspeccionarla.
-    2. Al hacer clic, se muestra un panel inferior con el **Lore y detalles extendidos** del robot, su arma y su habilidad.
-    3. La tarjeta seleccionada se resalta visualmente (borde turquesa `#4EE2C9`, fondo oscurecido `#123038`).
-    4. Se activa el botón de **"Confirmar"**. El jugador puede cambiar de opinión y elegir otra tarjeta antes de confirmar.
-    5. Tras confirmar, el turno pasa al oponente y la tarjeta elegida desaparece de la lista de disponibles.
 - **Elementos UI**: 
     - **Fondo**: Imagen de fondo de hangar/laboratorio (`bg1.png`).
-    - **Instrucciones**: Etiquetas de texto que indican de quién es el turno y cuántos robots lleva cada uno.
-    - **Tarjetas de Robot**: Generadas dinámicamente con:
-        - Nombre e imagen del modelo.
-        - Estadísticas básicas: HP y Movimiento.
-        - Detalles del Arma: Nombre, Alcance y Daño.
-        - Detalles de la Skill: Nombre, Cooldown y parámetros específicos (ej: Curación, Alcance extra).
-    - **Panel de Descripción**: Situado en la parte inferior, con un espacio fijo reservado (130px) para evitar desplazamientos bruscos en la interfaz cuando aparece el texto.
-    - **Botón Confirmar**: Estilizado con `boton_1.png`, solo habilitado cuando hay una selección pendiente.
-    - **Transición**: Al confirmar el 6º robot, la pantalla navega automáticamente a la **Pantalla de Combate**.
+    - **Título**: Panel contenedor del título de la pantalla (a unos 30 px del top, centrado horizontalmente, unos 800 px de ancho). El gráfico del texto aun por hacer.
+    - **Bloque de selección de robots**: (unos 650 pix de alto, a unos 120px del top, ocupando todo el ancho).  No tiene elemento visual, es un contenedor. Contenido:
+        - Botones de Flechas de izquierda y derecha a cada lado del bloque (a unos 20 pix de los lados), para ir rotando entre la info del robot que se muestra en el panel. Entre los botones hay más contenido con imágenes e info del robot seleccionado en ese momento. Inicialmente, se verá el primero por defecto (Saber Prime en esta versión). Cada vez que se pulsa a izquierda se va al robot anterior (si no lo hay, se va al último). Cada vez que se pulsa en la derecha se va al siguiente (si no lo hay, al primero). Si solo queda un robot, los botones de izquierda y derecha se inhabilitan (efecto de inhabilitación).
+        - Panel contenedor de concepts (izquierda)  (aprox. 700x700 px). Un contenedor semi-transparente oscuro (`rgba(0,0,0,0.4)`).Muestra la imagen de concept del robot correspondiente. Las imágenes están en src\main\resources\com\titozeio\images y terminan en "_concept.jpg" (por ejemplo, "iceage_concept.jpg").
+        -Panel de stats (derecha de concepts) (375x270 px). Aun sin elemento de UI final. Muestra los HPs del robot y el alcance y daño del arma. 
+        -Panel de Skills (derecha de concepts, debajo de stats) (375x340 px). Elemento de UI similar al panel de stats, sin gráfico aun. Muestra la info del skill: Nombre, tipo (defensa, ataque, curación,...), y sus stats (alcance y daño para ataque, por ejemplo).
+        -Panel de info del robot seleccionado (derecha de stats y skills) (aprox.500 x700 px). Elemento de UI similar al panel de stats, sin gráfico aun. Muestra los textos de descripción del robot, su arma y su skill.
+    - **Botón de “Confirmar selección"**: No tiene elemento visual aun.(Unos 10 px debajo del bloque de selección de robots). Cuando el J1 o el J2 pulsan este botón confirman que se quieren quedar con el robot seleccionado (aquel del que se está mostrando la info ahora mismo). El turno de selección pasa al otro jugador, se muestra brevemente el “mensaje de cambio de jugador” y el robot seleccionado deja de estar disponible en la lista de seleccionables. Si ya no quedan robots por seleccionar, entonces en lugar de eso, pasamos directamente a la pantalla de Game Screen.
+    - **Bloque de abajo**: Bloque de abajo (a unos 20 cm del bottom), centrado:  No tiene elemento visual, es un contenedor. Contenido:
+        -Panel de robots seleccionados de P1. Un panel de UI que aun no tenemos. Conteenido:
+            -Indicador “P1” de texto.
+            - Lista de robots seleccionados por P1 (inicialmente vacío,  con siluetas temporales que serán sustituidas por las imágenes de los robots que vaya seleccionando P1). Las imágenes serán las mismas que se usan en el GameScreen(src\main\resources\com\titozeio\sprites, terminados en “_P1” para P1).
+            - Nombres en pequeño de cada robot debajo de su imagen.
+        -Panel de robots seleccionados de P2 (contenido similar al de P1 pero aplicado a P2). A la derecha del conteneedor de robots de P1.
+        -Botón de Terminar al azar" (a unos 20 px a la derecha del panel de P2). Al ser pulsado, El sistema realizará las selecciones pendientes al azar y pasamos al Game Screen.
+    - **Mensaje de cambio de jugador**: Cada vez que un jugador confirma su selección (y al mostrarse la pantalla al principio), aparece un panel de mensaje centrado, mostrando: “Turno de elegir robot: P1” (o P2, si es el turno de P2). El panel de mensaje aparece centrado, y todo lo demás difuminado o con un overlay oscureciendo todo. A los 3 segundos (o si uno de los jugadores hace click donde sea) se cierra, quitándose el overlay.
+
+- **Flujo de Selección**: 
+    1. Se muestra el  "Mensaje de cambio de jugador" con la ifno correspondiente..  
+    2. Una vez se cierre el popup del "Mensaje de cambio de jugador", el jugador activo puede ir visualizando la info (concepts, stats, descripciones) del robot activo de la lista de disponibles, y puede pasar al siguiente robot disponiblee pulsando en la flecha dercha o al anterior en la izquierda. Una vez que pulse en el botón de "Confirmar selección", el robot seleccionado pasa a formar parte de su equipo, se elimina de los robots disponibles (apareciendo en su bloque), los paneles pasan a mostrar la info del siguiente (si no quedaran, se habría completado la selección y pasamos a la Game Screen).
+    3. Si aun quedan robots aparecería el  "Mensaje de cambio de jugador" con la ifno correspondiente. Se cambia de jugador activo, y volvemos al paso 2.
+    4. En cualquier momento, cualquiera de los dos jugadores puede pulsar el botón de "Terminar al azar". El sistema realizará las selecciones pendientes al azar y pasamos al Game Screen.
+
+### Estado actual implementado (marzo 2026)
+- Se eliminaron los textos superiores temporales de “los jugadores eligen robots...” para liberar espacio útil.
+- Popup de cambio de jugador ajustado a contenido (no fullscreen), centrado, con overlay.
+- Paneles de `Stats`, `Skills` e `Info` ampliados en legibilidad:
+  - Títulos más grandes.
+  - Etiquetas de stats alineadas a la izquierda y destacadas.
+  - Valores en blanco para contraste.
+- `Stats` integra también datos de arma como stats del robot (`HP`, `Movimiento`, `Daño`, `Alcance`).
+- En `Skills`, el encabezado muestra directamente el nombre de la skill.
+- Botones de `Confirmar selección` y `Terminar al azar` incrementados en altura para priorizar interacción.
+- Paneles de selección de jugadores renombrados a `Jugador 1` y `Jugador 2` (en lugar de `P1/P2`) con más espaciado.
+- Uso de retratos (`face_*`) en marco cuadrado consistente para robots, en lugar de sprite de cuerpo completo.
+
  ## Pantalla de Combate:
   - **Descripción**: La pantalla de combate es la pantalla principal del juego y donde se desarrola el core loop. 
   - **Elementos**: 
@@ -468,6 +608,26 @@ Un boceto o descripción del único mapa que tendrá el prototipo.
         - Cancelar: Cuando se seleccionan las opciones movimiento, atacar, o skill, aparece este botón de cancelar, que cancela la acción seleccionada y vuelve a mostrar el menú de acciones disponibles.
         - Confirmación de acción: Una vez que el jugador ha realizado una acción de movimiento o skill de movimiento, se activa automáticamente la acción de atacar. Y viceversa: una vez realizada la acción de ataque (o skill de ataque), se activa automáticamente la acción de movimiento. (una vez se empieza a realizar las acciones de un robot, hay que completar ambas).
         - Cuando un robot ha realizado sus dos acciones posibles, el robot aparece como "agotado" (un efecto visual de algún tipo, por ejemplo, se oscurece) y no se puede volver a seleccionar.
-       
+      
+### Estado actual implementado (marzo 2026)
+- `Combat Log` con dos estados:
+  - Replegado: una sola línea mostrando siempre el último evento.
+  - Desplegado: panel completo con histórico y scroll.
+  - Toggle dedicado para expandir/replegar.
+- El panel de info muestra el nombre del robot seleccionado como título (en lugar de “INFORMACIÓN”).
+- En despliegue, el panel de info prioriza el robot que se está desplegando.
+- Badge de propietario (`P1`/`P2`) visible junto al título del panel.
+- Bloque de skill en el panel de info:
+  - Nombre de skill + estado de cooldown visual por “dots”.
+  - `READY!` en verde cuando la skill está cargada.
+  - Botón `+info / -info` para alternar entre vista general del robot y vista detallada de skill.
+  - Al cambiar de robot, se restablece por defecto la vista general.
+- Robots enemigos en panel de info mostrados con opacidad reducida (feedback visual de “no propio”).
+- Barras de vida actualizadas a formato segmentado (1 segmento = 1 HP), tanto en mapa como en panel de info.
+- Reubicación de acciones inferiores (`Skill` y `Finalizar turno`) junto al log inferior para no invadir zona central del mapa.
+- Ajustes de hit-testing/interacción en HUD:
+  - Paneles inferiores y de info configurados para no bloquear `hover/click` del mapa en sus zonas vacías.
+  - Los botones interactivos (`toggle log`, `skill`, `fin turno`, `+info`) conservan interacción normal.
+  - Corregido el bloqueo parcial de las dos filas inferiores de hexágonos.
 
 

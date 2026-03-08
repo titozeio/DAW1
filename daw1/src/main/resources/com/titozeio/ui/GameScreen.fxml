@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.titozeio.ui.GameScreen">
+<StackPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.titozeio.ui.GameScreen">
    <children>
       
       <!-- Fondo base (textura o rejilla scifi) -->
@@ -25,7 +25,7 @@
       </ImageView>
 
       <!-- Capa del Mapa: Donde se renderizarán los Hexágonos -->
-      <StackPane fx:id="mapContainer">
+      <StackPane fx:id="mapContainer" styleClass="map-frame">
          <children>
       <Pane fx:id="hexMapPane" prefHeight="720.0" prefWidth="1280.0" />
          </children>
@@ -35,11 +35,11 @@
       <!-- pickOnBounds=false → los clics en el área central (vacía) pasan al mapa -->
       <BorderPane fx:id="mainHUD" mouseTransparent="false" pickOnBounds="false">
          <top>
-            <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="1280.0" spacing="20.0" style="-fx-background-color: rgba(11, 22, 28, 0.7); -fx-border-color: #4EE2C9; -fx-border-width: 0 0 1 0;" BorderPane.alignment="CENTER">
+            <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="1280.0" spacing="20.0" style="-fx-background-color: rgba(11, 22, 28, 0.7); -fx-border-color: #57C0EF; -fx-border-width: 0 0 1 0;" BorderPane.alignment="CENTER">
                <children>
                   <VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <Label fx:id="turnLabel" text="TURNO 1 - JUGADOR 1" textFill="#4ee2c9">
+                        <Label fx:id="turnLabel" text="TURNO 1 - JUGADOR 1" textFill="#57C0EF">
                            <font>
                               <Font name="Exo 2 Bold" size="24.0" />
                            </font>
@@ -59,68 +59,113 @@
          </top>
          
          <bottom>
-            <HBox alignment="BOTTOM_CENTER" prefHeight="180.0" prefWidth="1280.0" spacing="20.0" BorderPane.alignment="CENTER">
+            <HBox alignment="BOTTOM_LEFT" spacing="12.0" pickOnBounds="false" BorderPane.alignment="CENTER_LEFT">
                <children>
-                  
-                  <!-- Panel de Información (Hover) -->
-                  <VBox fx:id="infoPanel" prefHeight="160.0" prefWidth="350.0" spacing="5.0" styleClass="scifi-panel">
+                  <VBox alignment="BOTTOM_LEFT" spacing="8.0">
                      <children>
-                        <Label text="INFORMACIÓN" textFill="#4ee2c9">
-                           <font>
-                              <Font name="Exo 2 Bold" size="14.0" />
-                           </font>
-                        </Label>
-                        <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #4EE2C9; -fx-opacity: 0.3;" />
-                        <Label fx:id="infoDetailsLabel" alignment="TOP_LEFT" prefHeight="110.0" prefWidth="330.0" text="info" textFill="#e1e1e1" wrapText="true">
-                           <font>
-                              <Font name="Exo 2 Light" size="13.0" />
-                           </font>
-                        </Label>
+                        <!-- Panel de Información (Hover) -->
+                        <VBox fx:id="infoPanel" prefHeight="190.0" prefWidth="340.0" spacing="6.0" styleClass="scifi-panel">
+                           <children>
+                        <HBox alignment="CENTER_LEFT">
+                           <children>
+                              <Label fx:id="infoTitleLabel" text="INFORMACIÓN" textFill="#57C0EF">
+                                 <font>
+                                    <Font name="Exo 2 Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Label fx:id="ownerBadgeLabel" text="" textFill="#EAFBFF" />
+                           </children>
+                        </HBox>
+                        <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #57C0EF; -fx-opacity: 0.3;" />
+                        <VBox fx:id="robotInfoBox" spacing="5.0">
+                           <children>
+                              <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                 <children>
+                                    <StackPane prefWidth="90.0" prefHeight="90.0" styleClass="robot-frame, robot-frame-portrait">
+                                       <children>
+                                          <ImageView fx:id="infoPortraitImage" fitWidth="82.0" fitHeight="82.0" preserveRatio="true" />
+                                       </children>
+                                    </StackPane>
+                                    <VBox spacing="4.0" prefWidth="250.0">
+                                       <children>
+                                          <HBox spacing="6.0" alignment="CENTER_LEFT"><children><Label text="HP" textFill="#57C0EF"/><StackPane fx:id="hpBarContainer" prefWidth="130.0" prefHeight="10.0" style="-fx-background-color: rgba(45,45,45,0.8);" /><Label fx:id="hpValueLabel" textFill="WHITE"/></children></HBox>
+                                          <HBox spacing="6.0" alignment="CENTER_LEFT"><children><Label text="MOV" textFill="#57C0EF"/><Label fx:id="moveValueLabel" textFill="WHITE"/></children></HBox>
+                                          <HBox spacing="6.0" alignment="CENTER_LEFT"><children><Label text="ALC" textFill="#57C0EF"/><Label fx:id="rangeValueLabel" textFill="WHITE"/></children></HBox>
+                                          <HBox spacing="6.0" alignment="CENTER_LEFT"><children><Label text="DAN" textFill="#57C0EF"/><Label fx:id="damageValueLabel" textFill="WHITE"/></children></HBox>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                        <VBox fx:id="skillInfoBox" spacing="3.0" visible="false" managed="false">
+                           <children>
+                              <Label fx:id="skillTypeInfoLabel" textFill="WHITE" />
+                              <Label fx:id="skillDetailLine1Label" textFill="WHITE" />
+                              <Label fx:id="skillDetailLine2Label" textFill="WHITE" />
+                           </children>
+                        </VBox>
+                        <HBox fx:id="skillFooterBox" alignment="CENTER_LEFT" spacing="6.0" style="-fx-background-color: rgba(30,35,40,0.85);">
+                           <padding><Insets left="6.0" right="6.0" top="4.0" bottom="4.0"/></padding>
+                           <children>
+                              <Label fx:id="skillNameInfoLabel" text="Skill -" textFill="#57C0EF" />
+                              <HBox fx:id="skillCooldownDots" spacing="4.0" alignment="CENTER_LEFT" />
+                              <Label fx:id="skillReadyLabel" text="READY!" textFill="#6CFF6C" visible="false" managed="false" style="-fx-effect: dropshadow(gaussian, rgba(108,255,108,0.7), 8, 0.2, 0, 0);" />
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Button fx:id="infoToggleButton" mnemonicParsing="false" onAction="#handleInfoToggleAction" text="+info" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-text-fill: #57C0EF;" />
+                           </children>
+                        </HBox>
+                        <Label fx:id="infoDetailsLabel" managed="false" visible="false" />
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" left="15.0" right="15.0" top="10.0" />
+                           </padding>
+                        </VBox>
                      </children>
-                     <padding>
-                        <Insets bottom="10.0" left="15.0" right="15.0" top="10.0" />
-                     </padding>
                   </VBox>
 
                   <!-- Registro de Combate (Log) -->
-                  <VBox prefHeight="200.0" prefWidth="100.0" spacing="5.0" style="-fx-background-color: rgba(0, 0, 0, 0.4); -fx-background-radius: 6;" HBox.hgrow="ALWAYS">
+                  <VBox fx:id="logPanelBox" alignment="BOTTOM_LEFT" prefHeight="36.0" minHeight="36.0" maxHeight="36.0" prefWidth="420.0" spacing="5.0" style="-fx-background-color: rgba(0, 0, 0, 0.4); -fx-background-radius: 6;">
                      <children>
-                        <Label text="LOG DE COMBATE" textFill="#949494">
-                           <font>
-                              <Font name="Exo 2 Regular" size="10.0" />
-                           </font>
-                        </Label>
-                        <ScrollPane fx:id="logScrollPane" fitToWidth="true" hbarPolicy="NEVER" prefHeight="130.0" vbarPolicy="ALWAYS">
+                        <ScrollPane fx:id="logScrollPane" fitToWidth="true" hbarPolicy="NEVER" prefHeight="130.0" vbarPolicy="ALWAYS" visible="false" managed="false">
                            <content>
                               <VBox fx:id="combatLogContent" spacing="2.0">
                                  <!-- Las líneas de log se añadirán aquí dinámicamente -->
                               </VBox>
                            </content>
                         </ScrollPane>
+                        <HBox alignment="CENTER_LEFT" spacing="8.0" pickOnBounds="false">
+                           <children>
+                              <Label fx:id="latestLogLabel" text="LOG" textFill="#E1E1E1" HBox.hgrow="ALWAYS" maxWidth="1.7976931348623157E308">
+                                 <font><Font name="Exo 2 Regular" size="12.0" /></font>
+                              </Label>
+                              <Button fx:id="logToggleButton" mnemonicParsing="false" onAction="#handleLogToggleAction" text="+" styleClass="scifi-button-outline" prefWidth="42.0" prefHeight="24.0" />
+                           </children>
+                        </HBox>
                      </children>
                      <padding>
                         <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
                      </padding>
                   </VBox>
 
-                  <!-- Acciones de Juego -->
-                  <VBox alignment="BOTTOM_CENTER" prefHeight="160.0" prefWidth="220.0" spacing="10.0">
+                  <HBox fx:id="actionButtonsBox" alignment="BOTTOM_LEFT" spacing="8.0">
                      <children>
-                        <Button fx:id="skillButton" mnemonicParsing="false" prefHeight="40.0" prefWidth="220.0" styleClass="scifi-button-outline" text="SKILL">
+                        <Button fx:id="skillButton" mnemonicParsing="false" prefHeight="36.0" prefWidth="150.0" styleClass="scifi-button-outline" text="SKILL">
                            <font>
                               <Font name="Exo 2 Bold" size="13.0" />
                            </font>
                         </Button>
-                        <Button fx:id="endTurnButton" mnemonicParsing="false" prefHeight="50.0" prefWidth="220.0" styleClass="scifi-button" text="FINALIZAR TURNO">
+                        <Button fx:id="endTurnButton" mnemonicParsing="false" prefHeight="36.0" prefWidth="180.0" styleClass="scifi-button" text="FINALIZAR TURNO">
                            <font>
-                              <Font name="Exo 2 Bold" size="16.0" />
+                              <Font name="Exo 2 Bold" size="14.0" />
                            </font>
                         </Button>
                      </children>
-                  </VBox>
+                  </HBox>
                </children>
                <padding>
-                  <Insets bottom="20.0" left="20.0" right="20.0" />
+                  <Insets bottom="12.0" left="20.0" right="20.0" />
                </padding>
             </HBox>
          </bottom>
@@ -132,7 +177,7 @@
             <Pane opacity="0.75" style="-fx-background-color: black;" />
             <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" spacing="30.0" styleClass="scifi-panel">
                <children>
-                  <Label fx:id="overlayTitle" text="MENSAJE DEL SISTEMA" textFill="#4ee2c9">
+                  <Label fx:id="overlayTitle" text="MENSAJE DEL SISTEMA" textFill="#57C0EF">
                      <font>
                         <Font name="Exo 2 Bold" size="28.0" />
                      </font>
@@ -176,7 +221,7 @@
                      </font>
                   </Label>
                   <!-- Turno final -->
-                  <Label fx:id="victoryTurnLabel" text="Turno 0" textFill="#4ee2c9">
+                  <Label fx:id="victoryTurnLabel" text="Turno 0" textFill="#57C0EF">
                      <font>
                         <Font name="Exo 2 Light" size="13.0" />
                      </font>

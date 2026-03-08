@@ -1,0 +1,191 @@
+[
+  {
+    "spriteName": "settings_panel_bg",
+    "x": 8,
+    "y": 8,
+    "width": 112,
+    "height": 112
+  },
+  {
+    "spriteName": "icon_music_on",
+    "x": 128,
+    "y": 8,
+    "width": 112,
+    "height": 112
+  },
+  {
+    "spriteName": "icon_music_off",
+    "x": 248,
+    "y": 8,
+    "width": 112,
+    "height": 112
+  },
+  {
+    "spriteName": "icon_sfx_on",
+    "x": 368,
+    "y": 8,
+    "width": 112,
+    "height": 112
+  },
+  {
+    "spriteName": "icon_sfx_off",
+    "x": 488,
+    "y": 8,
+    "width": 112,
+    "height": 112
+  },
+  {
+    "spriteName": "btn_close_x",
+    "x": 608,
+    "y": 8,
+    "width": 112,
+    "height": 112
+  },
+  {
+    "spriteName": "btn_close_x_hover",
+    "x": 728,
+    "y": 8,
+    "width": 112,
+    "height": 112
+  },
+  {
+    "spriteName": "btn_close_x_pressed",
+    "x": 848,
+    "y": 8,
+    "width": 112,
+    "height": 112
+  },
+  {
+    "spriteName": "selection_title_panel",
+    "x": 8,
+    "y": 128,
+    "width": 112,
+    "height": 112
+  },
+  {
+    "spriteName": "arrow_left",
+    "x": 128,
+    "y": 128,
+    "width": 112,
+    "height": 112
+  },
+  {
+    "spriteName": "arrow_right",
+    "x": 248,
+    "y": 128,
+    "width": 112,
+    "height": 112
+  },
+  {
+    "spriteName": "arrow_left_disabled",
+    "x": 368,
+    "y": 128,
+    "width": 112,
+    "height": 112
+  },
+  {
+    "spriteName": "arrow_right_disabled",
+    "x": 488,
+    "y": 128,
+    "width": 112,
+    "height": 112
+  },
+  {
+    "spriteName": "panel_stats_bg",
+    "x": 608,
+    "y": 128,
+    "width": 112,
+    "height": 112
+  },
+  {
+    "spriteName": "panel_skills_bg",
+    "x": 728,
+    "y": 128,
+    "width": 112,
+    "height": 112
+  },
+  {
+    "spriteName": "panel_robot_info_bg",
+    "x": 848,
+    "y": 128,
+    "width": 112,
+    "height": 112
+  },
+  {
+    "spriteName": "btn_confirm_selection",
+    "x": 8,
+    "y": 248,
+    "width": 112,
+    "height": 112
+  },
+  {
+    "spriteName": "btn_confirm_selection_hover",
+    "x": 128,
+    "y": 248,
+    "width": 112,
+    "height": 112
+  },
+  {
+    "spriteName": "btn_confirm_selection_pressed",
+    "x": 248,
+    "y": 248,
+    "width": 112,
+    "height": 112
+  },
+  {
+    "spriteName": "btn_confirm_selection_disabled",
+    "x": 368,
+    "y": 248,
+    "width": 112,
+    "height": 112
+  },
+  {
+    "spriteName": "btn_random_finish",
+    "x": 488,
+    "y": 248,
+    "width": 112,
+    "height": 112
+  },
+  {
+    "spriteName": "btn_random_finish_hover",
+    "x": 608,
+    "y": 248,
+    "width": 112,
+    "height": 112
+  },
+  {
+    "spriteName": "btn_random_finish_pressed",
+    "x": 728,
+    "y": 248,
+    "width": 112,
+    "height": 112
+  },
+  {
+    "spriteName": "panel_team_p1_bg",
+    "x": 848,
+    "y": 248,
+    "width": 112,
+    "height": 112
+  },
+  {
+    "spriteName": "panel_team_p2_bg",
+    "x": 8,
+    "y": 368,
+    "width": 112,
+    "height": 112
+  },
+  {
+    "spriteName": "slot_robot_placeholder",
+    "x": 128,
+    "y": 368,
+    "width": 112,
+    "height": 112
+  },
+  {
+    "spriteName": "turn_popup_bg",
+    "x": 248,
+    "y": 368,
+    "width": 112,
+    "height": 112
+  }
+]
