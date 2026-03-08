@@ -6,12 +6,17 @@ import com.titozeio.ui.Screen;
 import com.titozeio.victory.BaseCaptureVC;
 import com.titozeio.victory.EliminationVC;
 import com.titozeio.victory.VictoryCondition;
+import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
+import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import javafx.stage.Stage;
 import java.util.List;
@@ -106,10 +111,87 @@ public class Game {
         return (player == p1) ? p2 : p1;
     }
 
+    /**
+     * Navega a la pantalla indicada con una animación de transición
+     * fade-out → cambio de escena → fade-in.
+     * Si el stage no tiene escena activa (p.ej., primer arranque o entorno
+     * headless)
+     * la transición es inmediata.
+     */
     public void displayScreen(Screen screen) {
         updateMusicForScreen(screen);
-        this.currentScreen = screen;
-        this.currentScreen.display();
+
+        // Sin stage disponible → transición inmediata (tests headless)
+        if (stage == null) {
+            this.currentScreen = screen;
+            screen.display();
+            return;
+        }
+
+        Scene currentScene = stage.getScene();
+
+        // Si no hay escena activa, mostrar directamente (primer inicio)
+        if (currentScene == null) {
+            this.currentScreen = screen;
+            screen.display();
+            return;
+        }
+
+        // ── Fade-out ──────────────────────────────────────────────────────────
+        // Superponemos un Rectangle negro sobre el StackPane raíz de la escena
+        // actual y lo animamos a opacidad 1.0 (negro total).
+        javafx.scene.Node root = currentScene.getRoot();
+        Rectangle overlay = null;
+
+        if (root instanceof StackPane sp) {
+            overlay = new Rectangle();
+            overlay.setFill(Color.BLACK);
+            overlay.setMouseTransparent(true);
+            overlay.setOpacity(0.0);
+            // Vincular tamaño al StackPane
+            overlay.widthProperty().bind(sp.widthProperty());
+            overlay.heightProperty().bind(sp.heightProperty());
+            sp.getChildren().add(overlay);
+        }
+
+        final Rectangle finalOverlay = overlay;
+
+        if (finalOverlay != null) {
+            FadeTransition fadeOut = new FadeTransition(Duration.millis(300), finalOverlay);
+            fadeOut.setFromValue(0.0);
+            fadeOut.setToValue(1.0);
+            fadeOut.setOnFinished(e -> {
+                // ── Cambio de escena ────────────────────────────────────────
+                this.currentScreen = screen;
+                screen.display();
+                // ── Fade-in ─────────────────────────────────────────────────
+                // El overlay ya no existe en la nueva escena; hacemos fade-in
+                // en el nuevo root.
+                Scene newScene = stage.getScene();
+                if (newScene != null) {
+                    javafx.scene.Node newRoot = newScene.getRoot();
+                    newRoot.setOpacity(0.0);
+                    FadeTransition fadeIn = new FadeTransition(Duration.millis(400), newRoot);
+                    fadeIn.setFromValue(0.0);
+                    fadeIn.setToValue(1.0);
+                    fadeIn.play();
+                }
+            });
+            fadeOut.play();
+        } else {
+            // Raíz no es StackPane → fade-in simple sin fade-out
+            this.currentScreen = screen;
+            screen.display();
+            Scene newScene = stage.getScene();
+            if (newScene != null) {
+                javafx.scene.Node newRoot = newScene.getRoot();
+                newRoot.setOpacity(0.0);
+                FadeTransition fadeIn = new FadeTransition(Duration.millis(400), newRoot);
+                fadeIn.setFromValue(0.0);
+                fadeIn.setToValue(1.0);
+                fadeIn.play();
+            }
+        }
     }
 
     private void updateMusicForScreen(Screen screen) {
