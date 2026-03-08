@@ -6,13 +6,17 @@ import com.titozeio.engine.Robot;
 import com.titozeio.enums.RobotTemplate;
 import com.titozeio.model.Weapon;
 import com.titozeio.skills.Skill;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
 import javafx.animation.PauseTransition;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
@@ -311,22 +315,26 @@ public class RobotSelectionScreen extends Screen {
         Weapon weapon = sample.getWeapon();
         Skill skill = sample.getSkill();
 
-        if (conceptImageView != null)
+        if (conceptImageView != null) {
             conceptImageView.setImage(loadConceptImage(template));
-        if (statHpValueLabel != null)
-            statHpValueLabel.setText(String.valueOf(sample.getMaxHp()));
-        if (statMoveValueLabel != null)
-            statMoveValueLabel.setText(String.valueOf(sample.getMovementPoints()));
-        if (statDamageValueLabel != null)
-            statDamageValueLabel.setText(String.valueOf(weapon.getDamage()));
-        if (statRangeValueLabel != null)
-            statRangeValueLabel.setText(String.valueOf(weapon.getRange()));
+            animateHologramPulse(conceptImageView);
+        }
+
+        // Animamos los textos de stats como si fueran una terminal recalculando
+        animateTextFlicker(statHpValueLabel, String.valueOf(sample.getMaxHp()));
+        animateTextFlicker(statMoveValueLabel, String.valueOf(sample.getMovementPoints()));
+        animateTextFlicker(statDamageValueLabel, String.valueOf(weapon.getDamage()));
+        animateTextFlicker(statRangeValueLabel, String.valueOf(weapon.getRange()));
 
         if (skill != null) {
-            if (skillIconImageView != null)
+            if (skillIconImageView != null) {
                 skillIconImageView.setImage(loadSkillIcon(skill));
-            if (skillTitleLabel != null)
+                fadeInNode(skillIconImageView, 200);
+            }
+            if (skillTitleLabel != null) {
                 skillTitleLabel.setText(skill.getName());
+                animateTextFlicker(skillTitleLabel, skill.getName());
+            }
             updateSkillTitleFont();
             if (skillTypeValueLabel != null)
                 skillTypeValueLabel.setText(String.valueOf(skill.getType()));
@@ -495,10 +503,22 @@ public class RobotSelectionScreen extends Screen {
             RobotTemplate t = team.get(index);
             Robot sample = t.createRobot(null);
             name.setText(sample.getModelName());
-            image.setImage(loadTeamSprite(t, p1));
-            image.setOpacity(1.0);
-            if (frame != null) {
-                frame.setOpacity(1.0);
+
+            // Si el slot estaba vacío (imagen null), animamos la aparición
+            if (image.getImage() == null) {
+                image.setImage(loadTeamSprite(t, p1));
+                image.setOpacity(0.0);
+                fadeInNode(image, 400);
+                if (frame != null) {
+                    frame.setOpacity(0.0);
+                    fadeInNode(frame, 400);
+                }
+            } else {
+                image.setImage(loadTeamSprite(t, p1));
+                image.setOpacity(1.0);
+                if (frame != null) {
+                    frame.setOpacity(1.0);
+                }
             }
         } else {
             name.setText("---");
@@ -558,6 +578,71 @@ public class RobotSelectionScreen extends Screen {
     @Override
     public void display() {
         this.stage.setScene(this.scene);
+    }
+
+    /**
+     * Crea un pulso de "holograma" más intenso con micro-destellos y glitches.
+     */
+    private void animateHologramPulse(ImageView iv) {
+        if (iv == null)
+            return;
+
+        ColorAdjust adj = new ColorAdjust();
+        iv.setEffect(adj);
+
+        Timeline pulse = new Timeline(
+                new KeyFrame(Duration.ZERO,
+                        new KeyValue(adj.brightnessProperty(), 0.0),
+                        new KeyValue(adj.contrastProperty(), 0.0),
+                        new KeyValue(iv.opacityProperty(), 0.5)),
+                new KeyFrame(Duration.millis(80),
+                        new KeyValue(adj.brightnessProperty(), 0.9), // Flash fuerte
+                        new KeyValue(adj.contrastProperty(), 0.6),
+                        new KeyValue(iv.opacityProperty(), 1.0)),
+                new KeyFrame(Duration.millis(150),
+                        new KeyValue(adj.brightnessProperty(), 0.2),
+                        new KeyValue(iv.opacityProperty(), 0.7) // Glitch de opacidad
+                ),
+                new KeyFrame(Duration.millis(220),
+                        new KeyValue(adj.brightnessProperty(), 0.7), // Segundo micro-destello
+                        new KeyValue(adj.contrastProperty(), 0.4),
+                        new KeyValue(iv.opacityProperty(), 1.0)),
+                new KeyFrame(Duration.millis(700),
+                        new KeyValue(adj.brightnessProperty(), 0.0),
+                        new KeyValue(adj.contrastProperty(), 0.0),
+                        new KeyValue(iv.opacityProperty(), 1.0)));
+        pulse.play();
+    }
+
+    /**
+     * Simula una terminal de datos "pensando" con una secuencia de carga más larga.
+     */
+    private void animateTextFlicker(Label label, String finalValue) {
+        if (label == null)
+            return;
+
+        Timeline flicker = new Timeline(
+                new KeyFrame(Duration.ZERO, e -> {
+                    label.setOpacity(0.3);
+                    label.setText("---");
+                }),
+                new KeyFrame(Duration.millis(120), e -> {
+                    label.setOpacity(0.8);
+                    label.setText("###");
+                }),
+                new KeyFrame(Duration.millis(240), e -> {
+                    label.setOpacity(0.5);
+                    label.setText("888");
+                }),
+                new KeyFrame(Duration.millis(360), e -> {
+                    label.setOpacity(0.9);
+                    label.setText("???");
+                }),
+                new KeyFrame(Duration.millis(500), e -> {
+                    label.setOpacity(1.0);
+                    label.setText(finalValue);
+                }));
+        flicker.play();
     }
 
     @Override
