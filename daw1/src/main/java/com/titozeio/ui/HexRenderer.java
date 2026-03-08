@@ -441,23 +441,20 @@ public class HexRenderer {
         double barW = HEX_SIZE * 0.9;
         double barH = 5.0;
 
-        // Fondo de la barra
+        // Fondo de la barra: gris oscuro al 80%, sin redondeado.
         Rectangle bg = new Rectangle(cx - barW / 2.0, barY, barW, barH);
-        bg.setFill(Color.web("#220000"));
-        bg.setArcWidth(3);
-        bg.setArcHeight(3);
+        bg.setFill(Color.web("#2d2d2d", 0.8));
         bg.setMouseTransparent(true);
         pane.getChildren().add(bg);
 
-        // Segmentos de HP
-        double segW = (barW - (maxHp - 1)) / maxHp;
-        for (int i = 0; i < hp; i++) {
-            double segX = cx - barW / 2.0 + i * (segW + 1);
-            Color segColor = (hp > maxHp * 0.5) ? Color.web("#44dd44")
-                    : (hp > maxHp * 0.25) ? Color.web("#dddd22")
-                            : Color.web("#dd2222");
-            Rectangle seg = new Rectangle(segX, barY, segW, barH);
-            seg.setFill(segColor);
+        // Segmentos de HP: uno por HP máximo. Perdidos al 40% opacidad.
+        double gap = 1.0;
+        double segW = (barW - gap * (maxHp + 1)) / maxHp;
+        for (int i = 0; i < maxHp; i++) {
+            double segX = cx - barW / 2.0 + gap + i * (segW + gap);
+            Rectangle seg = new Rectangle(segX, barY + 1, segW, Math.max(1.0, barH - 2));
+            seg.setFill(Color.web("#44dd44"));
+            seg.setOpacity(i < hp ? 1.0 : 0.4);
             seg.setMouseTransparent(true);
             pane.getChildren().add(seg);
         }

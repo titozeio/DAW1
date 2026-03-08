@@ -63,19 +63,59 @@
                <children>
                   
                   <!-- Panel de Información (Hover) -->
-                  <VBox fx:id="infoPanel" prefHeight="160.0" prefWidth="350.0" spacing="5.0" styleClass="scifi-panel">
+                  <VBox fx:id="infoPanel" prefHeight="190.0" prefWidth="390.0" spacing="6.0" styleClass="scifi-panel">
                      <children>
-                        <Label text="INFORMACIÓN" textFill="#4ee2c9">
-                           <font>
-                              <Font name="Exo 2 Bold" size="14.0" />
-                           </font>
-                        </Label>
+                        <HBox alignment="CENTER_LEFT">
+                           <children>
+                              <Label fx:id="infoTitleLabel" text="INFORMACIÓN" textFill="#4ee2c9">
+                                 <font>
+                                    <Font name="Exo 2 Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Label fx:id="ownerBadgeLabel" text="" textFill="#EAFBFF" />
+                           </children>
+                        </HBox>
                         <Region prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #4EE2C9; -fx-opacity: 0.3;" />
-                        <Label fx:id="infoDetailsLabel" alignment="TOP_LEFT" prefHeight="110.0" prefWidth="330.0" text="info" textFill="#e1e1e1" wrapText="true">
-                           <font>
-                              <Font name="Exo 2 Light" size="13.0" />
-                           </font>
-                        </Label>
+                        <VBox fx:id="robotInfoBox" spacing="5.0">
+                           <children>
+                              <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                 <children>
+                                    <StackPane prefWidth="90.0" prefHeight="90.0" style="-fx-background-color: rgba(128,128,128,0.3); -fx-border-color: #6CFDF6; -fx-border-width: 1;">
+                                       <children>
+                                          <ImageView fx:id="infoPortraitImage" fitWidth="82.0" fitHeight="82.0" preserveRatio="true" />
+                                       </children>
+                                    </StackPane>
+                                    <VBox spacing="4.0" prefWidth="250.0">
+                                       <children>
+                                          <HBox spacing="6.0" alignment="CENTER_LEFT"><children><Label text="HP" textFill="#7AEBF1"/><StackPane fx:id="hpBarContainer" prefWidth="130.0" prefHeight="10.0" style="-fx-background-color: rgba(45,45,45,0.8);" /><Label fx:id="hpValueLabel" textFill="WHITE"/></children></HBox>
+                                          <HBox spacing="6.0" alignment="CENTER_LEFT"><children><Label text="MOV" textFill="#7AEBF1"/><Label fx:id="moveValueLabel" textFill="WHITE"/></children></HBox>
+                                          <HBox spacing="6.0" alignment="CENTER_LEFT"><children><Label text="ALC" textFill="#7AEBF1"/><Label fx:id="rangeValueLabel" textFill="WHITE"/></children></HBox>
+                                          <HBox spacing="6.0" alignment="CENTER_LEFT"><children><Label text="DAN" textFill="#7AEBF1"/><Label fx:id="damageValueLabel" textFill="WHITE"/></children></HBox>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                        <VBox fx:id="skillInfoBox" spacing="3.0" visible="false" managed="false">
+                           <children>
+                              <Label fx:id="skillTypeInfoLabel" textFill="WHITE" />
+                              <Label fx:id="skillDetailLine1Label" textFill="WHITE" />
+                              <Label fx:id="skillDetailLine2Label" textFill="WHITE" />
+                           </children>
+                        </VBox>
+                        <HBox fx:id="skillFooterBox" alignment="CENTER_LEFT" spacing="6.0" style="-fx-background-color: rgba(30,35,40,0.85);">
+                           <padding><Insets left="6.0" right="6.0" top="4.0" bottom="4.0"/></padding>
+                           <children>
+                              <Label fx:id="skillNameInfoLabel" text="Skill -" textFill="#7AEBF1" />
+                              <HBox fx:id="skillCooldownDots" spacing="4.0" alignment="CENTER_LEFT" />
+                              <Label fx:id="skillReadyLabel" text="READY!" textFill="#6CFF6C" visible="false" managed="false" style="-fx-effect: dropshadow(gaussian, rgba(108,255,108,0.7), 8, 0.2, 0, 0);" />
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Button fx:id="infoToggleButton" mnemonicParsing="false" onAction="#handleInfoToggleAction" text="+info" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-text-fill: #7AEBF1;" />
+                           </children>
+                        </HBox>
+                        <Label fx:id="infoDetailsLabel" managed="false" visible="false" />
                      </children>
                      <padding>
                         <Insets bottom="10.0" left="15.0" right="15.0" top="10.0" />
@@ -83,20 +123,23 @@
                   </VBox>
 
                   <!-- Registro de Combate (Log) -->
-                  <VBox prefHeight="200.0" prefWidth="100.0" spacing="5.0" style="-fx-background-color: rgba(0, 0, 0, 0.4); -fx-background-radius: 6;" HBox.hgrow="ALWAYS">
+                  <VBox fx:id="logPanelBox" alignment="BOTTOM_LEFT" prefHeight="200.0" prefWidth="100.0" spacing="5.0" style="-fx-background-color: rgba(0, 0, 0, 0.4); -fx-background-radius: 6;" HBox.hgrow="ALWAYS">
                      <children>
-                        <Label text="LOG DE COMBATE" textFill="#949494">
-                           <font>
-                              <Font name="Exo 2 Regular" size="10.0" />
-                           </font>
-                        </Label>
-                        <ScrollPane fx:id="logScrollPane" fitToWidth="true" hbarPolicy="NEVER" prefHeight="130.0" vbarPolicy="ALWAYS">
+                        <ScrollPane fx:id="logScrollPane" fitToWidth="true" hbarPolicy="NEVER" prefHeight="130.0" vbarPolicy="ALWAYS" visible="false" managed="false">
                            <content>
                               <VBox fx:id="combatLogContent" spacing="2.0">
                                  <!-- Las líneas de log se añadirán aquí dinámicamente -->
                               </VBox>
                            </content>
                         </ScrollPane>
+                        <HBox alignment="CENTER_LEFT" spacing="8.0">
+                           <children>
+                              <Label fx:id="latestLogLabel" text="LOG" textFill="#E1E1E1" HBox.hgrow="ALWAYS" maxWidth="1.7976931348623157E308">
+                                 <font><Font name="Exo 2 Regular" size="12.0" /></font>
+                              </Label>
+                              <Button fx:id="logToggleButton" mnemonicParsing="false" onAction="#handleLogToggleAction" text="▼" styleClass="scifi-button-outline" prefWidth="34.0" prefHeight="24.0" />
+                           </children>
+                        </HBox>
                      </children>
                      <padding>
                         <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
