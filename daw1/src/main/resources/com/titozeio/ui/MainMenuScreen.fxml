@@ -48,9 +48,9 @@
          </padding>
       </VBox>
 
-      <StackPane fx:id="settingsOverlay" alignment="CENTER" managed="false" style="-fx-background-color: rgba(0,0,0,0.8);" visible="false">
+      <StackPane fx:id="settingsOverlay" alignment="CENTER" managed="false" style="-fx-background-color: rgba(0,0,0,0.9);" visible="false">
          <children>
-            <VBox alignment="TOP_LEFT" maxHeight="220.0" maxWidth="360.0" minHeight="220.0" minWidth="360.0" prefHeight="220.0" prefWidth="360.0" spacing="22.0" styleClass="scifi-panel">
+            <VBox alignment="TOP_LEFT" maxHeight="180.0" maxWidth="360.0" minHeight="180.0" minWidth="360.0" prefHeight="180.0" prefWidth="360.0" spacing="22.0" styleClass="scifi-panel">
                <padding>
                   <Insets bottom="24.0" left="24.0" right="24.0" top="18.0" />
                </padding>
