@@ -154,8 +154,8 @@ public class Game {
                 int next = resolveNextTrackNumber(theme, currentTrackNumber);
                 playThemeTrack(theme, next);
             });
-        } catch (Exception e) {
-            System.err.println("Error al reproducir música (" + path + "): " + e.getMessage());
+        } catch (Throwable t) {
+            System.err.println("Error al reproducir música (" + path + "): " + t.getMessage());
         }
     }
 

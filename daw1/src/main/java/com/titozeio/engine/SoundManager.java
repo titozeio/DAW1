@@ -135,9 +135,11 @@ public class SoundManager {
             AudioClip clip = new AudioClip(resource.toExternalForm());
             clip.setVolume(Math.max(0.0, Math.min(1.0, volume)));
             clip.play();
-        } catch (Exception e) {
-            // En entornos headless o sin GStreamer, simplemente ignoramos
-            System.err.println("[SoundManager] No se pudo reproducir " + fileName + ": " + e.getMessage());
+        } catch (Throwable t) {
+            // En entornos headless o sin soporte nativo de media (p.ej. CI con Monocle)
+            // se puede lanzar NoSuchMethodError u otros Error no recuperables;
+            // los ignoramos para no romper los tests.
+            System.err.println("[SoundManager] No se pudo reproducir " + fileName + ": " + t.getMessage());
         }
     }
 
