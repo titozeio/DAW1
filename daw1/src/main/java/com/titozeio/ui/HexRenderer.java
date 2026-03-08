@@ -5,16 +5,22 @@ import com.titozeio.engine.Map;
 import com.titozeio.engine.Robot;
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
 import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
+import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
 import javafx.scene.Node;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -107,6 +113,10 @@ public class HexRenderer {
      */
     private Hexagon landingHex = null;
 
+    /** Datos para animación de ataque */
+    private Hexagon attackerHexScope = null;
+    private Hexagon targetHexScope = null;
+
     // ── Constructor ───────────────────────────────────────────────────────────
     public HexRenderer(Pane pane) {
         this.pane = pane;
@@ -174,6 +184,12 @@ public class HexRenderer {
         this.landingHex = hex;
     }
 
+    /** Registra un ataque para animarlo en el próximo render. */
+    public void markAttack(Hexagon attacker, Hexagon target) {
+        this.attackerHexScope = attacker;
+        this.targetHexScope = target;
+    }
+
     // ── API pública ───────────────────────────────────────────────────────────
 
     /**
@@ -205,6 +221,11 @@ public class HexRenderer {
                 }
             }
         }
+
+        // Limpiar estados de animación después de un ciclo completo de renderizado
+        this.landingHex = null;
+        this.attackerHexScope = null;
+        this.targetHexScope = null;
     }
 
     // ── Renderizado interno ───────────────────────────────────────────────────
@@ -386,13 +407,104 @@ public class HexRenderer {
         // 1. Animación de aterrizaje (despliegue)
         if (robot.getPosition() != null && robot.getPosition().equals(landingHex)) {
             applyLandingAnimation(robotNode, hpBarNode);
-            landingHex = null;
         }
         // 2. Animación de desplazamiento (movimiento)
         else if (robot.getPreviousPosition() != null) {
             applyMoveAnimation(robotNode, hpBarNode, robot.getPreviousPosition(), cx, cy);
             robot.clearPreviousPosition();
         }
+        // 3. Animación de ataque (retroceso o impacto)
+        else if (robot.getPosition() != null) {
+            if (robot.getPosition().equals(attackerHexScope)) {
+                applyRecoilAnimation(robotNode, hpBarNode, targetHexScope);
+                drawLaserTracer(attackerHexScope, targetHexScope);
+            } else if (robot.getPosition().equals(targetHexScope)) {
+                applyImpactAnimation(robotNode, hpBarNode);
+            }
+        }
+    }
+
+    private void drawLaserTracer(Hexagon from, Hexagon to) {
+        if (from == null || to == null)
+            return;
+        double[] p1 = axialToPixel(from.getQ(), from.getR());
+        double[] p2 = axialToPixel(to.getQ(), to.getR());
+
+        // Offset visual para que el láser salga "del arma/pecho"
+        double beamY = -12.0;
+
+        Line laser = new Line(p1[0], p1[1] + beamY, p2[0], p2[1] + beamY);
+        laser.setStroke(Color.web("#57C0EF"));
+        laser.setStrokeWidth(3.0);
+        laser.setStrokeLineCap(StrokeLineCap.ROUND);
+        laser.setOpacity(0.0);
+        laser.setMouseTransparent(true);
+
+        Line glow = new Line(p1[0], p1[1] + beamY, p2[0], p2[1] + beamY);
+        glow.setStroke(Color.WHITE);
+        glow.setStrokeWidth(1.2);
+        glow.setOpacity(0.0);
+        glow.setMouseTransparent(true);
+
+        pane.getChildren().addAll(laser, glow);
+
+        Timeline anim = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(laser.opacityProperty(), 0),
+                        new KeyValue(glow.opacityProperty(), 0)),
+                new KeyFrame(Duration.millis(50), new KeyValue(laser.opacityProperty(), 1),
+                        new KeyValue(glow.opacityProperty(), 1)),
+                new KeyFrame(Duration.millis(250), new KeyValue(laser.opacityProperty(), 0),
+                        new KeyValue(glow.opacityProperty(), 0)));
+
+        anim.setOnFinished(e -> pane.getChildren().removeAll(laser, glow));
+        anim.play();
+    }
+
+    private void applyRecoilAnimation(Node robot, Node hpBar, Hexagon target) {
+        if (target == null)
+            return;
+
+        // Simplemente retrocedemos un poco en dirección contraria al objetivo
+        // (aproximado)
+        // Para hacerlo perfecto necesitaríamos la posición actual del atacante, pero
+        // un pequeño retroceso visual "hacia atrás" suele ser suficiente.
+
+        TranslateTransition recoil = new TranslateTransition(Duration.millis(120), robot);
+        recoil.setByX(-10); // Retroceder a la izquierda
+        recoil.setByY(5);
+        recoil.setAutoReverse(true);
+        recoil.setCycleCount(2);
+        recoil.play();
+
+        if (hpBar != null) {
+            TranslateTransition hpRecoil = new TranslateTransition(Duration.millis(120), hpBar);
+            hpRecoil.setByX(-10);
+            hpRecoil.setByY(5);
+            hpRecoil.setAutoReverse(true);
+            hpRecoil.setCycleCount(2);
+            hpRecoil.play();
+        }
+    }
+
+    private void applyImpactAnimation(Node robot, Node hpBar) {
+        ColorAdjust flashEffect = new ColorAdjust();
+        flashEffect.setBrightness(0.0);
+        flashEffect.setHue(-0.05); // Un toque rojizo
+        flashEffect.setSaturation(0.6);
+        robot.setEffect(flashEffect);
+
+        Timeline flash = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(flashEffect.brightnessProperty(), 0.0)),
+                new KeyFrame(Duration.millis(100), new KeyValue(flashEffect.brightnessProperty(), 0.8)),
+                new KeyFrame(Duration.millis(300), new KeyValue(flashEffect.brightnessProperty(), 0.0)));
+        flash.setOnFinished(e -> robot.setEffect(null));
+        flash.play();
+
+        TranslateTransition shake = new TranslateTransition(Duration.millis(50), robot);
+        shake.setByX(4);
+        shake.setAutoReverse(true);
+        shake.setCycleCount(4);
+        shake.play();
     }
 
     private void applyMoveAnimation(Node robot, Node hpBar, Hexagon fromHex, double targetX, double targetY) {

@@ -601,6 +601,9 @@ public class GameScreen extends Screen {
             return;
         }
 
+        // Avisar al renderizador para que anime el disparo
+        hexRenderer.markAttack(selectedRobot.getPosition(), targetHex);
+
         // SFX del arma del atacante
         playWeaponSfx(selectedRobot);
 
