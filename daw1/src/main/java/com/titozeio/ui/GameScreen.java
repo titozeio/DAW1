@@ -58,6 +58,8 @@ public class GameScreen extends Screen {
     @FXML
     private Label infoDetailsLabel;
     @FXML
+    private VBox infoPanel;
+    @FXML
     private Label infoTitleLabel;
     @FXML
     private Label ownerBadgeLabel;
@@ -186,12 +188,21 @@ public class GameScreen extends Screen {
         if (logScrollPane != null) {
             logScrollPane.setVisible(false);
             logScrollPane.setManaged(false);
+            logScrollPane.setMouseTransparent(true);
         }
         if (logPanelBox != null) {
             logPanelBox.setAlignment(javafx.geometry.Pos.BOTTOM_LEFT);
+            logPanelBox.setPrefHeight(36.0);
+            logPanelBox.setMinHeight(36.0);
+            logPanelBox.setMaxHeight(36.0);
+            logPanelBox.setPickOnBounds(false);
         }
         if (latestLogLabel != null) {
             latestLogLabel.setText("LOG");
+            latestLogLabel.setMouseTransparent(true);
+        }
+        if (combatLogContent != null) {
+            combatLogContent.setMouseTransparent(true);
         }
 
         startDeployPhase();
@@ -854,6 +865,11 @@ public class GameScreen extends Screen {
         logToggleButton.setText(logExpanded ? "▲" : "▼");
         if (logPanelBox != null) {
             logPanelBox.setAlignment(javafx.geometry.Pos.BOTTOM_LEFT);
+            double h = logExpanded ? 200.0 : 36.0;
+            logPanelBox.setPrefHeight(h);
+            logPanelBox.setMinHeight(h);
+            logPanelBox.setMaxHeight(h);
+            logPanelBox.setPickOnBounds(false);
         }
     }
 

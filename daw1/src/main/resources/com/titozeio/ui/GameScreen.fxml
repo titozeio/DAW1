@@ -59,12 +59,13 @@
          </top>
          
          <bottom>
-            <HBox alignment="BOTTOM_CENTER" prefHeight="180.0" prefWidth="1280.0" spacing="20.0" BorderPane.alignment="CENTER">
+            <HBox alignment="BOTTOM_LEFT" spacing="12.0" BorderPane.alignment="CENTER_LEFT">
                <children>
-                  
-                  <!-- Panel de Información (Hover) -->
-                  <VBox fx:id="infoPanel" prefHeight="190.0" prefWidth="390.0" spacing="6.0" styleClass="scifi-panel">
+                  <VBox alignment="BOTTOM_LEFT" spacing="8.0">
                      <children>
+                        <!-- Panel de Información (Hover) -->
+                        <VBox fx:id="infoPanel" prefHeight="190.0" prefWidth="340.0" spacing="6.0" styleClass="scifi-panel">
+                           <children>
                         <HBox alignment="CENTER_LEFT">
                            <children>
                               <Label fx:id="infoTitleLabel" text="INFORMACIÓN" textFill="#4ee2c9">
@@ -116,14 +117,16 @@
                            </children>
                         </HBox>
                         <Label fx:id="infoDetailsLabel" managed="false" visible="false" />
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" left="15.0" right="15.0" top="10.0" />
+                           </padding>
+                        </VBox>
                      </children>
-                     <padding>
-                        <Insets bottom="10.0" left="15.0" right="15.0" top="10.0" />
-                     </padding>
                   </VBox>
 
                   <!-- Registro de Combate (Log) -->
-                  <VBox fx:id="logPanelBox" alignment="BOTTOM_LEFT" prefHeight="200.0" prefWidth="100.0" spacing="5.0" style="-fx-background-color: rgba(0, 0, 0, 0.4); -fx-background-radius: 6;" HBox.hgrow="ALWAYS">
+                  <VBox fx:id="logPanelBox" alignment="BOTTOM_LEFT" prefHeight="36.0" minHeight="36.0" maxHeight="36.0" prefWidth="420.0" spacing="5.0" style="-fx-background-color: rgba(0, 0, 0, 0.4); -fx-background-radius: 6;">
                      <children>
                         <ScrollPane fx:id="logScrollPane" fitToWidth="true" hbarPolicy="NEVER" prefHeight="130.0" vbarPolicy="ALWAYS" visible="false" managed="false">
                            <content>
@@ -132,7 +135,7 @@
                               </VBox>
                            </content>
                         </ScrollPane>
-                        <HBox alignment="CENTER_LEFT" spacing="8.0">
+                        <HBox alignment="CENTER_LEFT" spacing="8.0" pickOnBounds="false">
                            <children>
                               <Label fx:id="latestLogLabel" text="LOG" textFill="#E1E1E1" HBox.hgrow="ALWAYS" maxWidth="1.7976931348623157E308">
                                  <font><Font name="Exo 2 Regular" size="12.0" /></font>
@@ -146,24 +149,23 @@
                      </padding>
                   </VBox>
 
-                  <!-- Acciones de Juego -->
-                  <VBox alignment="BOTTOM_CENTER" prefHeight="160.0" prefWidth="220.0" spacing="10.0">
+                  <HBox alignment="BOTTOM_LEFT" spacing="8.0">
                      <children>
-                        <Button fx:id="skillButton" mnemonicParsing="false" prefHeight="40.0" prefWidth="220.0" styleClass="scifi-button-outline" text="SKILL">
+                        <Button fx:id="skillButton" mnemonicParsing="false" prefHeight="36.0" prefWidth="150.0" styleClass="scifi-button-outline" text="SKILL">
                            <font>
                               <Font name="Exo 2 Bold" size="13.0" />
                            </font>
                         </Button>
-                        <Button fx:id="endTurnButton" mnemonicParsing="false" prefHeight="50.0" prefWidth="220.0" styleClass="scifi-button" text="FINALIZAR TURNO">
+                        <Button fx:id="endTurnButton" mnemonicParsing="false" prefHeight="36.0" prefWidth="180.0" styleClass="scifi-button" text="FINALIZAR TURNO">
                            <font>
-                              <Font name="Exo 2 Bold" size="16.0" />
+                              <Font name="Exo 2 Bold" size="14.0" />
                            </font>
                         </Button>
                      </children>
-                  </VBox>
+                  </HBox>
                </children>
                <padding>
-                  <Insets bottom="20.0" left="20.0" right="20.0" />
+                  <Insets bottom="12.0" left="20.0" right="20.0" />
                </padding>
             </HBox>
          </bottom>
