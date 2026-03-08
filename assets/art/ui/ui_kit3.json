@@ -1,0 +1,218 @@
+[
+  {
+    "spriteName": "settings_panel_bg",
+    "file": "ui_kit3/settings_panel_bg.png",
+    "x": 16,
+    "y": 14,
+    "width": 494,
+    "height": 541
+  },
+  {
+    "spriteName": "icon_music_on",
+    "file": "ui_kit3/icon_music_on.png",
+    "x": 542,
+    "y": 14,
+    "width": 208,
+    "height": 206
+  },
+  {
+    "spriteName": "icon_music_off",
+    "file": "ui_kit3/icon_music_off.png",
+    "x": 772,
+    "y": 14,
+    "width": 208,
+    "height": 206
+  },
+  {
+    "spriteName": "icon_sfx_on",
+    "file": "ui_kit3/icon_sfx_on.png",
+    "x": 1002,
+    "y": 14,
+    "width": 210,
+    "height": 206
+  },
+  {
+    "spriteName": "icon_sfx_off",
+    "file": "ui_kit3/icon_sfx_off.png",
+    "x": 1230,
+    "y": 14,
+    "width": 208,
+    "height": 206
+  },
+  {
+    "spriteName": "btn_close_x",
+    "file": "ui_kit3/btn_close_x.png",
+    "x": 1450,
+    "y": 14,
+    "width": 210,
+    "height": 206
+  },
+  {
+    "spriteName": "btn_close_x_hover",
+    "file": "ui_kit3/btn_close_x_hover.png",
+    "x": 1680,
+    "y": 14,
+    "width": 210,
+    "height": 206
+  },
+  {
+    "spriteName": "btn_close_x_pressed",
+    "file": "ui_kit3/btn_close_x_pressed.png",
+    "x": 1908,
+    "y": 14,
+    "width": 136,
+    "height": 206
+  },
+  {
+    "spriteName": "selection_title_panel",
+    "file": "ui_kit3/selection_title_panel.png",
+    "x": 8,
+    "y": 585,
+    "width": 762,
+    "height": 153
+  },
+  {
+    "spriteName": "arrow_left",
+    "file": "ui_kit3/arrow_left.png",
+    "x": 806,
+    "y": 525,
+    "width": 219,
+    "height": 215
+  },
+  {
+    "spriteName": "arrow_right",
+    "file": "ui_kit3/arrow_right.png",
+    "x": 1260,
+    "y": 525,
+    "width": 220,
+    "height": 215
+  },
+  {
+    "spriteName": "arrow_left_disabled",
+    "file": "ui_kit3/arrow_left_disabled.png",
+    "x": 1680,
+    "y": 525,
+    "width": 220,
+    "height": 215
+  },
+  {
+    "spriteName": "arrow_right_disabled",
+    "file": "ui_kit3/arrow_right_disabled.png",
+    "x": 1910,
+    "y": 525,
+    "width": 134,
+    "height": 215
+  },
+  {
+    "spriteName": "panel_stats_bg",
+    "file": "ui_kit3/panel_stats_bg.png",
+    "x": 10,
+    "y": 770,
+    "width": 500,
+    "height": 440
+  },
+  {
+    "spriteName": "panel_skills_bg",
+    "file": "ui_kit3/panel_skills_bg.png",
+    "x": 520,
+    "y": 770,
+    "width": 500,
+    "height": 440
+  },
+  {
+    "spriteName": "panel_robot_info_bg",
+    "file": "ui_kit3/panel_robot_info_bg.png",
+    "x": 1030,
+    "y": 770,
+    "width": 745,
+    "height": 440
+  },
+  {
+    "spriteName": "btn_confirm_selection",
+    "file": "ui_kit3/btn_confirm_selection.png",
+    "x": 8,
+    "y": 1235,
+    "width": 467,
+    "height": 103
+  },
+  {
+    "spriteName": "btn_confirm_selection_hover",
+    "file": "ui_kit3/btn_confirm_selection_hover.png",
+    "x": 504,
+    "y": 1235,
+    "width": 476,
+    "height": 103
+  },
+  {
+    "spriteName": "btn_confirm_selection_pressed",
+    "file": "ui_kit3/btn_confirm_selection_pressed.png",
+    "x": 1020,
+    "y": 1235,
+    "width": 470,
+    "height": 103
+  },
+  {
+    "spriteName": "btn_confirm_selection_disabled",
+    "file": "ui_kit3/btn_confirm_selection_disabled.png",
+    "x": 1545,
+    "y": 1235,
+    "width": 495,
+    "height": 103
+  },
+  {
+    "spriteName": "btn_random_finish",
+    "file": "ui_kit3/btn_random_finish.png",
+    "x": 8,
+    "y": 1370,
+    "width": 467,
+    "height": 105
+  },
+  {
+    "spriteName": "btn_random_finish_hover",
+    "file": "ui_kit3/btn_random_finish_hover.png",
+    "x": 504,
+    "y": 1370,
+    "width": 476,
+    "height": 105
+  },
+  {
+    "spriteName": "btn_random_finish_pressed",
+    "file": "ui_kit3/btn_random_finish_pressed.png",
+    "x": 1020,
+    "y": 1370,
+    "width": 470,
+    "height": 105
+  },
+  {
+    "spriteName": "panel_team_p1_bg",
+    "file": "ui_kit3/panel_team_p1_bg.png",
+    "x": 8,
+    "y": 1560,
+    "width": 492,
+    "height": 460
+  },
+  {
+    "spriteName": "panel_team_p2_bg",
+    "file": "ui_kit3/panel_team_p2_bg.png",
+    "x": 515,
+    "y": 1560,
+    "width": 493,
+    "height": 460
+  },
+  {
+    "spriteName": "slot_robot_placeholder",
+    "file": "ui_kit3/slot_robot_placeholder.png",
+    "x": 1038,
+    "y": 1560,
+    "width": 152,
+    "height": 268
+  },
+  {
+    "spriteName": "turn_popup_bg",
+    "file": "ui_kit3/turn_popup_bg.png",
+    "x": 1030,
+    "y": 1770,
+    "width": 1010,
+    "height": 258
+  }
+]
