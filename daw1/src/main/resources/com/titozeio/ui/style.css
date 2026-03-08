@@ -212,3 +212,27 @@
     -fx-border-style: solid;
     -fx-effect: dropshadow(gaussian, rgba(87, 192, 239, 0.55), 14, 0.35, 0, 0);
 }
+
+/* Flechas navegación selección de robots */
+.nav-arrow-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 1;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+}
+
+.nav-arrow-button:hover {
+    -fx-border-color: #F7F5E9;
+    -fx-effect: dropshadow(gaussian, rgba(245, 220, 142, 0.85), 6, 0.35, 0, 0);
+}
+
+.nav-arrow-button:pressed {
+    -fx-opacity: 0.7;
+}
+
+.nav-arrow-button:disabled {
+    -fx-opacity: 0.6;
+}
