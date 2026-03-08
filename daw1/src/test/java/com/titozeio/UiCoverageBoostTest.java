@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
+import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -34,9 +35,19 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Polygon;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 class UiCoverageBoostTest {
+    @BeforeAll
+    static void initFx() {
+        try {
+            Platform.startup(() -> {
+            });
+        } catch (IllegalStateException ignored) {
+            // JavaFX toolkit already initialized.
+        }
+    }
 
     static class TestGame extends Game {
         Screen displayed;
