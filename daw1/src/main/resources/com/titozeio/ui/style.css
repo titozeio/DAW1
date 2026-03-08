@@ -203,3 +203,12 @@
     -fx-background-color: transparent;
     -fx-padding: 6;
 }
+
+/* Marco global del mapa (GameScreen) */
+.map-frame {
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(87, 192, 239, 0.9);
+    -fx-border-width: 2;
+    -fx-border-style: solid;
+    -fx-effect: dropshadow(gaussian, rgba(87, 192, 239, 0.55), 14, 0.35, 0, 0);
+}
