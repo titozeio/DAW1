@@ -25,6 +25,7 @@ public class Robot {
     private Skill skill;
     private Player owner;
     private Hexagon position;
+    private Hexagon previousPosition; // Para animaciones de movimiento
 
     // Control de acciones por turno
     private boolean usedMovement;
@@ -69,8 +70,9 @@ public class Robot {
         if (position != null)
             position.setOccupant(null);
         // Ocupar nueva casilla
+        // Ocupar nueva casilla
         target.setOccupant(this);
-        this.position = target;
+        setPosition(target);
         usedMovement = true;
         System.out.println(modelName + " se mueve a " + target);
     }
@@ -262,7 +264,18 @@ public class Robot {
     }
 
     public void setPosition(Hexagon position) {
-        this.position = position;
+        if (this.position != position) {
+            this.previousPosition = this.position;
+            this.position = position;
+        }
+    }
+
+    public Hexagon getPreviousPosition() {
+        return previousPosition;
+    }
+
+    public void clearPreviousPosition() {
+        this.previousPosition = null;
     }
 
     public boolean isUsedMovement() {

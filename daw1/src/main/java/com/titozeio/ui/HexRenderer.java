@@ -17,9 +17,7 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 
 import java.util.Collections;
@@ -188,10 +186,22 @@ public class HexRenderer {
         pane.getChildren().clear();
 
         Hexagon[][] grid = map.getGrid();
+
+        // Primera capa: Los hexágonos (terreno, overlays, resaltados)
         for (Hexagon[] row : grid) {
             for (Hexagon hex : row) {
                 if (hex != null) {
                     renderHex(hex);
+                }
+            }
+        }
+
+        // Segunda capa: Los robots (siempre encima de todo el terreno)
+        for (Hexagon[] row : grid) {
+            for (Hexagon hex : row) {
+                if (hex != null && hex.isOccupied()) {
+                    double[] center = axialToPixel(hex.getQ(), hex.getR());
+                    renderRobotToken(center[0], center[1], hex.getOccupant());
                 }
             }
         }
@@ -307,11 +317,6 @@ public class HexRenderer {
             rim.setMouseTransparent(true);
             pane.getChildren().add(rim);
         }
-
-        // 6. Token del robot (si hay un ocupante)
-        if (hex.isOccupied()) {
-            renderRobotToken(cx, cy, hex.getOccupant());
-        }
     }
 
     // ── Helpers de construcción ───────────────────────────────────────────────
@@ -378,10 +383,41 @@ public class HexRenderer {
 
         Node hpBarNode = renderHpBar(cx, cy + HEX_SIZE * 0.55, robot);
 
-        // Si es el hexágono marcado para aterrizaje, aplicar animación
-        if (robotNode != null && robot.getPosition() != null && robot.getPosition().equals(landingHex)) {
+        // 1. Animación de aterrizaje (despliegue)
+        if (robot.getPosition() != null && robot.getPosition().equals(landingHex)) {
             applyLandingAnimation(robotNode, hpBarNode);
             landingHex = null;
+        }
+        // 2. Animación de desplazamiento (movimiento)
+        else if (robot.getPreviousPosition() != null) {
+            applyMoveAnimation(robotNode, hpBarNode, robot.getPreviousPosition(), cx, cy);
+            robot.clearPreviousPosition();
+        }
+    }
+
+    private void applyMoveAnimation(Node robot, Node hpBar, Hexagon fromHex, double targetX, double targetY) {
+        double[] oldPos = axialToPixel(fromHex.getQ(), fromHex.getR());
+        double offsetX = oldPos[0] - targetX;
+        double offsetY = oldPos[1] - targetY;
+
+        Duration duration = Duration.millis(400);
+
+        TranslateTransition moveRobot = new TranslateTransition(duration, robot);
+        moveRobot.setFromX(offsetX);
+        moveRobot.setFromY(offsetY);
+        moveRobot.setToX(0);
+        moveRobot.setToY(0);
+        moveRobot.setInterpolator(Interpolator.EASE_BOTH);
+        moveRobot.play();
+
+        if (hpBar != null) {
+            TranslateTransition moveHp = new TranslateTransition(duration, hpBar);
+            moveHp.setFromX(offsetX);
+            moveHp.setFromY(offsetY);
+            moveHp.setToX(0);
+            moveHp.setToY(0);
+            moveHp.setInterpolator(Interpolator.EASE_BOTH);
+            moveHp.play();
         }
     }
 
