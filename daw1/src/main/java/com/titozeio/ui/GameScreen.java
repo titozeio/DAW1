@@ -14,6 +14,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -107,6 +108,8 @@ public class GameScreen extends Screen {
     private Button skillButton;
     @FXML
     private Button endTurnButton;
+    @FXML
+    private HBox actionButtonsBox;
     // Overlay genérico
     @FXML
     private StackPane overlayPane;
@@ -204,8 +207,39 @@ public class GameScreen extends Screen {
         if (combatLogContent != null) {
             combatLogContent.setMouseTransparent(true);
         }
+        makePanelPassThrough(infoPanel, infoToggleButton);
+        makePanelPassThrough(logPanelBox, logToggleButton);
+        makePanelPassThrough(actionButtonsBox, null);
+        setMouseTransparentRecursively(skillButton, false);
+        setMouseTransparentRecursively(endTurnButton, false);
 
         startDeployPhase();
+    }
+
+    /**
+     * Hace que un panel no intercepte hover/clicks del mapa, excepto un botón
+     * interactivo opcional.
+     */
+    private void makePanelPassThrough(Node panelRoot, Node keepInteractive) {
+        if (panelRoot == null) {
+            return;
+        }
+        setMouseTransparentRecursively(panelRoot, true);
+        if (keepInteractive != null) {
+            setMouseTransparentRecursively(keepInteractive, false);
+        }
+    }
+
+    private void setMouseTransparentRecursively(Node node, boolean transparent) {
+        if (node == null) {
+            return;
+        }
+        node.setMouseTransparent(transparent);
+        if (node instanceof Parent parent) {
+            for (Node child : parent.getChildrenUnmodifiable()) {
+                setMouseTransparentRecursively(child, transparent);
+            }
+        }
     }
 
     private void configureBackground() {
