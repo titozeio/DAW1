@@ -1,10 +1,13 @@
 package com.titozeio.ui;
 
 import com.titozeio.engine.SoundManager;
+import javafx.animation.FadeTransition;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Labeled;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 /**
  * Clase base abstracta para todas las pantallas del juego.
@@ -38,7 +41,9 @@ public abstract class Screen {
         SoundManager.attachButtonSoundsToAll(root);
     }
 
-    /** Fuerza mayúsculas en toda la UI para nodos Labeled/Text actuales y futuros. */
+    /**
+     * Fuerza mayúsculas en toda la UI para nodos Labeled/Text actuales y futuros.
+     */
     protected void enforceUppercaseText(Parent root) {
         root.lookupAll("*").forEach(node -> {
             if (node instanceof Labeled labeled) {
@@ -69,5 +74,44 @@ public abstract class Screen {
                 });
             }
         });
+    }
+
+    /**
+     * Muestra {@code node} con una animación de fade-in.
+     * Pone el nodo visible (y managed) antes de empezar la animación.
+     *
+     * @param node   El nodo JavaFX a mostrar (normalmente un StackPane overlay).
+     * @param millis Duración del fade en milisegundos.
+     */
+    protected static void fadeInNode(Node node, double millis) {
+        if (node == null)
+            return;
+        node.setOpacity(0.0);
+        node.setVisible(true);
+        node.setManaged(true);
+        FadeTransition ft = new FadeTransition(Duration.millis(millis), node);
+        ft.setFromValue(0.0);
+        ft.setToValue(1.0);
+        ft.play();
+    }
+
+    /**
+     * Oculta {@code node} con una animación de fade-out.
+     * Al terminar, pone el nodo invisible y no managed.
+     *
+     * @param node   El nodo JavaFX a ocultar.
+     * @param millis Duración del fade en milisegundos.
+     */
+    protected static void fadeOutNode(Node node, double millis) {
+        if (node == null)
+            return;
+        FadeTransition ft = new FadeTransition(Duration.millis(millis), node);
+        ft.setFromValue(node.getOpacity());
+        ft.setToValue(0.0);
+        ft.setOnFinished(e -> {
+            node.setVisible(false);
+            node.setManaged(false);
+        });
+        ft.play();
     }
 }

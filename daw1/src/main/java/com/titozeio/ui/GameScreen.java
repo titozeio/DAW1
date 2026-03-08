@@ -198,7 +198,7 @@ public class GameScreen extends Screen {
         if (surrenderButton != null) {
             surrenderButton.setDisable(true);
         }
-        overlayAcceptButton.setOnAction(e -> overlayPane.setVisible(false));
+        overlayAcceptButton.setOnAction(e -> fadeOutNode(overlayPane, 180));
         victoryMenuButton.setOnAction(e -> returnToMenu());
         if (logScrollPane != null) {
             logScrollPane.setVisible(false);
@@ -1278,7 +1278,7 @@ public class GameScreen extends Screen {
             victoryReason.setText(winner.getName() + " ha conquistado la base enemiga durante 2 turnos.");
         }
         victoryTurnLabel.setText("Partida resuelta en el turno " + game.getTurnCounter());
-        victoryPane.setVisible(true);
+        fadeInNode(victoryPane, 300);
         endTurnButton.setDisable(true);
         skillButton.setDisable(true);
         if (surrenderButton != null) {
@@ -1309,7 +1309,7 @@ public class GameScreen extends Screen {
     public void showOverlayMessage(String title, String message) {
         overlayTitle.setText(title);
         overlayMessage.setText(message);
-        overlayPane.setVisible(true);
+        fadeInNode(overlayPane, 200);
     }
 
     public void addLogMessage(String message) {

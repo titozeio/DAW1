@@ -247,10 +247,7 @@ public class RobotSelectionScreen extends Screen {
 
     @FXML
     public void handleDismissTurnOverlay() {
-        if (turnOverlay == null)
-            return;
-        turnOverlay.setVisible(false);
-        turnOverlay.setManaged(false);
+        fadeOutNode(turnOverlay, 200);
     }
 
     private void refreshView() {
@@ -519,11 +516,25 @@ public class RobotSelectionScreen extends Screen {
         }
         String jugador = isPlayer2Turn ? "P2" : "P1";
         turnOverlayLabel.setText("Turno de elegir robot: " + jugador);
-        turnOverlay.setManaged(true);
-        turnOverlay.setVisible(true);
-        PauseTransition autoHide = new PauseTransition(Duration.seconds(3));
-        autoHide.setOnFinished(e -> handleDismissTurnOverlay());
-        autoHide.play();
+
+        // Pequeño delay para que el evento de clic del botón anterior
+        // se haya descartado antes de que el overlay sea visible e interactivo.
+        PauseTransition delay = new PauseTransition(Duration.millis(120));
+        delay.setOnFinished(ev -> {
+            // El overlay es inaccesible al mouse durante el fade-in
+            // para evitar que cualquier clic residual lo cierre al instante.
+            turnOverlay.setMouseTransparent(true);
+            fadeInNode(turnOverlay, 220);
+
+            PauseTransition enableMouse = new PauseTransition(Duration.millis(240));
+            enableMouse.setOnFinished(e2 -> turnOverlay.setMouseTransparent(false));
+            enableMouse.play();
+
+            PauseTransition autoHide = new PauseTransition(Duration.seconds(3));
+            autoHide.setOnFinished(e -> handleDismissTurnOverlay());
+            autoHide.play();
+        });
+        delay.play();
     }
 
     private boolean isSelectionComplete() {

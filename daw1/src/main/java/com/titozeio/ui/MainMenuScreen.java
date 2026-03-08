@@ -89,14 +89,12 @@ public class MainMenuScreen extends Screen {
 
     @FXML
     public void handleSettingsOpenAction() {
-        settingsOverlay.setVisible(true);
-        settingsOverlay.setManaged(true);
+        fadeInNode(settingsOverlay, 150);
     }
 
     @FXML
     public void handleSettingsCloseAction() {
-        settingsOverlay.setVisible(false);
-        settingsOverlay.setManaged(false);
+        fadeOutNode(settingsOverlay, 150);
     }
 
     @FXML
