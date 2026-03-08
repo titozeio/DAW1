@@ -6,6 +6,8 @@ import com.titozeio.engine.Hexagon;
 import com.titozeio.engine.MovementCalculator;
 import com.titozeio.engine.Player;
 import com.titozeio.engine.Robot;
+import com.titozeio.engine.SoundManager;
+import com.titozeio.enums.AttackType;
 import com.titozeio.enums.SkillType;
 import com.titozeio.skills.JetpackBoost;
 import com.titozeio.skills.Skill;
@@ -436,6 +438,7 @@ public class GameScreen extends Screen {
 
     private void selectRobot(Robot robot) {
         selectedRobot = robot;
+        SoundManager.play(SoundManager.UI_UNIT_SELECT);
         if (infoPanel != null) {
             infoPanel.setOpacity(1.0);
         }
@@ -527,6 +530,7 @@ public class GameScreen extends Screen {
             return;
         }
 
+        SoundManager.play(SoundManager.UI_ABILITY_READY);
         selectionMode = SelectionMode.SKILL;
         boolean isAttackSkill = (skill.getType() == SkillType.ATTACK);
 
@@ -550,6 +554,7 @@ public class GameScreen extends Screen {
 
     private void executeMove(Hexagon hex) {
         String name = selectedRobot.getModelName();
+        SoundManager.play(SoundManager.MECH_MOVE);
         selectedRobot.move(hex);
         addLogMessage(name + " se mueve a (" + hex.getQ() + "," + hex.getR() + ").");
         if (!selectedRobot.isUsedAttack())
@@ -565,14 +570,20 @@ public class GameScreen extends Screen {
             return;
         }
 
+        // SFX del arma del atacante
+        playWeaponSfx(selectedRobot);
+
         int hpBefore = target.getCurrentHp();
         selectedRobot.attack(target, game.getMap());
         int damage = hpBefore - target.getCurrentHp();
 
-        addLogMessage(damage > 0
-                ? "💥 " + selectedRobot.getModelName() + " → " + target.getModelName()
-                        + ": " + damage + " daño. HP: " + target.getCurrentHp() + "/" + target.getMaxHp()
-                : selectedRobot.getModelName() + " ataca a " + target.getModelName() + " sin causar daño.");
+        if (damage > 0) {
+            SoundManager.play(SoundManager.MECH_RECEIVE_HIT);
+            addLogMessage("💥 " + selectedRobot.getModelName() + " → " + target.getModelName()
+                    + ": " + damage + " daño. HP: " + target.getCurrentHp() + "/" + target.getMaxHp());
+        } else {
+            addLogMessage(selectedRobot.getModelName() + " ataca a " + target.getModelName() + " sin causar daño.");
+        }
 
         if (target.isDestroyed()) {
             targetHex.setOccupant(null);
@@ -580,6 +591,24 @@ public class GameScreen extends Screen {
         }
         clearSelection();
         checkAndShowVictory("eliminación");
+    }
+
+    /** Reproduce el SFX de arma adecuado según el tipo de ataque del robot. */
+    private void playWeaponSfx(Robot robot) {
+        if (robot == null || robot.getWeapon() == null)
+            return;
+        AttackType type = robot.getWeapon().getAttackType();
+        int range = robot.getWeapon().getRange();
+        if (type == AttackType.ENERGY) {
+            SoundManager.play(SoundManager.LASER_SHOT);
+        } else if (type == AttackType.EXPLOSIVE) {
+            SoundManager.play(SoundManager.WEAPON_MISSILES);
+        } else if (type == AttackType.KINETIC && range <= 1) {
+            // Arma melee cinética (Death Knight – Martillo propulsado)
+            SoundManager.play(SoundManager.PLASMA_SABER);
+        } else {
+            SoundManager.play(SoundManager.LASER_SHOT);
+        }
     }
 
     /**
@@ -596,6 +625,10 @@ public class GameScreen extends Screen {
 
         boolean isAttackSkill = (skill.getType() == SkillType.ATTACK);
         String skillName = skill.getName();
+        String skillClass = skill.getClass().getSimpleName();
+
+        // SFX de la skill antes de ejecutar
+        playSkillSfx(skillClass);
 
         if (isAttackSkill) {
             // El hex debe tener un ocupante (robot objetivo)
@@ -610,6 +643,7 @@ public class GameScreen extends Screen {
             int damage = hpBefore - target.getCurrentHp();
 
             if (damage > 0) {
+                SoundManager.play(SoundManager.MECH_RECEIVE_HIT);
                 addLogMessage("⚡ " + skillName + ": " + selectedRobot.getModelName()
                         + " → " + target.getModelName() + ": " + damage + " daño. HP: "
                         + target.getCurrentHp() + "/" + target.getMaxHp());
@@ -624,14 +658,41 @@ public class GameScreen extends Screen {
                 addLogMessage("☠ " + target.getModelName() + " ha sido DESTRUIDO.");
             }
         } else {
-            // Skill de movimiento: target = Hexagon
-            selectedRobot.useSkill(hex); // skill.execute() mueve al robot
+            // Skill de movimiento: mueve al robot
+            selectedRobot.useSkill(hex);
             addLogMessage("⚡ " + skillName + ": " + selectedRobot.getModelName()
                     + " se teletransporta a (" + hex.getQ() + "," + hex.getR() + ").");
         }
 
+        SoundManager.play(SoundManager.UI_ABILITY_COOLDOWN);
         clearSelection();
         checkAndShowVictory("eliminación");
+    }
+
+    /** Reproduce el SFX correcto para cada skill. */
+    private void playSkillSfx(String skillClass) {
+        switch (skillClass) {
+            case "FreezeRay":
+                SoundManager.play(SoundManager.WEAPON_FREEZING_RAY);
+                break;
+            case "GuidedMissile":
+                SoundManager.play(SoundManager.MISSILE_LAUNCH);
+                break;
+            case "RepairNanobots":
+                SoundManager.play(SoundManager.REPAIR_NANOBOTS);
+                break;
+            case "JetpackBoost":
+                SoundManager.play(SoundManager.MOBILITY_JUMP_THRUSTERS);
+                break;
+            case "TurboPropulsion":
+                SoundManager.play(SoundManager.MOBILITY_HYPERSPEED_DASH);
+                break;
+            case "PlasmaSaberAttack":
+                SoundManager.play(SoundManager.WEAPON_PLASMA_SABER);
+                break;
+            default:
+                SoundManager.play(SoundManager.UI_ABILITY_READY);
+        }
     }
 
     // ── Cálculo de objetivos de skill ─────────────────────────────────────────
@@ -799,14 +860,18 @@ public class GameScreen extends Screen {
             return;
         }
         Skill sk = robot.getSkill();
-        if (infoTitleLabel != null) infoTitleLabel.setText(robot.getModelName());
+        if (infoTitleLabel != null)
+            infoTitleLabel.setText(robot.getModelName());
         if (ownerBadgeLabel != null) {
             ownerBadgeLabel.setText(resolveOwnerBadge(robot));
         }
-        if (infoPortraitImage != null) infoPortraitImage.setImage(loadPortraitForRobot(robot));
+        if (infoPortraitImage != null)
+            infoPortraitImage.setImage(loadPortraitForRobot(robot));
         renderSegmentedHpBar(hpBarContainer, robot.getCurrentHp(), robot.getMaxHp());
-        if (hpValueLabel != null) hpValueLabel.setText(robot.getCurrentHp() + "/" + robot.getMaxHp());
-        if (skillNameInfoLabel != null) skillNameInfoLabel.setText(sk != null ? sk.getName() : "Sin skill");
+        if (hpValueLabel != null)
+            hpValueLabel.setText(robot.getCurrentHp() + "/" + robot.getMaxHp());
+        if (skillNameInfoLabel != null)
+            skillNameInfoLabel.setText(sk != null ? sk.getName() : "Sin skill");
         colorSkillName(sk);
         renderSkillCooldown(sk);
 
@@ -819,25 +884,38 @@ public class GameScreen extends Screen {
                 skillInfoBox.setVisible(true);
                 skillInfoBox.setManaged(true);
             }
-            if (moveValueLabel != null) moveValueLabel.setText("-");
-            if (rangeValueLabel != null) rangeValueLabel.setText("-");
-            if (damageValueLabel != null) damageValueLabel.setText("-");
+            if (moveValueLabel != null)
+                moveValueLabel.setText("-");
+            if (rangeValueLabel != null)
+                rangeValueLabel.setText("-");
+            if (damageValueLabel != null)
+                damageValueLabel.setText("-");
             if (sk == null) {
-                if (skillTypeInfoLabel != null) skillTypeInfoLabel.setText("Tipo: -");
-                if (skillDetailLine1Label != null) skillDetailLine1Label.setText("-");
-                if (skillDetailLine2Label != null) skillDetailLine2Label.setText("-");
+                if (skillTypeInfoLabel != null)
+                    skillTypeInfoLabel.setText("Tipo: -");
+                if (skillDetailLine1Label != null)
+                    skillDetailLine1Label.setText("-");
+                if (skillDetailLine2Label != null)
+                    skillDetailLine2Label.setText("-");
             } else {
                 String type = inferSkillCategory(sk);
-                if (skillTypeInfoLabel != null) skillTypeInfoLabel.setText("Tipo: " + type);
+                if (skillTypeInfoLabel != null)
+                    skillTypeInfoLabel.setText("Tipo: " + type);
                 if ("movimiento".equals(type)) {
-                    if (skillDetailLine1Label != null) skillDetailLine1Label.setText("Movimiento: " + extractStat(sk, "Movimiento"));
-                    if (skillDetailLine2Label != null) skillDetailLine2Label.setText("");
+                    if (skillDetailLine1Label != null)
+                        skillDetailLine1Label.setText("Movimiento: " + extractStat(sk, "Movimiento"));
+                    if (skillDetailLine2Label != null)
+                        skillDetailLine2Label.setText("");
                 } else if ("curación".equals(type)) {
-                    if (skillDetailLine1Label != null) skillDetailLine1Label.setText("Alcance: " + extractStat(sk, "Alcance"));
-                    if (skillDetailLine2Label != null) skillDetailLine2Label.setText("Recuperación: " + extractStat(sk, "Curación"));
+                    if (skillDetailLine1Label != null)
+                        skillDetailLine1Label.setText("Alcance: " + extractStat(sk, "Alcance"));
+                    if (skillDetailLine2Label != null)
+                        skillDetailLine2Label.setText("Recuperación: " + extractStat(sk, "Curación"));
                 } else {
-                    if (skillDetailLine1Label != null) skillDetailLine1Label.setText("Alcance: " + extractStat(sk, "Alcance"));
-                    if (skillDetailLine2Label != null) skillDetailLine2Label.setText("Daño: " + extractStat(sk, "Daño"));
+                    if (skillDetailLine1Label != null)
+                        skillDetailLine1Label.setText("Alcance: " + extractStat(sk, "Alcance"));
+                    if (skillDetailLine2Label != null)
+                        skillDetailLine2Label.setText("Daño: " + extractStat(sk, "Daño"));
                 }
             }
         } else {
@@ -849,9 +927,12 @@ public class GameScreen extends Screen {
                 skillInfoBox.setVisible(false);
                 skillInfoBox.setManaged(false);
             }
-            if (moveValueLabel != null) moveValueLabel.setText(String.valueOf(robot.getMovementPoints()));
-            if (rangeValueLabel != null) rangeValueLabel.setText(String.valueOf(robot.getWeapon().getRange()));
-            if (damageValueLabel != null) damageValueLabel.setText(String.valueOf(robot.getWeapon().getDamage()));
+            if (moveValueLabel != null)
+                moveValueLabel.setText(String.valueOf(robot.getMovementPoints()));
+            if (rangeValueLabel != null)
+                rangeValueLabel.setText(String.valueOf(robot.getWeapon().getRange()));
+            if (damageValueLabel != null)
+                damageValueLabel.setText(String.valueOf(robot.getWeapon().getDamage()));
             infoDetailsLabel.setText("");
         }
 
@@ -983,7 +1064,8 @@ public class GameScreen extends Screen {
     }
 
     private void colorSkillName(Skill sk) {
-        if (skillNameInfoLabel == null) return;
+        if (skillNameInfoLabel == null)
+            return;
         if (sk == null) {
             skillNameInfoLabel.setTextFill(Color.web("#7AEBF1"));
             return;
@@ -1003,15 +1085,19 @@ public class GameScreen extends Screen {
             return "";
         }
         String n = robot.getOwner().getName().toLowerCase().replace(" ", "");
-        if (n.contains("1") || n.contains("p1")) return "P1";
-        if (n.contains("2") || n.contains("p2")) return "P2";
+        if (n.contains("1") || n.contains("p1"))
+            return "P1";
+        if (n.contains("2") || n.contains("p2"))
+            return "P2";
         return "";
     }
 
     private void renderSegmentedHpBar(StackPane container, int hp, int maxHp) {
-        if (container == null) return;
+        if (container == null)
+            return;
         container.getChildren().clear();
-        if (maxHp <= 0) return;
+        if (maxHp <= 0)
+            return;
         Pane pane = new Pane();
         double w = container.getPrefWidth() > 0 ? container.getPrefWidth() : 130.0;
         double h = container.getPrefHeight() > 0 ? container.getPrefHeight() : 10.0;
@@ -1040,15 +1126,19 @@ public class GameScreen extends Screen {
     private void clearSelection() {
         selectedRobot = null;
         infoSkillMode = false;
-        if (infoToggleButton != null) infoToggleButton.setText("+info");
+        if (infoToggleButton != null)
+            infoToggleButton.setText("+info");
         selectionMode = SelectionMode.NONE;
         skillButton.setText("SKILL");
         skillButton.setDisable(true);
         clearAllHighlights();
         infoDetailsLabel.setText("Selecciona un robot tuyo para actuar.");
-        if (infoTitleLabel != null) infoTitleLabel.setText("INFORMACIÓN");
-        if (ownerBadgeLabel != null) ownerBadgeLabel.setText("");
-        if (infoPanel != null) infoPanel.setOpacity(1.0);
+        if (infoTitleLabel != null)
+            infoTitleLabel.setText("INFORMACIÓN");
+        if (ownerBadgeLabel != null)
+            ownerBadgeLabel.setText("");
+        if (infoPanel != null)
+            infoPanel.setOpacity(1.0);
     }
 
     private void showTerrainInfo(Hexagon hex) {
@@ -1061,7 +1151,8 @@ public class GameScreen extends Screen {
         if (hex.isBaseP2())
             sb.append("\n⚑ BASE JUGADOR 2");
         infoDetailsLabel.setText(sb.toString());
-        if (infoTitleLabel != null) infoTitleLabel.setText("INFORMACIÓN");
+        if (infoTitleLabel != null)
+            infoTitleLabel.setText("INFORMACIÓN");
     }
 
     private static String terrainName(Hexagon hex) {
@@ -1143,6 +1234,7 @@ public class GameScreen extends Screen {
         switch (input.trim().toUpperCase()) {
             case "F":
                 if (game.getPhase() == GamePhase.COMBAT) {
+                    SoundManager.play(SoundManager.UI_TURN_CHANGE);
                     addLogMessage("Fin de turno (" + game.getCurrentPlayer().getName() + ").");
                     clearSelection();
                     game.nextTurn();
@@ -1155,6 +1247,7 @@ public class GameScreen extends Screen {
                 }
                 break;
             default:
+                SoundManager.play(SoundManager.UI_INVALID);
                 System.out.println("Acción no reconocida: " + input);
         }
     }
