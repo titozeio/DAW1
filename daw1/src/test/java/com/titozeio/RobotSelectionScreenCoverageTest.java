@@ -190,11 +190,9 @@ class RobotSelectionScreenCoverageTest {
     @Test
     void initializeDataNoArgsAndOverlayLambdaCovered() throws Exception {
         RobotSelectionScreen s = new RobotSelectionScreen();
+        Screen.setAnimationsEnabled(false);
 
         Method init = RobotSelectionScreen.class.getDeclaredMethod("initializeData");
-        init.setAccessible(true);
-        init.invoke(s);
-
         init.setAccessible(true);
         init.invoke(s);
 
@@ -203,17 +201,10 @@ class RobotSelectionScreenCoverageTest {
         overlay.setManaged(true);
         set(s, "turnOverlay", overlay);
 
-        Method[] declared = RobotSelectionScreen.class.getDeclaredMethods();
-        Method lambda = null;
-        for (Method m : declared) {
-            if (m.getName().startsWith("lambda$")) {
-                lambda = m;
-                break;
-            }
-        }
-        assertNotNull(lambda, "No se encontró método lambda del overlay");
-        lambda.setAccessible(true);
-        lambda.invoke(s, new Object[] { null });
+        // En lugar de buscar una lambda aleatoria que puede haber cambiado de orden,
+        // llamamos directamente a handleDismissTurnOverlay que es lo que el test
+        // pretendía cubrir (o el efecto de la lambda).
+        s.handleDismissTurnOverlay();
 
         assertFalse(overlay.isVisible());
         assertFalse(overlay.isManaged());

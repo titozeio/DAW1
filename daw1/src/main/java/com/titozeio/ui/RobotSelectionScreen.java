@@ -545,24 +545,24 @@ public class RobotSelectionScreen extends Screen {
             return;
         }
 
-        // Pequeño delay para que el evento de clic del botón anterior
-        // se haya descartado antes de que el overlay sea visible e interactivo.
         PauseTransition delay = new PauseTransition(Duration.millis(120));
-        delay.setOnFinished(ev -> {
-            // El overlay es inaccesible al mouse durante el fade-in
-            // para evitar que cualquier clic residual lo cierre al instante.
-            turnOverlay.setMouseTransparent(true);
-            fadeInNode(turnOverlay, 220);
-
-            PauseTransition enableMouse = new PauseTransition(Duration.millis(240));
-            enableMouse.setOnFinished(e2 -> turnOverlay.setMouseTransparent(false));
-            enableMouse.play();
-
-            PauseTransition autoHide = new PauseTransition(Duration.seconds(3));
-            autoHide.setOnFinished(e -> handleDismissTurnOverlay());
-            autoHide.play();
-        });
+        delay.setOnFinished(ev -> showOverlayContent());
         delay.play();
+    }
+
+    private void showOverlayContent() {
+        if (turnOverlay == null)
+            return;
+        turnOverlay.setMouseTransparent(true);
+        fadeInNode(turnOverlay, 220);
+
+        PauseTransition enableMouse = new PauseTransition(Duration.millis(240));
+        enableMouse.setOnFinished(ev -> turnOverlay.setMouseTransparent(false));
+        enableMouse.play();
+
+        PauseTransition autoHide = new PauseTransition(Duration.seconds(3));
+        autoHide.setOnFinished(ev -> handleDismissTurnOverlay());
+        autoHide.play();
     }
 
     private boolean isSelectionComplete() {
