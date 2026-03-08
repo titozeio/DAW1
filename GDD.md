@@ -420,29 +420,42 @@ Un boceto o descripción del único mapa que tendrá el prototipo.
     - **Fondo**: Imagen de arte conceptual (`Splash concept.png`) que cubre toda la pantalla.
     - **Panel Central**: Un contenedor semi-transparente oscuro (`rgba(0,0,0,0.4)`) con bordes redondeados que agrupa el título y las acciones.
     - **Título**: Logotipo del juego (`title_transparent.png`) centrado en la parte superior del panel.
-    - **Acciones**: Botón de "Play" estilizado con una imagen de base personalizada (`boton_1.png`) y tipografía "Exo 2".
+    - **Acciones**: 
+        - Botón de "Play" estilizado con una imagen de base personalizada (`boton_1.png`) y tipografía "Exo 2".
+        - Botón de "Settings" estilizado con una imagen de base personalizada (`boton_1.png`) y tipografía "Exo 2". Abre el panel de settings.
+    - **Panel de settings**: Un panel (que necesita su gráfico correspondiente, mientras crear un panel default) que se abre por encima del contenido de la pantalla a modo de popup con un overlay que oscurezca todo. contiene:
+        - Toggle (icono) de musica on/off (con su texto en "Exo 2").
+        - Toggle (icono) de sfx on/off (con su texto en "Exo 2").
+        - Botón de cerrar el panel (un botón con típica aspa en x). Cuando se pulsa se cierra el popup.
 
 ## Pantalla de Nueva partida (Selección de Robots):
 - **Descripción**: 
     - Los jugadores eligen su equipo de 3 robots de forma alterna. Por equilibrio competitivo, **J2 elige primero** (compensando que J1 tendrá el primer turno en combate).
-    - La pantalla utiliza un sistema de **tarjetas dinámicas** cargadas de forma independiente para cada modelo de robot disponible.
-- **Flujo de Selección**: 
-    1. El jugador activo hace clic en una tarjeta para inspeccionarla.
-    2. Al hacer clic, se muestra un panel inferior con el **Lore y detalles extendidos** del robot, su arma y su habilidad.
-    3. La tarjeta seleccionada se resalta visualmente (borde turquesa `#4EE2C9`, fondo oscurecido `#123038`).
-    4. Se activa el botón de **"Confirmar"**. El jugador puede cambiar de opinión y elegir otra tarjeta antes de confirmar.
-    5. Tras confirmar, el turno pasa al oponente y la tarjeta elegida desaparece de la lista de disponibles.
 - **Elementos UI**: 
     - **Fondo**: Imagen de fondo de hangar/laboratorio (`bg1.png`).
-    - **Instrucciones**: Etiquetas de texto que indican de quién es el turno y cuántos robots lleva cada uno.
-    - **Tarjetas de Robot**: Generadas dinámicamente con:
-        - Nombre e imagen del modelo.
-        - Estadísticas básicas: HP y Movimiento.
-        - Detalles del Arma: Nombre, Alcance y Daño.
-        - Detalles de la Skill: Nombre, Cooldown y parámetros específicos (ej: Curación, Alcance extra).
-    - **Panel de Descripción**: Situado en la parte inferior, con un espacio fijo reservado (130px) para evitar desplazamientos bruscos en la interfaz cuando aparece el texto.
-    - **Botón Confirmar**: Estilizado con `boton_1.png`, solo habilitado cuando hay una selección pendiente.
-    - **Transición**: Al confirmar el 6º robot, la pantalla navega automáticamente a la **Pantalla de Combate**.
+    - **Título**: Panel contenedor del título de la pantalla (a unos 30 px del top, centrado horizontalmente, unos 800 px de ancho). El gráfico del texto aun por hacer.
+    - **Bloque de selección de robots**: (unos 650 pix de alto, a unos 120px del top, ocupando todo el ancho).  No tiene elemento visual, es un contenedor. Contenido:
+        - Botones de Flechas de izquierda y derecha a cada lado del bloque (a unos 20 pix de los lados), para ir rotando entre la info del robot que se muestra en el panel. Entre los botones hay más contenido con imágenes e info del robot seleccionado en ese momento. Inicialmente, se verá el primero por defecto (Saber Prime en esta versión). Cada vez que se pulsa a izquierda se va al robot anterior (si no lo hay, se va al último). Cada vez que se pulsa en la derecha se va al siguiente (si no lo hay, al primero). Si solo queda un robot, los botones de izquierda y derecha se inhabilitan (efecto de inhabilitación).
+        - Panel contenedor de concepts (izquierda)  (aprox. 700x700 px). Un contenedor semi-transparente oscuro (`rgba(0,0,0,0.4)`).Muestra la imagen de concept del robot correspondiente. Las imágenes están en src\main\resources\com\titozeio\images y terminan en "_concept.jpg" (por ejemplo, "iceage_concept.jpg").
+        -Panel de stats (derecha de concepts) (375x270 px). Aun sin elemento de UI final. Muestra los HPs del robot y el alcance y daño del arma. 
+        -Panel de Skills (derecha de concepts, debajo de stats) (375x340 px). Elemento de UI similar al panel de stats, sin gráfico aun. Muestra la info del skill: Nombre, tipo (defensa, ataque, curación,...), y sus stats (alcance y daño para ataque, por ejemplo).
+        -Panel de info del robot seleccionado (derecha de stats y skills) (aprox.500 x700 px). Elemento de UI similar al panel de stats, sin gráfico aun. Muestra los textos de descripción del robot, su arma y su skill.
+    - **Botón de “Confirmar selección"**: No tiene elemento visual aun.(Unos 10 px debajo del bloque de selección de robots). Cuando el J1 o el J2 pulsan este botón confirman que se quieren quedar con el robot seleccionado (aquel del que se está mostrando la info ahora mismo). El turno de selección pasa al otro jugador, se muestra brevemente el “mensaje de cambio de jugador” y el robot seleccionado deja de estar disponible en la lista de seleccionables. Si ya no quedan robots por seleccionar, entonces en lugar de eso, pasamos directamente a la pantalla de Game Screen.
+    - **Bloque de abajo**: Bloque de abajo (a unos 20 cm del bottom), centrado:  No tiene elemento visual, es un contenedor. Contenido:
+        -Panel de robots seleccionados de P1. Un panel de UI que aun no tenemos. Conteenido:
+            -Indicador “P1” de texto.
+            - Lista de robots seleccionados por P1 (inicialmente vacío,  con siluetas temporales que serán sustituidas por las imágenes de los robots que vaya seleccionando P1). Las imágenes serán las mismas que se usan en el GameScreen(src\main\resources\com\titozeio\sprites, terminados en “_P1” para P1).
+            - Nombres en pequeño de cada robot debajo de su imagen.
+        -Panel de robots seleccionados de P2 (contenido similar al de P1 pero aplicado a P2). A la derecha del conteneedor de robots de P1.
+        -Botón de Terminar al azar" (a unos 20 px a la derecha del panel de P2). Al ser pulsado, El sistema realizará las selecciones pendientes al azar y pasamos al Game Screen.
+    - **Mensaje de cambio de jugador**: Cada vez que un jugador confirma su selección (y al mostrarse la pantalla al principio), aparece un panel de mensaje centrado, mostrando: “Turno de elegir robot: P1” (o P2, si es el turno de P2). El panel de mensaje aparece centrado, y todo lo demás difuminado o con un overlay oscureciendo todo. A los 3 segundos (o si uno de los jugadores hace click donde sea) se cierra, quitándose el overlay.
+
+- **Flujo de Selección**: 
+    1. Se muestra el  "Mensaje de cambio de jugador" con la ifno correspondiente..  
+    2. Una vez se cierre el popup del "Mensaje de cambio de jugador", el jugador activo puede ir visualizando la info (concepts, stats, descripciones) del robot activo de la lista de disponibles, y puede pasar al siguiente robot disponiblee pulsando en la flecha dercha o al anterior en la izquierda. Una vez que pulse en el botón de "Confirmar selección", el robot seleccionado pasa a formar parte de su equipo, se elimina de los robots disponibles (apareciendo en su bloque), los paneles pasan a mostrar la info del siguiente (si no quedaran, se habría completado la selección y pasamos a la Game Screen).
+    3. Si aun quedan robots aparecería el  "Mensaje de cambio de jugador" con la ifno correspondiente. Se cambia de jugador activo, y volvemos al paso 2.
+    4. En cualquier momento, cualquiera de los dos jugadores puede pulsar el botón de "Terminar al azar". El sistema realizará las selecciones pendientes al azar y pasamos al Game Screen.
+
  ## Pantalla de Combate:
   - **Descripción**: La pantalla de combate es la pantalla principal del juego y donde se desarrola el core loop. 
   - **Elementos**: 
