@@ -355,6 +355,7 @@ public class GameScreen extends Screen {
         addLogMessage(deployingPlayer.getName() + " despliega " + robot.getModelName()
                 + " en (" + hex.getQ() + "," + hex.getR() + ").");
         updateDeployHud();
+        hexRenderer.markLanding(hex);
         highlightDeployZones();
 
         if (robotsToPlace.isEmpty()) {

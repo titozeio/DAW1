@@ -3,6 +3,12 @@ package com.titozeio.ui;
 import com.titozeio.engine.Hexagon;
 import com.titozeio.engine.Map;
 import com.titozeio.engine.Robot;
+import javafx.animation.FadeTransition;
+import javafx.animation.Interpolator;
+import javafx.animation.ParallelTransition;
+import javafx.animation.ScaleTransition;
+import javafx.animation.TranslateTransition;
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -14,6 +20,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.util.Duration;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -96,6 +103,12 @@ public class HexRenderer {
      */
     private boolean skillHighlightAttack = false;
 
+    /**
+     * Hexágono que debe reproducir la animación de aterrizaje en el próximo
+     * renderizado.
+     */
+    private Hexagon landingHex = null;
+
     // ── Constructor ───────────────────────────────────────────────────────────
     public HexRenderer(Pane pane) {
         this.pane = pane;
@@ -153,6 +166,14 @@ public class HexRenderer {
     /** @return true si el hexágono está en el rango de uso de skill. */
     public boolean isSkillHighlighted(Hexagon hex) {
         return skillHighlighted.contains(hex);
+    }
+
+    /**
+     * Marca un hexágono para que su ocupante aterrice con animación en el próximo
+     * render.
+     */
+    public void markLanding(Hexagon hex) {
+        this.landingHex = hex;
     }
 
     // ── API pública ───────────────────────────────────────────────────────────
@@ -332,6 +353,7 @@ public class HexRenderer {
         double yOffset = HEX_SIZE * 0.15;
         Image sprite = resolveRobotSprite(robot);
 
+        Node robotNode = null;
         if (sprite != null) {
             ImageView spriteView = new ImageView(sprite);
             spriteView.setFitWidth(spriteSize);
@@ -342,6 +364,7 @@ public class HexRenderer {
             spriteView.setX(cx - spriteSize / 2.0);
             spriteView.setY(cy - spriteSize / 2.0 - yOffset);
             pane.getChildren().add(spriteView);
+            robotNode = spriteView;
         } else {
             // Fallback si no se encuentra el sprite de prueba
             javafx.scene.shape.Circle fallback = new javafx.scene.shape.Circle(cx, cy, HEX_SIZE * 0.4);
@@ -350,9 +373,51 @@ public class HexRenderer {
             fallback.setStrokeWidth(1.0);
             fallback.setMouseTransparent(true);
             pane.getChildren().add(fallback);
+            robotNode = fallback;
         }
 
-        renderHpBar(cx, cy + HEX_SIZE * 0.55, robot);
+        Node hpBarNode = renderHpBar(cx, cy + HEX_SIZE * 0.55, robot);
+
+        // Si es el hexágono marcado para aterrizaje, aplicar animación
+        if (robotNode != null && robot.getPosition() != null && robot.getPosition().equals(landingHex)) {
+            applyLandingAnimation(robotNode, hpBarNode);
+            landingHex = null;
+        }
+    }
+
+    private void applyLandingAnimation(Node robotNode, Node hpBarNode) {
+        robotNode.setOpacity(0);
+        robotNode.setScaleX(2.0);
+        robotNode.setScaleY(2.0);
+        robotNode.setTranslateY(-300);
+
+        Duration d = Duration.millis(600);
+
+        TranslateTransition t = new TranslateTransition(d, robotNode);
+        t.setToY(0);
+        t.setInterpolator(Interpolator.EASE_IN);
+
+        ScaleTransition s = new ScaleTransition(d, robotNode);
+        s.setToX(1.0);
+        s.setToY(1.0);
+
+        FadeTransition f = new FadeTransition(d, robotNode);
+        f.setToValue(1.0);
+
+        ParallelTransition pt = new ParallelTransition(t, s, f);
+
+        if (hpBarNode != null) {
+            hpBarNode.setOpacity(0);
+            hpBarNode.setTranslateY(-300);
+            TranslateTransition tHp = new TranslateTransition(d, hpBarNode);
+            tHp.setToY(0);
+            tHp.setInterpolator(Interpolator.EASE_IN);
+            FadeTransition fHp = new FadeTransition(d, hpBarNode);
+            fHp.setToValue(1.0);
+            pt.getChildren().addAll(tHp, fHp);
+        }
+
+        pt.play();
     }
 
     private static Image resolveRobotSprite(Robot robot) {
@@ -438,17 +503,19 @@ public class HexRenderer {
                 "scout");
     }
 
-    private void renderHpBar(double cx, double barY, Robot robot) {
+    private Node renderHpBar(double cx, double barY, Robot robot) {
         int hp = robot.getCurrentHp();
         int maxHp = robot.getMaxHp();
         double barW = HEX_SIZE * 0.9;
         double barH = 5.0;
 
+        Pane hpContainer = new Pane();
+        hpContainer.setMouseTransparent(true);
+
         // Fondo de la barra: gris oscuro al 80%, sin redondeado.
         Rectangle bg = new Rectangle(cx - barW / 2.0, barY, barW, barH);
         bg.setFill(Color.web("#2d2d2d", 0.8));
-        bg.setMouseTransparent(true);
-        pane.getChildren().add(bg);
+        hpContainer.getChildren().add(bg);
 
         // Segmentos de HP: uno por HP máximo. Perdidos al 40% opacidad.
         double gap = 1.0;
@@ -458,9 +525,11 @@ public class HexRenderer {
             Rectangle seg = new Rectangle(segX, barY + 1, segW, Math.max(1.0, barH - 2));
             seg.setFill(Color.web("#44dd44"));
             seg.setOpacity(i < hp ? 1.0 : 0.4);
-            seg.setMouseTransparent(true);
-            pane.getChildren().add(seg);
+            hpContainer.getChildren().add(seg);
         }
+
+        pane.getChildren().add(hpContainer);
+        return hpContainer;
     }
 
     /** Devuelve 2 iniciales del nombre del modelo. */
