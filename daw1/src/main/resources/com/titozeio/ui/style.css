@@ -1,10 +1,20 @@
 /* Estilos generales */
 .root {
     -fx-font-family: "Exo 2";
+    -fx-snap-to-pixel: true;
 }
 
 .label, .button, .text, .text-flow, .scroll-pane {
     -fx-font-family: "Exo 2";
+}
+
+/* Suavizado tipografico: mejora bordes en labels/textos */
+.text {
+    -fx-font-smoothing-type: lcd;
+}
+
+.label, .button {
+    -fx-effect: null;
 }
 
 /* Paneles base Sci-fi */
