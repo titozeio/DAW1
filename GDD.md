@@ -267,27 +267,43 @@ El juego cuenta con dos capas de audio independientes:
 
 #### Tabla de SFX implementados:
 
-| Archivo                        | Evento que lo dispara                                      |
-| ------------------------------ | ---------------------------------------------------------- |
-| `mech_move.wav`                | Robot se mueve a una casilla                               |
-| `laser_shot.wav`               | Ataque con arma tipo **ENERGY** (Victory Saber, Bulwark)   |
-| `weapon_missiles.wav`          | Ataque con arma tipo **EXPLOSIVE** (Ice Age)               |
-| `plasma_saber.wav`             | Ataque cuerpo a cuerpo **KINETIC** de melee (Death Knight) |
-| `mech_receive_hit.wav`         | Robot recibe daño (ataque normal o skill)                  |
-| `weapon_freezing_ray.wav`      | Skill **Rayo Congelador** (Ice Age)                        |
-| `missile_launch.wav`           | Skill **Misiles Teledirigidos** (Bullseye)                 |
-| `weapon_plasma_saber.wav`      | Skill **Sable de Plasma** (Victory Saber)                  |
-| `repair_nanobots.wav`          | Skill **Nanobots Reparadores** (Bulwark)                   |
-| `mobility_jump_thrusters.wav`  | Skill **Retropropulsores** (Scout)                         |
-| `mobility_hyperspeed_dash.wav` | Skill **Turbo Propulsores** (Death Knight)                 |
-| `ui_unit_select.wav`           | Seleccionar un robot propio                                |
-| `ui_ability_ready.wav`         | Entrar en modo Skill                                       |
-| `ui_ability_cooldown.wav`      | Skill ejecutada (entra en cooldown)                        |
-| `ui_turn_change.wav`           | Fin de turno                                               |
-| `ui_invalid.wav`               | Acción no reconocida                                       |
-| `ui_click_confirm.wav`         | Confirmaciones de UI                                       |
-| `ui_hover.wav`                 | Disponible para hover sobre elementos                      |
-| `ui_error.wav`                 | Disponible para errores de UI                              |
+| Archivo                        | Evento que lo dispara                                                |
+| ------------------------------ | -------------------------------------------------------------------- |
+| `mech_move.wav`                | Robot se mueve a una casilla                                         |
+| `laser_shot.wav`               | Ataque con arma tipo **ENERGY** (Victory Saber, Bulwark)             |
+| `weapon_missiles.wav`          | Ataque con arma tipo **EXPLOSIVE** (Ice Age)                         |
+| `plasma_saber.wav`             | Ataque cuerpo a cuerpo **KINETIC** de melee (Death Knight)           |
+| `mech_receive_hit.wav`         | Robot recibe daño (ataque normal o skill)                            |
+| `weapon_freezing_ray.wav`      | Skill **Rayo Congelador** (Ice Age)                                  |
+| `missile_launch.wav`           | Skill **Misiles Teledirigidos** (Bullseye)                           |
+| `weapon_plasma_saber.wav`      | Skill **Sable de Plasma** (Victory Saber)                            |
+| `repair_nanobots.wav`          | Skill **Nanobots Reparadores** (Bulwark)                             |
+| `mobility_jump_thrusters.wav`  | Skill **Retropropulsores** (Scout)                                   |
+| `mobility_hyperspeed_dash.wav` | Skill **Turbo Propulsores** (Death Knight)                           |
+| `ui_unit_select.wav`           | Seleccionar un robot propio                                          |
+| `ui_ability_ready.wav`         | Entrar en modo Skill                                                 |
+| `ui_ability_cooldown.wav`      | Skill ejecutada (entra en cooldown)                                  |
+| `ui_turn_change.wav`           | Fin de turno                                                         |
+| `ui_invalid.wav`               | Acción no reconocida en modo combate                                 |
+| `ui_hover.wav`                 | **Hover** sobre cualquier botón de cualquier pantalla (vol. 45%)     |
+| `ui_click_confirm.wav`         | **Click** en cualquier botón **habilitado** en cualquier pantalla    |
+| `ui_error.wav`                 | **Click** en cualquier botón **deshabilitado** en cualquier pantalla |
+
+#### Sistema de SFX global en botones
+
+Los tres SFX de interfaz de usuario (`ui_hover`, `ui_click_confirm`, `ui_error`) se aplican **automáticamente a todos los botones de todas las pantallas** mediante un sistema centralizado:
+
+- `SoundManager.attachButtonSounds(Button)` — adjunta los tres listeners a un botón concreto.
+- `SoundManager.attachButtonSoundsToAll(Parent)` — recorre el árbol de nodos **recursivamente** y aplica el método anterior a todo `Button` encontrado.
+- `Screen.initButtonSounds(Parent)` — método heredable de la clase base. Cada pantalla lo llama en su `create()` pasando el nodo raíz FXML.
+
+| Evento de botón                  | SFX                    | Volumen |
+| -------------------------------- | ---------------------- | ------- |
+| Hover (ratón encima)             | `ui_hover.wav`         | 45%     |
+| Click en botón **habilitado**    | `ui_click_confirm.wav` | 65%     |
+| Click en botón **deshabilitado** | `ui_error.wav`         | 50%     |
+
+Pantallas cubiertas: `MainMenuScreen`, `RobotSelectionScreen`, `GameScreen`.
 
 ## CI/CD (Integración Continua):
 

@@ -44,6 +44,7 @@ public class MainMenuScreen extends Screen {
             controller.game = game;
             controller.scene = new Scene(root, 1280, 720);
             controller.applyGlobalStyle(controller.scene);
+            controller.initButtonSounds(root);
             return controller;
         } catch (IOException e) {
             System.err.println("Error al cargar MainMenuScreen.fxml: " + e.getMessage());

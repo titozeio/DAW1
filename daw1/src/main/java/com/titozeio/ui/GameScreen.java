@@ -170,6 +170,7 @@ public class GameScreen extends Screen {
             ctrl.window = game.getStage();
             ctrl.scene = new Scene(root, 1280, 720);
             ctrl.applyGlobalStyle(ctrl.scene);
+            ctrl.initButtonSounds(root);
             ctrl.initializeUI();
             return ctrl;
         } catch (IOException e) {

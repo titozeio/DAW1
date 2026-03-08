@@ -135,6 +135,7 @@ public class RobotSelectionScreen extends Screen {
             ctrl.game = game;
             ctrl.scene = new Scene(root, 1280, 720);
             ctrl.applyGlobalStyle(ctrl.scene);
+            ctrl.initButtonSounds(root);
             ctrl.initializeData();
             ctrl.refreshView();
             ctrl.showTurnOverlay();
@@ -162,7 +163,8 @@ public class RobotSelectionScreen extends Screen {
         }
     }
 
-    // Compatibilidad con tests antiguos que invocan initializeData(List) por reflexión
+    // Compatibilidad con tests antiguos que invocan initializeData(List) por
+    // reflexión
     private void initializeData(List<RobotTemplate> allTemplates) {
         this.availableTemplates = new ArrayList<>(allTemplates);
         this.player1Templates = new ArrayList<>();
@@ -304,18 +306,30 @@ public class RobotSelectionScreen extends Screen {
 
     private void updateCurrentRobotInfo() {
         if (availableTemplates.isEmpty()) {
-            if (conceptImageView != null) conceptImageView.setImage(null);
-            if (statHpValueLabel != null) statHpValueLabel.setText("-");
-            if (statMoveValueLabel != null) statMoveValueLabel.setText("-");
-            if (statDamageValueLabel != null) statDamageValueLabel.setText("-");
-            if (statRangeValueLabel != null) statRangeValueLabel.setText("-");
-            if (skillTitleLabel != null) skillTitleLabel.setText("SKILL");
-            if (skillTypeValueLabel != null) skillTypeValueLabel.setText("-");
-            if (skillCooldownValueLabel != null) skillCooldownValueLabel.setText("-");
-            if (skillStatsValueLabel != null) skillStatsValueLabel.setText("-");
-            if (descRobotLabel != null) descRobotLabel.setText("-");
-            if (descWeaponLabel != null) descWeaponLabel.setText("-");
-            if (descSkillLabel != null) descSkillLabel.setText("-");
+            if (conceptImageView != null)
+                conceptImageView.setImage(null);
+            if (statHpValueLabel != null)
+                statHpValueLabel.setText("-");
+            if (statMoveValueLabel != null)
+                statMoveValueLabel.setText("-");
+            if (statDamageValueLabel != null)
+                statDamageValueLabel.setText("-");
+            if (statRangeValueLabel != null)
+                statRangeValueLabel.setText("-");
+            if (skillTitleLabel != null)
+                skillTitleLabel.setText("SKILL");
+            if (skillTypeValueLabel != null)
+                skillTypeValueLabel.setText("-");
+            if (skillCooldownValueLabel != null)
+                skillCooldownValueLabel.setText("-");
+            if (skillStatsValueLabel != null)
+                skillStatsValueLabel.setText("-");
+            if (descRobotLabel != null)
+                descRobotLabel.setText("-");
+            if (descWeaponLabel != null)
+                descWeaponLabel.setText("-");
+            if (descSkillLabel != null)
+                descSkillLabel.setText("-");
             return;
         }
         RobotTemplate template = availableTemplates.get(currentIndex);
@@ -323,28 +337,45 @@ public class RobotSelectionScreen extends Screen {
         Weapon weapon = sample.getWeapon();
         Skill skill = sample.getSkill();
 
-        if (conceptImageView != null) conceptImageView.setImage(loadConceptImage(template));
-        if (statHpValueLabel != null) statHpValueLabel.setText(String.valueOf(sample.getMaxHp()));
-        if (statMoveValueLabel != null) statMoveValueLabel.setText(String.valueOf(sample.getMovementPoints()));
-        if (statDamageValueLabel != null) statDamageValueLabel.setText(String.valueOf(weapon.getDamage()));
-        if (statRangeValueLabel != null) statRangeValueLabel.setText(String.valueOf(weapon.getRange()));
+        if (conceptImageView != null)
+            conceptImageView.setImage(loadConceptImage(template));
+        if (statHpValueLabel != null)
+            statHpValueLabel.setText(String.valueOf(sample.getMaxHp()));
+        if (statMoveValueLabel != null)
+            statMoveValueLabel.setText(String.valueOf(sample.getMovementPoints()));
+        if (statDamageValueLabel != null)
+            statDamageValueLabel.setText(String.valueOf(weapon.getDamage()));
+        if (statRangeValueLabel != null)
+            statRangeValueLabel.setText(String.valueOf(weapon.getRange()));
 
         if (skill != null) {
-            if (skillTitleLabel != null) skillTitleLabel.setText(skill.getName());
-            if (skillTypeValueLabel != null) skillTypeValueLabel.setText(String.valueOf(skill.getType()));
-            if (skillCooldownValueLabel != null) skillCooldownValueLabel.setText(String.valueOf(skill.getCooldown()));
-            if (skillStatsValueLabel != null) skillStatsValueLabel.setText(formatSkillStats(skill));
-            if (descSkillLabel != null) descSkillLabel.setText(skill.getDescription());
+            if (skillTitleLabel != null)
+                skillTitleLabel.setText(skill.getName());
+            if (skillTypeValueLabel != null)
+                skillTypeValueLabel.setText(String.valueOf(skill.getType()));
+            if (skillCooldownValueLabel != null)
+                skillCooldownValueLabel.setText(String.valueOf(skill.getCooldown()));
+            if (skillStatsValueLabel != null)
+                skillStatsValueLabel.setText(formatSkillStats(skill));
+            if (descSkillLabel != null)
+                descSkillLabel.setText(skill.getDescription());
         } else {
-            if (skillTitleLabel != null) skillTitleLabel.setText("Sin skill");
-            if (skillTypeValueLabel != null) skillTypeValueLabel.setText("-");
-            if (skillCooldownValueLabel != null) skillCooldownValueLabel.setText("-");
-            if (skillStatsValueLabel != null) skillStatsValueLabel.setText("-");
-            if (descSkillLabel != null) descSkillLabel.setText("-");
+            if (skillTitleLabel != null)
+                skillTitleLabel.setText("Sin skill");
+            if (skillTypeValueLabel != null)
+                skillTypeValueLabel.setText("-");
+            if (skillCooldownValueLabel != null)
+                skillCooldownValueLabel.setText("-");
+            if (skillStatsValueLabel != null)
+                skillStatsValueLabel.setText("-");
+            if (descSkillLabel != null)
+                descSkillLabel.setText("-");
         }
 
-        if (descRobotLabel != null) descRobotLabel.setText(sample.getDescription());
-        if (descWeaponLabel != null) descWeaponLabel.setText(weapon.getDescription());
+        if (descRobotLabel != null)
+            descRobotLabel.setText(sample.getDescription());
+        if (descWeaponLabel != null)
+            descWeaponLabel.setText(weapon.getDescription());
     }
 
     private String formatSkillStats(Skill skill) {
@@ -430,7 +461,8 @@ public class RobotSelectionScreen extends Screen {
         setTeamSlot(player2Templates, 2, p2Slot3Image, p2Slot3Name, p2Slot3Frame, false);
     }
 
-    private void setTeamSlot(List<RobotTemplate> team, int index, ImageView image, Label name, StackPane frame, boolean p1) {
+    private void setTeamSlot(List<RobotTemplate> team, int index, ImageView image, Label name, StackPane frame,
+            boolean p1) {
         if (index < team.size()) {
             RobotTemplate t = team.get(index);
             Robot sample = t.createRobot(null);

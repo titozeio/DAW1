@@ -1,5 +1,7 @@
 package com.titozeio.ui;
 
+import com.titozeio.engine.SoundManager;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 
 /**
@@ -23,5 +25,14 @@ public abstract class Screen {
         } else {
             System.err.println("No se encontró el archivo CSS global: " + cssPath);
         }
+    }
+
+    /**
+     * Adjunta SFX de hover, click y error a todos los botones del árbol dado.
+     * Llama a este método desde {@code initialize()} de cada pantalla pasando
+     * el nodo raíz cargado por FXML.
+     */
+    protected void initButtonSounds(Parent root) {
+        SoundManager.attachButtonSoundsToAll(root);
     }
 }

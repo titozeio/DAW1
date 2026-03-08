@@ -2,6 +2,9 @@ package com.titozeio.engine;
 
 import javafx.application.ConditionalFeature;
 import javafx.application.Platform;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.control.Button;
 import javafx.scene.media.AudioClip;
 
 /**
@@ -17,6 +20,55 @@ public class SoundManager {
 
     private static final String BASE = "/com/titozeio/sounds/sfx/";
     private static final double DEFAULT_VOLUME = 0.65;
+
+    // ── Utilidades para botones ───────────────────────────────────────────────
+
+    /**
+     * Adjunta los tres SFX de UI (hover, click, error si deshabilitado) a un
+     * {@link Button} de JavaFX.
+     *
+     * @param button el botón al que aplicar los sonidos
+     */
+    public static void attachButtonSounds(Button button) {
+        if (button == null)
+            return;
+
+        // Hover
+        button.setOnMouseEntered(e -> {
+            play(UI_HOVER, 0.45);
+            if (button.getUserData() instanceof Runnable prev)
+                prev.run();
+        });
+
+        // Click: confirm si habilitado, error si deshabilitado
+        button.setOnMousePressed(e -> {
+            if (!button.isDisabled()) {
+                play(UI_CLICK_CONFIRM);
+            } else {
+                play(UI_ERROR, 0.5);
+            }
+        });
+    }
+
+    /**
+     * Recorre recursivamente todos los hijos de un {@link Parent} y llama a
+     * {@link #attachButtonSounds(Button)} en cada {@link Button} encontrado.
+     * Útil para inicializar toda una pantalla de una vez.
+     *
+     * @param root nodo raíz del que colgar los SFX
+     */
+    public static void attachButtonSoundsToAll(Parent root) {
+        if (root == null)
+            return;
+        for (Node child : root.getChildrenUnmodifiable()) {
+            if (child instanceof Button btn) {
+                attachButtonSounds(btn);
+            }
+            if (child instanceof Parent p) {
+                attachButtonSoundsToAll(p);
+            }
+        }
+    }
 
     // ── SFX de combate ────────────────────────────────────────────────────────
     public static final String MECH_MOVE = "mech_move.wav";
