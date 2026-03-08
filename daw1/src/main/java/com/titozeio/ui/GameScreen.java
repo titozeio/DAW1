@@ -665,6 +665,10 @@ public class GameScreen extends Screen {
         playSkillSfx(skillClass);
 
         if (isAttackSkill) {
+            // Avisar al renderizador para que anime el disparo/habilidad
+            boolean isHeal = skillClass.equals("RepairNanobots");
+            hexRenderer.markAttack(selectedRobot.getPosition(), hex, isHeal);
+
             // El hex debe tener un ocupante (robot objetivo)
             Robot target = hex.getOccupant();
             if (target == null) {

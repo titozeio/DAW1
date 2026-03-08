@@ -113,9 +113,10 @@ public class HexRenderer {
      */
     private Hexagon landingHex = null;
 
-    /** Datos para animación de ataque */
+    /** Datos para animación de ataque/habilidad */
     private Hexagon attackerHexScope = null;
     private Hexagon targetHexScope = null;
+    private boolean isHealScope = false;
 
     // ── Constructor ───────────────────────────────────────────────────────────
     public HexRenderer(Pane pane) {
@@ -184,10 +185,16 @@ public class HexRenderer {
         this.landingHex = hex;
     }
 
-    /** Registra un ataque para animarlo en el próximo render. */
-    public void markAttack(Hexagon attacker, Hexagon target) {
+    /** Registra un ataque o habilidad para animarla en el próximo render. */
+    public void markAttack(Hexagon attacker, Hexagon target, boolean isHeal) {
         this.attackerHexScope = attacker;
         this.targetHexScope = target;
+        this.isHealScope = isHeal;
+    }
+
+    /** Versión por defecto (ataque normal) */
+    public void markAttack(Hexagon attacker, Hexagon target) {
+        markAttack(attacker, target, false);
     }
 
     // ── API pública ───────────────────────────────────────────────────────────
@@ -417,14 +424,14 @@ public class HexRenderer {
         else if (robot.getPosition() != null) {
             if (robot.getPosition().equals(attackerHexScope)) {
                 applyRecoilAnimation(robotNode, hpBarNode, targetHexScope);
-                drawLaserTracer(attackerHexScope, targetHexScope);
+                drawLaserTracer(attackerHexScope, targetHexScope, isHealScope);
             } else if (robot.getPosition().equals(targetHexScope)) {
-                applyImpactAnimation(robotNode, hpBarNode);
+                applyImpactAnimation(robotNode, hpBarNode, isHealScope);
             }
         }
     }
 
-    private void drawLaserTracer(Hexagon from, Hexagon to) {
+    private void drawLaserTracer(Hexagon from, Hexagon to, boolean isHeal) {
         if (from == null || to == null)
             return;
         double[] p1 = axialToPixel(from.getQ(), from.getR());
@@ -434,7 +441,8 @@ public class HexRenderer {
         double beamY = -12.0;
 
         Line laser = new Line(p1[0], p1[1] + beamY, p2[0], p2[1] + beamY);
-        laser.setStroke(Color.web("#57C0EF"));
+        Color beamColor = isHeal ? Color.web("#44ff44") : Color.web("#57C0EF");
+        laser.setStroke(beamColor);
         laser.setStrokeWidth(3.0);
         laser.setStrokeLineCap(StrokeLineCap.ROUND);
         laser.setOpacity(0.0);
@@ -486,10 +494,14 @@ public class HexRenderer {
         }
     }
 
-    private void applyImpactAnimation(Node robot, Node hpBar) {
+    private void applyImpactAnimation(Node robot, Node hpBar, boolean isHeal) {
         ColorAdjust flashEffect = new ColorAdjust();
         flashEffect.setBrightness(0.0);
-        flashEffect.setHue(-0.05); // Un toque rojizo
+        if (isHeal) {
+            flashEffect.setHue(0.4); // Verde sanador
+        } else {
+            flashEffect.setHue(-0.05); // Un toque rojizo
+        }
         flashEffect.setSaturation(0.6);
         robot.setEffect(flashEffect);
 
