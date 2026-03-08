@@ -99,6 +99,18 @@ public class RobotSelectionScreen extends Screen {
     @FXML
     private Label p2Slot3Name;
     @FXML
+    private StackPane p1Slot1Frame;
+    @FXML
+    private StackPane p1Slot2Frame;
+    @FXML
+    private StackPane p1Slot3Frame;
+    @FXML
+    private StackPane p2Slot1Frame;
+    @FXML
+    private StackPane p2Slot2Frame;
+    @FXML
+    private StackPane p2Slot3Frame;
+    @FXML
     private StackPane turnOverlay;
     @FXML
     private Label turnOverlayLabel;
@@ -382,22 +394,22 @@ public class RobotSelectionScreen extends Screen {
         String file;
         switch (template) {
             case VICTORY_SABER:
-                file = p1 ? "saberprime_p1.png" : "saberprime_p2.png";
+                file = "face_saberprime.png";
                 break;
             case BULLSEYE:
-                file = p1 ? "bullseye_p1.png" : "bullseye_p2.png";
+                file = "face_bullseye.png";
                 break;
             case BULWARK:
-                file = p1 ? "bulwark_p1.png" : "Bulwark_p2.png";
+                file = "face_bulwark.png";
                 break;
             case SCOUT:
-                file = p1 ? "scout_p1.png" : "scout_p2.png";
+                file = "face_scout.png";
                 break;
             case DEATH_KNIGHT:
-                file = p1 ? "death_knight_p1.png" : "death_knight_p2.png";
+                file = "face_deathknight.png";
                 break;
             case ICE_AGE:
-                file = p1 ? "ice_age_p1.png" : "ice_age_p2.png";
+                file = "face_iceage.png";
                 break;
             default:
                 return null;
@@ -410,25 +422,31 @@ public class RobotSelectionScreen extends Screen {
         if (p1Slot1Image == null || p2Slot1Image == null) {
             return;
         }
-        setTeamSlot(player1Templates, 0, p1Slot1Image, p1Slot1Name, true);
-        setTeamSlot(player1Templates, 1, p1Slot2Image, p1Slot2Name, true);
-        setTeamSlot(player1Templates, 2, p1Slot3Image, p1Slot3Name, true);
-        setTeamSlot(player2Templates, 0, p2Slot1Image, p2Slot1Name, false);
-        setTeamSlot(player2Templates, 1, p2Slot2Image, p2Slot2Name, false);
-        setTeamSlot(player2Templates, 2, p2Slot3Image, p2Slot3Name, false);
+        setTeamSlot(player1Templates, 0, p1Slot1Image, p1Slot1Name, p1Slot1Frame, true);
+        setTeamSlot(player1Templates, 1, p1Slot2Image, p1Slot2Name, p1Slot2Frame, true);
+        setTeamSlot(player1Templates, 2, p1Slot3Image, p1Slot3Name, p1Slot3Frame, true);
+        setTeamSlot(player2Templates, 0, p2Slot1Image, p2Slot1Name, p2Slot1Frame, false);
+        setTeamSlot(player2Templates, 1, p2Slot2Image, p2Slot2Name, p2Slot2Frame, false);
+        setTeamSlot(player2Templates, 2, p2Slot3Image, p2Slot3Name, p2Slot3Frame, false);
     }
 
-    private void setTeamSlot(List<RobotTemplate> team, int index, ImageView image, Label name, boolean p1) {
+    private void setTeamSlot(List<RobotTemplate> team, int index, ImageView image, Label name, StackPane frame, boolean p1) {
         if (index < team.size()) {
             RobotTemplate t = team.get(index);
             Robot sample = t.createRobot(null);
             name.setText(sample.getModelName());
             image.setImage(loadTeamSprite(t, p1));
             image.setOpacity(1.0);
+            if (frame != null) {
+                frame.setOpacity(1.0);
+            }
         } else {
             name.setText("---");
             image.setImage(null);
             image.setOpacity(0.4);
+            if (frame != null) {
+                frame.setOpacity(0.3);
+            }
         }
     }
 
