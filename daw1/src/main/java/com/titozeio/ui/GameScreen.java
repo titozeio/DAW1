@@ -18,6 +18,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
@@ -80,6 +81,8 @@ public class GameScreen extends Screen {
     private Label damageValueLabel;
     @FXML
     private Label skillNameInfoLabel;
+    @FXML
+    private ImageView skillInfoIconImageView;
     @FXML
     private HBox skillCooldownDots;
     @FXML
@@ -848,10 +851,13 @@ public class GameScreen extends Screen {
     private void updateSkillButton(Robot robot) {
         if (robot == null || robot.getSkill() == null) {
             skillButton.setText("SKILL");
+            skillButton.setGraphic(null);
             skillButton.setDisable(true);
             return;
         }
         Skill sk = robot.getSkill();
+        skillButton.setGraphic(createSkillButtonGraphic(sk));
+        skillButton.setContentDisplay(ContentDisplay.LEFT);
         if (!sk.isReady()) {
             skillButton.setText("SKILL: " + sk.getName() + " (CD:" + sk.getCurrentCooldown() + ")");
             skillButton.setDisable(true);
@@ -875,6 +881,9 @@ public class GameScreen extends Screen {
             if (ownerBadgeLabel != null) {
                 ownerBadgeLabel.setText("");
             }
+            if (skillInfoIconImageView != null) {
+                skillInfoIconImageView.setImage(null);
+            }
             return;
         }
         Skill sk = robot.getSkill();
@@ -890,6 +899,8 @@ public class GameScreen extends Screen {
             hpValueLabel.setText(robot.getCurrentHp() + "/" + robot.getMaxHp());
         if (skillNameInfoLabel != null)
             skillNameInfoLabel.setText(sk != null ? sk.getName() : "Sin skill");
+        if (skillInfoIconImageView != null)
+            skillInfoIconImageView.setImage(loadSkillIcon(sk));
         colorSkillName(sk);
         renderSkillCooldown(sk);
 
@@ -1081,6 +1092,49 @@ public class GameScreen extends Screen {
         return res == null ? null : new Image(res.toExternalForm());
     }
 
+    private Image loadSkillIcon(Skill skill) {
+        if (skill == null) {
+            return null;
+        }
+        String fileName;
+        switch (skill.getClass().getSimpleName()) {
+            case "FreezeRay":
+                fileName = "skill_freezing_ray.png";
+                break;
+            case "GuidedMissile":
+                fileName = "skill_guided_missiles.png";
+                break;
+            case "RepairNanobots":
+                fileName = "skill_repair_nanobots.png";
+                break;
+            case "PlasmaSaberAttack":
+                fileName = "skill_plasma_saber.png";
+                break;
+            case "JetpackBoost":
+                fileName = "skill_retro_thrusters.png";
+                break;
+            case "TurboPropulsion":
+                fileName = "skill_turbo_thrusters.png";
+                break;
+            default:
+                return null;
+        }
+        var res = getClass().getResource("/com/titozeio/ui/" + fileName);
+        return res == null ? null : new Image(res.toExternalForm());
+    }
+
+    private ImageView createSkillButtonGraphic(Skill skill) {
+        Image icon = loadSkillIcon(skill);
+        if (icon == null) {
+            return null;
+        }
+        ImageView imageView = new ImageView(icon);
+        imageView.setFitWidth(16.0);
+        imageView.setFitHeight(16.0);
+        imageView.setPreserveRatio(true);
+        return imageView;
+    }
+
     private void colorSkillName(Skill sk) {
         if (skillNameInfoLabel == null)
             return;
@@ -1148,6 +1202,7 @@ public class GameScreen extends Screen {
             infoToggleButton.setText("+info");
         selectionMode = SelectionMode.NONE;
         skillButton.setText("SKILL");
+        skillButton.setGraphic(null);
         skillButton.setDisable(true);
         clearAllHighlights();
         infoDetailsLabel.setText("Selecciona un robot tuyo para actuar.");

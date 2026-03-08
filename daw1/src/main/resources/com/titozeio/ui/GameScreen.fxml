@@ -109,6 +109,11 @@
                         <HBox fx:id="skillFooterBox" alignment="CENTER_LEFT" spacing="6.0" style="-fx-background-color: rgba(30,35,40,0.85);">
                            <padding><Insets left="6.0" right="6.0" top="4.0" bottom="4.0"/></padding>
                            <children>
+                              <StackPane prefWidth="22.0" prefHeight="22.0" styleClass="robot-frame, robot-frame-portrait">
+                                 <children>
+                                    <ImageView fx:id="skillInfoIconImageView" fitWidth="16.0" fitHeight="16.0" preserveRatio="true" />
+                                 </children>
+                              </StackPane>
                               <Label fx:id="skillNameInfoLabel" text="Skill -" textFill="#57C0EF" />
                               <HBox fx:id="skillCooldownDots" spacing="4.0" alignment="CENTER_LEFT" />
                               <Label fx:id="skillReadyLabel" text="READY!" textFill="#6CFF6C" visible="false" managed="false" style="-fx-effect: dropshadow(gaussian, rgba(108,255,108,0.7), 8, 0.2, 0, 0);" />
@@ -151,7 +156,7 @@
 
                   <HBox fx:id="actionButtonsBox" alignment="BOTTOM_LEFT" spacing="8.0">
                      <children>
-                        <Button fx:id="skillButton" mnemonicParsing="false" prefHeight="36.0" prefWidth="150.0" styleClass="scifi-button-outline" text="SKILL">
+                        <Button fx:id="skillButton" mnemonicParsing="false" prefHeight="36.0" prefWidth="260.0" styleClass="scifi-button-outline" text="SKILL">
                            <font>
                               <Font name="Exo 2 Bold" size="13.0" />
                            </font>

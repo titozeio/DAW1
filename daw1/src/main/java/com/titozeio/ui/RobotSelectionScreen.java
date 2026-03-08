@@ -60,6 +60,8 @@ public class RobotSelectionScreen extends Screen {
     @FXML
     private Label skillTitleLabel;
     @FXML
+    private ImageView skillIconImageView;
+    @FXML
     private Label skillTypeValueLabel;
     @FXML
     private Label skillCooldownValueLabel;
@@ -290,6 +292,8 @@ public class RobotSelectionScreen extends Screen {
                 statRangeValueLabel.setText("-");
             if (skillTitleLabel != null)
                 skillTitleLabel.setText("SKILL");
+            if (skillIconImageView != null)
+                skillIconImageView.setImage(null);
             updateSkillTitleFont();
             if (skillTypeValueLabel != null)
                 skillTypeValueLabel.setText("-");
@@ -322,6 +326,8 @@ public class RobotSelectionScreen extends Screen {
             statRangeValueLabel.setText(String.valueOf(weapon.getRange()));
 
         if (skill != null) {
+            if (skillIconImageView != null)
+                skillIconImageView.setImage(loadSkillIcon(skill));
             if (skillTitleLabel != null)
                 skillTitleLabel.setText(skill.getName());
             updateSkillTitleFont();
@@ -334,6 +340,8 @@ public class RobotSelectionScreen extends Screen {
             if (descSkillLabel != null)
                 descSkillLabel.setText(skill.getDescription());
         } else {
+            if (skillIconImageView != null)
+                skillIconImageView.setImage(null);
             if (skillTitleLabel != null)
                 skillTitleLabel.setText("Sin skill");
             updateSkillTitleFont();
@@ -368,6 +376,37 @@ public class RobotSelectionScreen extends Screen {
             size = 20.0;
         }
         skillTitleLabel.setFont(Font.font("Exo 2 Regular", size));
+    }
+
+    private Image loadSkillIcon(Skill skill) {
+        if (skill == null) {
+            return null;
+        }
+        String fileName;
+        switch (skill.getClass().getSimpleName()) {
+            case "FreezeRay":
+                fileName = "skill_freezing_ray.png";
+                break;
+            case "GuidedMissile":
+                fileName = "skill_guided_missiles.png";
+                break;
+            case "RepairNanobots":
+                fileName = "skill_repair_nanobots.png";
+                break;
+            case "PlasmaSaberAttack":
+                fileName = "skill_plasma_saber.png";
+                break;
+            case "JetpackBoost":
+                fileName = "skill_retro_thrusters.png";
+                break;
+            case "TurboPropulsion":
+                fileName = "skill_turbo_thrusters.png";
+                break;
+            default:
+                return null;
+        }
+        var res = getClass().getResource("/com/titozeio/ui/" + fileName);
+        return res == null ? null : new Image(res.toExternalForm());
     }
 
     private String formatSkillStats(Skill skill) {
