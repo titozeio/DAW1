@@ -54,10 +54,10 @@ public class HexRenderer {
     private static final Color C_WATER_DEEP = Color.web("#0e3a60");
 
     // ── Paleta de zonas especiales (overlays semitransparentes) ───────────────
-    private static final Color C_DEPLOY_P1 = Color.web("#3366cc", 0.25);
-    private static final Color C_DEPLOY_P2 = Color.web("#cc3333", 0.25);
-    private static final Color C_BASE_P1 = Color.web("#5599ff", 0.45);
-    private static final Color C_BASE_P2 = Color.web("#ff5555", 0.45);
+    private static final Color C_DEPLOY_P1 = Color.web("#cc3333", 0.25);
+    private static final Color C_DEPLOY_P2 = Color.web("#3366cc", 0.25);
+    private static final Color C_BASE_P1 = Color.web("#ff5555", 0.45);
+    private static final Color C_BASE_P2 = Color.web("#5599ff", 0.45);
 
     // ── Borde de los hexágonos ────────────────────────────────────────────────
     private static final Color C_STROKE = Color.web("#0a1008", 0.6);
@@ -222,8 +222,11 @@ public class HexRenderer {
         // 3. Overlay de resaltado de despliegue (verde)
         if (highlighted.contains(hex)) {
             Polygon hl = buildHexPolygon(cx, cy, HEX_SIZE - 1);
-            hl.setFill(Color.web("#00ff88", 0.28));
-            hl.setStroke(Color.web("#00ff88", 0.9));
+            boolean isP1Deploy = hex.isDeployZoneP1();
+            String fill = isP1Deploy ? "#ff6666" : "#66a3ff";
+            String stroke = isP1Deploy ? "#ff9a9a" : "#9ac3ff";
+            hl.setFill(Color.web(fill, 0.32));
+            hl.setStroke(Color.web(stroke, 0.95));
             hl.setStrokeType(StrokeType.INSIDE);
             hl.setStrokeWidth(2.0);
             hl.setMouseTransparent(true);
@@ -275,8 +278,8 @@ public class HexRenderer {
             Polygon rim = buildHexPolygon(cx, cy, HEX_SIZE);
             rim.setFill(Color.TRANSPARENT);
             Color borderColor = hex.isBaseP1()
-                    ? Color.web("#77aaff", 0.9)
-                    : Color.web("#ff7777", 0.9);
+                    ? Color.web("#ff7777", 0.9)
+                    : Color.web("#77aaff", 0.9);
             rim.setStroke(borderColor);
             rim.setStrokeType(StrokeType.INSIDE);
             rim.setStrokeWidth(2.5);

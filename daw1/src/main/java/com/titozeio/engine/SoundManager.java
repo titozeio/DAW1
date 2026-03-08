@@ -1,7 +1,5 @@
 package com.titozeio.engine;
 
-import javafx.application.ConditionalFeature;
-import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -93,7 +91,6 @@ public class SoundManager {
     public static final String UI_INVALID = "ui_invalid.wav";
     public static final String UI_HOVER = "ui_hover.wav";
 
-    private static Boolean audioAvailable = null;
     private static boolean sfxEnabled = true;
 
     /**
@@ -124,8 +121,6 @@ public class SoundManager {
     public static void play(String fileName, double volume) {
         if (!sfxEnabled)
             return;
-        if (!isAudioAvailable())
-            return;
         try {
             var resource = SoundManager.class.getResource(BASE + fileName);
             if (resource == null) {
@@ -141,16 +136,5 @@ public class SoundManager {
             // los ignoramos para no romper los tests.
             System.err.println("[SoundManager] No se pudo reproducir " + fileName + ": " + t.getMessage());
         }
-    }
-
-    private static boolean isAudioAvailable() {
-        if (audioAvailable == null) {
-            try {
-                audioAvailable = Platform.isSupported(ConditionalFeature.MEDIA);
-            } catch (Exception e) {
-                audioAvailable = false;
-            }
-        }
-        return audioAvailable;
     }
 }

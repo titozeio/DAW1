@@ -114,6 +114,8 @@ public class GameScreen extends Screen {
     @FXML
     private Button endTurnButton;
     @FXML
+    private Button surrenderButton;
+    @FXML
     private HBox actionButtonsBox;
     // Overlay genérico
     @FXML
@@ -193,6 +195,9 @@ public class GameScreen extends Screen {
 
         endTurnButton.setDisable(true);
         skillButton.setDisable(true);
+        if (surrenderButton != null) {
+            surrenderButton.setDisable(true);
+        }
         overlayAcceptButton.setOnAction(e -> overlayPane.setVisible(false));
         victoryMenuButton.setOnAction(e -> returnToMenu());
         if (logScrollPane != null) {
@@ -388,6 +393,9 @@ public class GameScreen extends Screen {
         endTurnButton.setDisable(false);
         endTurnButton.setOnAction(e -> handleInput("F"));
         skillButton.setDisable(true);
+        if (surrenderButton != null) {
+            surrenderButton.setDisable(false);
+        }
         updateCombatHud();
         showOverlayMessage("¡COMBATE INICIADO!",
                 "Turno 1 – " + game.getCurrentPlayer().getName()
@@ -1256,18 +1264,37 @@ public class GameScreen extends Screen {
     private void showVictory(Player winner, String reason) {
         boolean isP1 = (winner == game.getP1());
         boolean byElimination = reason.equals("eliminación");
-        victoryIcon.setText(byElimination ? "🏆" : "🏴");
+        boolean bySurrender = reason.equals("rendición");
+        victoryIcon.setText(bySurrender ? "⚑" : (byElimination ? "🏆" : "🏴"));
         victoryTitle.setText("¡" + winner.getName().toUpperCase() + " GANA!");
         victoryTitle.setStyle("-fx-font-size: 32px; -fx-text-fill: "
                 + (isP1 ? "#5599ff" : "#ff5555") + ";");
-        victoryReason.setText(byElimination
-                ? winner.getName() + " ha eliminado a todos los robots rivales."
-                : winner.getName() + " ha conquistado la base enemiga durante 2 turnos.");
+        if (bySurrender) {
+            victoryReason.setText(winner.getName() + " gana porque el rival se ha rendido.");
+        } else if (byElimination) {
+            victoryReason.setText(winner.getName() + " ha eliminado a todos los robots rivales.");
+        } else {
+            victoryReason.setText(winner.getName() + " ha conquistado la base enemiga durante 2 turnos.");
+        }
         victoryTurnLabel.setText("Partida resuelta en el turno " + game.getTurnCounter());
         victoryPane.setVisible(true);
         endTurnButton.setDisable(true);
         skillButton.setDisable(true);
+        if (surrenderButton != null) {
+            surrenderButton.setDisable(true);
+        }
         addLogMessage("🏆 ¡" + winner.getName() + " gana por " + reason + "!");
+    }
+
+    @FXML
+    public void handleSurrenderAction() {
+        if (game.getPhase() != GamePhase.COMBAT) {
+            return;
+        }
+        Player loser = game.getCurrentPlayer();
+        Player winner = game.getOpponent(loser);
+        addLogMessage("⚑ " + loser.getName() + " se ha rendido.");
+        showVictory(winner, "rendición");
     }
 
     private void returnToMenu() {

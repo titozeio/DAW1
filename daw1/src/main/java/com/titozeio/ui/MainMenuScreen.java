@@ -47,6 +47,7 @@ public class MainMenuScreen extends Screen {
             controller.applyGlobalStyle(controller.scene);
             controller.enforceUppercaseText(root);
             controller.initButtonSounds(root);
+            controller.syncAudioTogglesWithState();
             return controller;
         } catch (IOException e) {
             System.err.println("Error al cargar MainMenuScreen.fxml: " + e.getMessage());
@@ -62,13 +63,27 @@ public class MainMenuScreen extends Screen {
 
     @FXML
     private void initialize() {
-        if (musicToggle != null) {
-            musicToggle.setSelected(true);
+        // El estado real se sincroniza en create(), cuando game ya está asignado.
+        if (musicToggle != null)
             musicToggle.setText("ON");
+        if (sfxToggle != null)
+            sfxToggle.setText("ON");
+    }
+
+    private void syncAudioTogglesWithState() {
+        if (game == null) {
+            return;
+        }
+        if (musicToggle != null) {
+            boolean musicOn = game.isMusicEnabled();
+            musicToggle.setSelected(musicOn);
+            musicToggle.setText(musicOn ? "ON" : "OFF");
         }
         if (sfxToggle != null) {
-            sfxToggle.setSelected(true);
-            sfxToggle.setText("ON");
+            boolean sfxOn = game.isSfxEnabled();
+            sfxToggle.setSelected(sfxOn);
+            sfxToggle.setText(sfxOn ? "ON" : "OFF");
+            SoundManager.setEnabled(sfxOn);
         }
     }
 

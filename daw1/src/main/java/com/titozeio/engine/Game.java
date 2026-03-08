@@ -121,8 +121,8 @@ public class Game {
     private void playThemeTrack(MusicTheme theme, int trackNumber) {
         stopCurrentMusic();
 
-        // Evitar inicialización de audio en entornos sin interfaz gráfica o sin soporte
-        if (stage == null || !isAudioSupported()) {
+        // Sin stage no intentamos reproducir.
+        if (stage == null) {
             return;
         }
 
@@ -215,15 +215,6 @@ public class Game {
         }
     }
 
-    private boolean isAudioSupported() {
-        try {
-            // Verificamos si la plataforma soporta MEDIA de forma segura
-            return javafx.application.Platform.isSupported(javafx.application.ConditionalFeature.MEDIA);
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
     public void handleInput(Object event) {
         // TODO: Procesar eventos (clics, teclas)
     }
@@ -290,5 +281,6 @@ public class Game {
 
     public void setSfxEnabled(boolean sfxEnabled) {
         this.sfxEnabled = sfxEnabled;
+        SoundManager.setEnabled(sfxEnabled);
     }
 }

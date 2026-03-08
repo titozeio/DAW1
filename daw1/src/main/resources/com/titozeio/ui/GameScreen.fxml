@@ -51,6 +51,11 @@
                         </Label>
                      </children>
                   </VBox>
+                  <Button fx:id="surrenderButton" mnemonicParsing="false" onAction="#handleSurrenderAction" prefHeight="34.0" prefWidth="130.0" styleClass="scifi-button-outline" text="RENDIRSE">
+                     <font>
+                        <Font name="Exo 2 Bold" size="12.0" />
+                     </font>
+                  </Button>
                </children>
                <padding>
                   <Insets left="20.0" right="20.0" />

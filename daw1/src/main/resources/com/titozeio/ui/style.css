@@ -290,3 +290,24 @@
     -fx-padding: 0;
     -fx-opacity: 0.5;
 }
+
+/* Popup victoria: mantener tipografia estable en todos los estados */
+#victoryMenuButton {
+    -fx-font-family: "Exo 2 Bold";
+    -fx-font-size: 14px;
+}
+
+#victoryMenuButton:hover {
+    -fx-font-family: "Exo 2 Bold";
+    -fx-font-size: 14px;
+}
+
+#victoryMenuButton:pressed {
+    -fx-font-family: "Exo 2 Bold";
+    -fx-font-size: 14px;
+}
+
+#victoryMenuButton:disabled {
+    -fx-font-family: "Exo 2 Bold";
+    -fx-font-size: 14px;
+}

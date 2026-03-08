@@ -16,7 +16,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
-    <javafx.version>21</javafx.version>
+    <javafx.version>21.0.2</javafx.version>
     <monocle.version>jdk-12.0.1+2</monocle.version>
   </properties>
 
@@ -47,13 +47,6 @@
         <groupId>com.google.code.gson</groupId>
         <artifactId>gson</artifactId>
         <version>2.10.1</version>
-    </dependency>
-    <!-- Monocle headless backend for JavaFX tests running in CI without a display -->
-    <dependency>
-        <groupId>org.testfx</groupId>
-        <artifactId>openjfx-monocle</artifactId>
-        <version>${monocle.version}</version>
-        <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -110,6 +103,9 @@
                 <stripDebug>true</stripDebug>
                 <noHeaderFiles>true</noHeaderFiles>
                 <noManPages>true</noManPages>
+                <options>
+                    <option>--add-exports=javafx.base/com.sun.javafx=javafx.media</option>
+                </options>
             </configuration>
         </plugin>
       </plugins>
@@ -126,6 +122,9 @@
           <stripDebug>true</stripDebug>
           <noHeaderFiles>true</noHeaderFiles>
           <noManPages>true</noManPages>
+          <options>
+            <option>--add-exports=javafx.base/com.sun.javafx=javafx.media</option>
+          </options>
         </configuration>
       </plugin>
       <plugin>
@@ -156,7 +155,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.2.5</version>
         <configuration>
-          <argLine>@{argLine} --enable-native-access=ALL-UNNAMED -Dglass.platform=Monocle -Dmonocle.platform=Headless -Djava.awt.headless=true</argLine>
+          <argLine>@{argLine} --enable-native-access=ALL-UNNAMED --add-exports=javafx.base/com.sun.javafx=javafx.media -Dglass.platform=Monocle -Dmonocle.platform=Headless -Djava.awt.headless=true</argLine>
           <redirectTestOutputToFile>true</redirectTestOutputToFile>
         </configuration>
       </plugin>
@@ -208,4 +207,24 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>headless-tests</id>
+      <activation>
+        <property>
+          <name>env.CI</name>
+        </property>
+      </activation>
+      <dependencies>
+        <!-- Solo en CI: backend headless de JavaFX para tests -->
+        <dependency>
+          <groupId>org.testfx</groupId>
+          <artifactId>openjfx-monocle</artifactId>
+          <version>${monocle.version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 </project>
