@@ -226,9 +226,25 @@ public class GameScreen extends Screen {
         if (panelRoot == null) {
             return;
         }
-        setMouseTransparentRecursively(panelRoot, true);
+        panelRoot.setMouseTransparent(false);
+        if (panelRoot instanceof javafx.scene.layout.Region region) {
+            region.setPickOnBounds(false);
+        }
+        if (panelRoot instanceof Parent parent) {
+            for (Node child : parent.getChildrenUnmodifiable()) {
+                setMouseTransparentRecursively(child, true);
+            }
+        }
         if (keepInteractive != null) {
             setMouseTransparentRecursively(keepInteractive, false);
+            Node current = keepInteractive.getParent();
+            while (current != null && current != panelRoot) {
+                current.setMouseTransparent(false);
+                if (current instanceof javafx.scene.layout.Region region) {
+                    region.setPickOnBounds(false);
+                }
+                current = current.getParent();
+            }
         }
     }
 
