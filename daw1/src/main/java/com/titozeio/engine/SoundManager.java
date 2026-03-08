@@ -94,6 +94,20 @@ public class SoundManager {
     public static final String UI_HOVER = "ui_hover.wav";
 
     private static Boolean audioAvailable = null;
+    private static boolean sfxEnabled = true;
+
+    /**
+     * Activa o desactiva globalmente todos los efectos de sonido.
+     * Se llama desde el panel de Settings del menú principal.
+     */
+    public static void setEnabled(boolean enabled) {
+        sfxEnabled = enabled;
+    }
+
+    /** Devuelve {@code true} si los SFX están actualmente habilitados. */
+    public static boolean isEnabled() {
+        return sfxEnabled;
+    }
 
     private SoundManager() {
         /* utilidad estática */ }
@@ -108,6 +122,8 @@ public class SoundManager {
     }
 
     public static void play(String fileName, double volume) {
+        if (!sfxEnabled)
+            return;
         if (!isAudioAvailable())
             return;
         try {

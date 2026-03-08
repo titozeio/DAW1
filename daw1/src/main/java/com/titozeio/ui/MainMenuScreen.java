@@ -1,6 +1,7 @@
 package com.titozeio.ui;
 
 import com.titozeio.engine.Game;
+import com.titozeio.engine.SoundManager;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -93,6 +94,7 @@ public class MainMenuScreen extends Screen {
     public void handleSfxToggleAction() {
         boolean enabled = sfxToggle.isSelected();
         sfxToggle.setText(enabled ? "ON" : "OFF");
+        SoundManager.setEnabled(enabled);
         game.setSfxEnabled(enabled);
     }
 
