@@ -16,6 +16,7 @@ import javafx.util.Duration;
 import javafx.stage.Stage;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.prefs.Preferences;
 
 public class Game {
 
@@ -34,6 +35,9 @@ public class Game {
     private int currentTrackNumber = 1;
     private boolean musicEnabled = true;
     private boolean sfxEnabled = true;
+    private static final String PREF_MUSIC_ENABLED = "musicEnabled";
+    private static final String PREF_SFX_ENABLED = "sfxEnabled";
+    private static final Preferences PREFS = Preferences.userNodeForPackage(Game.class);
 
     // Referencia a la ventana de JavaFX
     private Stage stage;
@@ -53,6 +57,9 @@ public class Game {
         this.stage = stage;
         this.victoryConditions = new ArrayList<>();
         this.turnCounter = 1;
+        this.musicEnabled = PREFS.getBoolean(PREF_MUSIC_ENABLED, true);
+        this.sfxEnabled = PREFS.getBoolean(PREF_SFX_ENABLED, true);
+        SoundManager.setEnabled(this.sfxEnabled);
 
         // Crear los jugadores sin robots (los robots se asignan en
         // RobotSelectionScreen)
@@ -266,6 +273,7 @@ public class Game {
 
     public void setMusicEnabled(boolean musicEnabled) {
         this.musicEnabled = musicEnabled;
+        PREFS.putBoolean(PREF_MUSIC_ENABLED, musicEnabled);
         if (!musicEnabled) {
             stopCurrentMusic();
             return;
@@ -281,6 +289,7 @@ public class Game {
 
     public void setSfxEnabled(boolean sfxEnabled) {
         this.sfxEnabled = sfxEnabled;
+        PREFS.putBoolean(PREF_SFX_ENABLED, sfxEnabled);
         SoundManager.setEnabled(sfxEnabled);
     }
 }

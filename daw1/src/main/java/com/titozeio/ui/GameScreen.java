@@ -351,6 +351,7 @@ public class GameScreen extends Screen {
             return;
         hex.setOccupant(robot);
         robot.setPosition(hex);
+        SoundManager.play(SoundManager.UI_CLICK_CONFIRM);
         addLogMessage(deployingPlayer.getName() + " despliega " + robot.getModelName()
                 + " en (" + hex.getQ() + "," + hex.getR() + ").");
         updateDeployHud();
