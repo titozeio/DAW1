@@ -169,9 +169,10 @@ public class GameScreen extends Screen {
     }
 
     /**
-     * Ejecuta la logica de create.
-     * @param game parametro de entrada.
-     * @return valor resultante de la operacion.
+     * Crea y configura una nueva instancia de GameScreen cargando su FXML.
+     * 
+     * @param game Referencia al controlador principal del juego.
+     * @return El controlador de pantalla configurado o null si hay error.
      */
     public static GameScreen create(Game game) {
         try {
@@ -1333,7 +1334,8 @@ public class GameScreen extends Screen {
 
     /**
      * Muestra overlay message.
-     * @param title parametro de entrada.
+     * 
+     * @param title   parametro de entrada.
      * @param message parametro de entrada.
      */
     public void showOverlayMessage(String title, String message) {
@@ -1344,6 +1346,7 @@ public class GameScreen extends Screen {
 
     /**
      * Agrega log message.
+     * 
      * @param message parametro de entrada.
      */
     public void addLogMessage(String message) {
@@ -1370,6 +1373,7 @@ public class GameScreen extends Screen {
     @Override
     /**
      * Ejecuta la logica de handle input.
+     * 
      * @param input parametro de entrada.
      */
     public void handleInput(String input) {

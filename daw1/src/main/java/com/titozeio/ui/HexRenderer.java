@@ -120,8 +120,9 @@ public class HexRenderer {
 
     // ── Constructor ───────────────────────────────────────────────────────────
     /**
-     * Crea una nueva instancia de la clase.
-     * @param pane parametro de entrada.
+     * Crea un renderizador vinculado a un contenedor de JavaFX.
+     * 
+     * @param pane El Pane donde se dibujarán los hexágonos y robots.
      */
     public HexRenderer(Pane pane) {
         this.pane = pane;

@@ -15,8 +15,9 @@ public class Player {
     private int baseControlTurns; // Turnos que un robot enemigo lleva en la base de este jugador
 
     /**
-     * Crea una nueva instancia de la clase.
-     * @param name parametro de entrada.
+     * Crea un nuevo jugador con su nombre y una lista vacía de robots.
+     * 
+     * @param name Nombre identificativo del jugador.
      */
     public Player(String name) {
         this.name = name;
@@ -60,6 +61,7 @@ public class Player {
     // Getters y Setters
     /**
      * Obtiene name.
+     * 
      * @return valor resultante de la operacion.
      */
     public String getName() {
@@ -68,6 +70,7 @@ public class Player {
 
     /**
      * Obtiene units.
+     * 
      * @return valor resultante de la operacion.
      */
     public List<Robot> getUnits() {
@@ -76,6 +79,7 @@ public class Player {
 
     /**
      * Obtiene base location.
+     * 
      * @return valor resultante de la operacion.
      */
     public Hexagon getBaseLocation() {
@@ -84,6 +88,7 @@ public class Player {
 
     /**
      * Actualiza base location.
+     * 
      * @param baseLocation parametro de entrada.
      */
     public void setBaseLocation(Hexagon baseLocation) {
@@ -92,6 +97,7 @@ public class Player {
 
     /**
      * Obtiene base control turns.
+     * 
      * @return valor resultante de la operacion.
      */
     public int getBaseControlTurns() {
@@ -115,6 +121,7 @@ public class Player {
     @Override
     /**
      * Devuelve una representacion textual del objeto.
+     * 
      * @return valor resultante de la operacion.
      */
     public String toString() {

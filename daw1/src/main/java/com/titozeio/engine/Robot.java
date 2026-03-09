@@ -35,7 +35,15 @@ public class Robot {
     private HashMap<RobotState, Integer> activeStates;
 
     /**
-     * Crea una nueva instancia de la clase.
+     * Crea un nuevo Robot con sus estadísticas base, equipo y dueño.
+     * 
+     * @param modelName      Nombre del modelo (ej: "Bullseye").
+     * @param description    Descripción narrativa del robot.
+     * @param maxHp          Puntos de vida máximos.
+     * @param movementPoints Puntos de movimiento por turno.
+     * @param weapon         Objeto Weapon asignado.
+     * @param skill          Objeto Skill asignado.
+     * @param owner          Jugador que controla este robot.
      */
     public Robot(String modelName, String description, int maxHp, int movementPoints,
             Weapon weapon, Skill skill, Player owner) {
@@ -231,8 +239,9 @@ public class Robot {
 
     // Getters y Setters
     /**
-     * Obtiene model name.
-     * @return valor resultante de la operacion.
+     * Obtiene el nombre del modelo.
+     * 
+     * @return El nombre del robot (ej: "Ice Age").
      */
     public String getModelName() {
         return modelName;
@@ -240,6 +249,7 @@ public class Robot {
 
     /**
      * Obtiene description.
+     * 
      * @return valor resultante de la operacion.
      */
     public String getDescription() {
@@ -248,6 +258,7 @@ public class Robot {
 
     /**
      * Obtiene max hp.
+     * 
      * @return valor resultante de la operacion.
      */
     public int getMaxHp() {
@@ -255,8 +266,9 @@ public class Robot {
     }
 
     /**
-     * Obtiene current hp.
-     * @return valor resultante de la operacion.
+     * Obtiene los puntos de vida actuales.
+     * 
+     * @return HP actual.
      */
     public int getCurrentHp() {
         return currentHp;
@@ -264,6 +276,7 @@ public class Robot {
 
     /**
      * Obtiene movement points.
+     * 
      * @return valor resultante de la operacion.
      */
     public int getMovementPoints() {
@@ -272,6 +285,7 @@ public class Robot {
 
     /**
      * Obtiene weapon.
+     * 
      * @return valor resultante de la operacion.
      */
     public Weapon getWeapon() {
@@ -280,6 +294,7 @@ public class Robot {
 
     /**
      * Obtiene skill.
+     * 
      * @return valor resultante de la operacion.
      */
     public Skill getSkill() {
@@ -288,6 +303,7 @@ public class Robot {
 
     /**
      * Obtiene owner.
+     * 
      * @return valor resultante de la operacion.
      */
     public Player getOwner() {
@@ -296,6 +312,7 @@ public class Robot {
 
     /**
      * Obtiene position.
+     * 
      * @return valor resultante de la operacion.
      */
     public Hexagon getPosition() {
@@ -303,8 +320,9 @@ public class Robot {
     }
 
     /**
-     * Actualiza position.
-     * @param position parametro de entrada.
+     * Actualiza la posición física del robot en el mapa.
+     * 
+     * @param position El Hexagon donde se ubica ahora.
      */
     public void setPosition(Hexagon position) {
         if (this.position != position) {
@@ -315,6 +333,7 @@ public class Robot {
 
     /**
      * Obtiene previous position.
+     * 
      * @return valor resultante de la operacion.
      */
     public Hexagon getPreviousPosition() {
@@ -330,6 +349,7 @@ public class Robot {
 
     /**
      * Indica si used movement.
+     * 
      * @return true si la condicion evaluada se cumple; false en caso contrario.
      */
     public boolean isUsedMovement() {
@@ -338,6 +358,7 @@ public class Robot {
 
     /**
      * Actualiza used movement.
+     * 
      * @param usedMovement parametro de entrada.
      */
     public void setUsedMovement(boolean usedMovement) {
@@ -346,6 +367,7 @@ public class Robot {
 
     /**
      * Indica si used attack.
+     * 
      * @return true si la condicion evaluada se cumple; false en caso contrario.
      */
     public boolean isUsedAttack() {
@@ -354,6 +376,7 @@ public class Robot {
 
     /**
      * Actualiza used attack.
+     * 
      * @param usedAttack parametro de entrada.
      */
     public void setUsedAttack(boolean usedAttack) {
@@ -363,6 +386,7 @@ public class Robot {
     @Override
     /**
      * Devuelve una representacion textual del objeto.
+     * 
      * @return valor resultante de la operacion.
      */
     public String toString() {

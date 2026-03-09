@@ -59,8 +59,10 @@ public class Game {
     }
 
     /**
-     * Crea una nueva instancia de la clase.
-     * @param stage parametro de entrada.
+     * Inicializa el núcleo del juego, registrando jugadores, condiciones de
+     * victoria y el mapa inicial.
+     * 
+     * @param stage La ventana principal de JavaFX.
      */
     public Game(Stage stage) {
         this.stage = stage;
@@ -314,10 +316,10 @@ public class Game {
         }
     }
 
-
     // Getters y Setters
     /**
      * Obtiene p1.
+     * 
      * @return valor resultante de la operacion.
      */
     public Player getP1() {
@@ -326,6 +328,7 @@ public class Game {
 
     /**
      * Obtiene p2.
+     * 
      * @return valor resultante de la operacion.
      */
     public Player getP2() {
@@ -334,6 +337,7 @@ public class Game {
 
     /**
      * Actualiza p1.
+     * 
      * @param p1 parametro de entrada.
      */
     public void setP1(Player p1) {
@@ -342,6 +346,7 @@ public class Game {
 
     /**
      * Actualiza p2.
+     * 
      * @param p2 parametro de entrada.
      */
     public void setP2(Player p2) {
@@ -350,6 +355,7 @@ public class Game {
 
     /**
      * Obtiene current player.
+     * 
      * @return valor resultante de la operacion.
      */
     public Player getCurrentPlayer() {
@@ -358,6 +364,7 @@ public class Game {
 
     /**
      * Obtiene turn counter.
+     * 
      * @return valor resultante de la operacion.
      */
     public int getTurnCounter() {
@@ -366,6 +373,7 @@ public class Game {
 
     /**
      * Obtiene map.
+     * 
      * @return valor resultante de la operacion.
      */
     public Map getMap() {
@@ -374,6 +382,7 @@ public class Game {
 
     /**
      * Obtiene phase.
+     * 
      * @return valor resultante de la operacion.
      */
     public GamePhase getPhase() {
@@ -382,6 +391,7 @@ public class Game {
 
     /**
      * Actualiza phase.
+     * 
      * @param phase parametro de entrada.
      */
     public void setPhase(GamePhase phase) {
@@ -390,6 +400,7 @@ public class Game {
 
     /**
      * Obtiene stage.
+     * 
      * @return valor resultante de la operacion.
      */
     public Stage getStage() {
@@ -398,6 +409,7 @@ public class Game {
 
     /**
      * Indica si music enabled.
+     * 
      * @return true si la condicion evaluada se cumple; false en caso contrario.
      */
     public boolean isMusicEnabled() {
@@ -406,6 +418,7 @@ public class Game {
 
     /**
      * Actualiza music enabled.
+     * 
      * @param musicEnabled parametro de entrada.
      */
     public void setMusicEnabled(boolean musicEnabled) {
@@ -422,6 +435,7 @@ public class Game {
 
     /**
      * Indica si sfx enabled.
+     * 
      * @return true si la condicion evaluada se cumple; false en caso contrario.
      */
     public boolean isSfxEnabled() {
@@ -430,6 +444,7 @@ public class Game {
 
     /**
      * Actualiza sfx enabled.
+     * 
      * @param sfxEnabled parametro de entrada.
      */
     public void setSfxEnabled(boolean sfxEnabled) {
