@@ -1364,22 +1364,32 @@ public class GameScreen extends Screen {
     }
 
     private Image loadTerrainImage(Hexagon hex) {
-        String path;
+        String path = terrainImagePath(hex);
+        var res = getClass().getResource(path);
+        if (res != null) {
+            return new Image(res.toExternalForm());
+        }
+        var fallback = getClass().getResource("/com/titozeio/ui/panel.png");
+        return fallback == null ? null : new Image(fallback.toExternalForm());
+    }
+
+    private String terrainImagePath(Hexagon hex) {
         switch (hex.getTerrain()) {
             case VEGETATION:
-                path = "/com/titozeio/images/bg1.jpg";
-                break;
+                return "/com/titozeio/images/terrain/vegetation.png";
             case WATER_SHALLOW:
+                return "/com/titozeio/images/terrain/water_shallow.png";
             case WATER_DEEP:
-                path = "/com/titozeio/images/bg2.jpg";
-                break;
+                return "/com/titozeio/images/terrain/water_deep.png";
             default:
-                path = hex.getHeight() > 0
-                        ? "/com/titozeio/ui/ui_kit/panel_stats_bg.png"
-                        : "/com/titozeio/ui/panel.png";
+                if (hex.getHeight() >= 2) {
+                    return "/com/titozeio/images/terrain/plateau_h2.png";
+                }
+                if (hex.getHeight() == 1) {
+                    return "/com/titozeio/images/terrain/hill_h1.png";
+                }
+                return "/com/titozeio/images/terrain/plain.png";
         }
-        var res = getClass().getResource(path);
-        return res == null ? null : new Image(res.toExternalForm());
     }
 
     private static String terrainName(Hexagon hex) {
