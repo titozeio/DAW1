@@ -8,6 +8,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.media.MediaView?>
 <?import javafx.scene.text.Font?>
 <StackPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.titozeio.ui.RobotSelectionScreen">
    <children>
@@ -41,9 +42,10 @@
                         </ImageView>
                      </graphic>
                   </Button>
-                  <StackPane prefWidth="390.0" prefHeight="390.0" minWidth="390.0" minHeight="390.0" maxWidth="390.0" maxHeight="390.0" styleClass="robot-frame, robot-frame-concept">
+                  <StackPane fx:id="conceptVisualContainer" prefWidth="390.0" prefHeight="390.0" minWidth="390.0" minHeight="390.0" maxWidth="390.0" maxHeight="390.0" styleClass="robot-frame, robot-frame-concept">
                      <children>
                         <ImageView fx:id="conceptImageView" fitWidth="378.0" fitHeight="378.0" preserveRatio="true" />
+                        <MediaView fx:id="conceptMediaView" fitWidth="378.0" fitHeight="378.0" preserveRatio="true" visible="false" />
                      </children>
                   </StackPane>
                   <VBox spacing="10.0" prefWidth="325.0">

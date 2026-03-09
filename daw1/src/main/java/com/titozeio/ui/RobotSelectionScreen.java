@@ -22,6 +22,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -54,6 +57,10 @@ public class RobotSelectionScreen extends Screen {
 
     @FXML
     private ImageView conceptImageView;
+    @FXML
+    private MediaView conceptMediaView;
+    @FXML
+    private StackPane conceptVisualContainer;
     @FXML
     private Label statHpValueLabel;
     @FXML
@@ -134,6 +141,9 @@ public class RobotSelectionScreen extends Screen {
     private Stage stage;
     private Game game;
     private Scene scene;
+    private MediaPlayer conceptMediaPlayer;
+    private PauseTransition conceptReplayPause;
+    private boolean conceptWaitingReplay = false;
 
     /**
      * Ejecuta la logica de create.
@@ -307,8 +317,17 @@ public class RobotSelectionScreen extends Screen {
 
     private void updateCurrentRobotInfo() {
         if (availableTemplates.isEmpty()) {
-            if (conceptImageView != null)
+            stopConceptMediaPlayback();
+            if (conceptMediaView != null) {
+                conceptMediaView.setVisible(false);
+                conceptMediaView.setManaged(false);
+                conceptMediaView.setMediaPlayer(null);
+            }
+            if (conceptImageView != null) {
                 conceptImageView.setImage(null);
+                conceptImageView.setVisible(true);
+                conceptImageView.setManaged(true);
+            }
             if (statHpValueLabel != null)
                 statHpValueLabel.setText("-");
             if (statMoveValueLabel != null)
@@ -341,10 +360,7 @@ public class RobotSelectionScreen extends Screen {
         Weapon weapon = sample.getWeapon();
         Skill skill = sample.getSkill();
 
-        if (conceptImageView != null) {
-            conceptImageView.setImage(loadConceptImage(template));
-            animateHologramPulse(conceptImageView);
-        }
+        updateConceptVisual(template);
 
         // Animamos los textos de stats como si fueran una terminal recalculando
         animateTextFlicker(statHpValueLabel, String.valueOf(sample.getMaxHp()));
@@ -483,6 +499,104 @@ public class RobotSelectionScreen extends Screen {
         return res == null ? null : new Image(res.toExternalForm());
     }
 
+    private Media loadConceptAnimation(RobotTemplate template) {
+        String file;
+        switch (template) {
+            case VICTORY_SABER:
+                file = "saberprime.mp4";
+                break;
+            case BULLSEYE:
+                file = "bullseye.mp4";
+                break;
+            case SCOUT:
+                file = "scout.mp4";
+                break;
+            case ICE_AGE:
+                file = "iceage.mp4";
+                break;
+            default:
+                return null;
+        }
+        var res = getClass().getResource("/com/titozeio/animations/" + file);
+        return res == null ? null : new Media(res.toExternalForm());
+    }
+
+    private void updateConceptVisual(RobotTemplate template) {
+        Media media = loadConceptAnimation(template);
+        if (media != null && conceptMediaView != null) {
+            playConceptAnimation(media);
+            if (conceptImageView != null) {
+                conceptImageView.setVisible(false);
+                conceptImageView.setManaged(false);
+            }
+            conceptMediaView.setVisible(true);
+            conceptMediaView.setManaged(true);
+            conceptMediaView.setOnMouseClicked(e -> {
+                if (conceptWaitingReplay && conceptMediaPlayer != null) {
+                    conceptWaitingReplay = false;
+                    if (conceptReplayPause != null) {
+                        conceptReplayPause.stop();
+                    }
+                    conceptMediaPlayer.seek(Duration.ZERO);
+                    conceptMediaPlayer.play();
+                }
+            });
+            return;
+        }
+
+        stopConceptMediaPlayback();
+        if (conceptMediaView != null) {
+            conceptMediaView.setVisible(false);
+            conceptMediaView.setManaged(false);
+            conceptMediaView.setMediaPlayer(null);
+        }
+        if (conceptImageView != null) {
+            conceptImageView.setVisible(true);
+            conceptImageView.setManaged(true);
+            conceptImageView.setImage(loadConceptImage(template));
+            animateHologramPulse(conceptImageView);
+        }
+    }
+
+    private void playConceptAnimation(Media media) {
+        stopConceptMediaPlayback();
+        conceptWaitingReplay = false;
+        conceptMediaPlayer = new MediaPlayer(media);
+        conceptMediaPlayer.setCycleCount(1);
+        conceptMediaView.setMediaPlayer(conceptMediaPlayer);
+
+        conceptMediaPlayer.setOnEndOfMedia(() -> {
+            conceptWaitingReplay = true;
+            conceptReplayPause = new PauseTransition(Duration.seconds(5));
+            conceptReplayPause.setOnFinished(e -> {
+                if (conceptWaitingReplay && conceptMediaPlayer != null) {
+                    conceptWaitingReplay = false;
+                    conceptMediaPlayer.seek(Duration.ZERO);
+                    conceptMediaPlayer.play();
+                }
+            });
+            conceptReplayPause.play();
+        });
+
+        conceptMediaPlayer.play();
+    }
+
+    private void stopConceptMediaPlayback() {
+        conceptWaitingReplay = false;
+        if (conceptReplayPause != null) {
+            conceptReplayPause.stop();
+            conceptReplayPause = null;
+        }
+        if (conceptMediaPlayer != null) {
+            try {
+                conceptMediaPlayer.stop();
+                conceptMediaPlayer.dispose();
+            } catch (Exception ignored) {
+            }
+            conceptMediaPlayer = null;
+        }
+    }
+
     private Image loadTeamSprite(RobotTemplate template, boolean p1) {
         String file;
         switch (template) {
@@ -596,6 +710,7 @@ public class RobotSelectionScreen extends Screen {
     }
 
     private void transitionToCombatScreen() {
+        stopConceptMediaPlayback();
         Player p1 = game.getP1();
         Player p2 = game.getP2();
         p1.getUnits().clear();
