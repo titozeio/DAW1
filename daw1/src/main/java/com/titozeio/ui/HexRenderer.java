@@ -84,6 +84,10 @@ public class HexRenderer {
      * Callback opcional: se llama con el Hexagon cuando el jugador hace clic en él.
      */
     private Consumer<Hexagon> onHexClick;
+    /** Callback opcional: hover sobre un hexágono. */
+    private Consumer<Hexagon> onHexHover;
+    /** Callback opcional: salida de hover de un hexágono. */
+    private Runnable onHexHoverExit;
 
     /** Hexágonos resaltados actualmente (zonas de despliegue disponibles, etc.). */
     private Set<Hexagon> highlighted = new HashSet<>();
@@ -134,6 +138,16 @@ public class HexRenderer {
      */
     public void setOnHexClick(Consumer<Hexagon> handler) {
         this.onHexClick = handler;
+    }
+
+    /** Registra el handler de hover al entrar en un hexágono. */
+    public void setOnHexHover(Consumer<Hexagon> handler) {
+        this.onHexHover = handler;
+    }
+
+    /** Registra el handler de hover al salir de un hexágono. */
+    public void setOnHexHoverExit(Runnable handler) {
+        this.onHexHoverExit = handler;
     }
 
     /**
@@ -265,10 +279,16 @@ public class HexRenderer {
         base.setOnMouseEntered(e -> {
             base.setStroke(Color.web("#bfefff", 0.95));
             base.setStrokeWidth(STROKE_WIDTH + 0.8);
+            if (onHexHover != null) {
+                onHexHover.accept(captured);
+            }
         });
         base.setOnMouseExited(e -> {
             base.setStroke(C_STROKE);
             base.setStrokeWidth(STROKE_WIDTH);
+            if (onHexHoverExit != null) {
+                onHexHoverExit.run();
+            }
         });
 
         pane.getChildren().add(base);

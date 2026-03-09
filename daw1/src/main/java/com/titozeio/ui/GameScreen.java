@@ -185,6 +185,7 @@ public class GameScreen extends Screen {
     private boolean infoSkillMode = false;
     private boolean logExpanded = false;
     private boolean infoHexMode = false;
+    private boolean hoverHexPreviewActive = false;
 
     // ── Factory ───────────────────────────────────────────────────────────────
     /**
@@ -225,6 +226,8 @@ public class GameScreen extends Screen {
         configureBackground();
         hexRenderer = new HexRenderer(hexMapPane);
         hexRenderer.setOnHexClick(this::onHexClicked);
+        hexRenderer.setOnHexHover(this::onHexHovered);
+        hexRenderer.setOnHexHoverExit(this::onHexHoverExited);
         hexRenderer.render(game.getMap());
 
         endTurnButton.setDisable(true);
@@ -628,6 +631,7 @@ public class GameScreen extends Screen {
     // ── Ejecución de acciones ─────────────────────────────────────────────────
 
     private void executeMove(Hexagon hex) {
+        endHoverHexPreview();
         SoundManager.play(SoundManager.MECH_MOVE);
 
         GameCommand moveCmd = new MoveCommand(selectedRobot, hex);
@@ -698,6 +702,7 @@ public class GameScreen extends Screen {
      * - Skills ATTACK: target = Robot objetivo (obtenido del ocupante del hex)
      */
     private void executeSkill(Hexagon hex) {
+        endHoverHexPreview();
         Skill skill = selectedRobot.getSkill();
         if (skill == null || !skill.isReady()) {
             clearSelection();
@@ -1256,6 +1261,7 @@ public class GameScreen extends Screen {
     }
 
     private void clearSelection() {
+        endHoverHexPreview();
         selectedRobot = null;
         infoSkillMode = false;
         infoHexMode = false;
@@ -1309,6 +1315,56 @@ public class GameScreen extends Screen {
         }
         if (hexZoneInfoLabel != null) {
             hexZoneInfoLabel.setText(resolveZoneAndCombatInfo(hex));
+        }
+    }
+
+    private void onHexHovered(Hexagon hex) {
+        if (!shouldPreviewHexOnHover()) {
+            return;
+        }
+        hoverHexPreviewActive = true;
+        showTerrainInfo(hex);
+    }
+
+    private void onHexHoverExited() {
+        endHoverHexPreview();
+    }
+
+    private void endHoverHexPreview() {
+        if (!hoverHexPreviewActive) {
+            return;
+        }
+        hoverHexPreviewActive = false;
+        restoreInfoPanelAfterHover();
+    }
+
+    private boolean shouldPreviewHexOnHover() {
+        if (game.getPhase() != GamePhase.COMBAT || selectedRobot == null) {
+            return false;
+        }
+        if (selectionMode == SelectionMode.MOVE) {
+            return true;
+        }
+        return selectionMode == SelectionMode.SKILL
+                && selectedRobot.getSkill() != null
+                && selectedRobot.getSkill().getType() == SkillType.MOVEMENT;
+    }
+
+    private void restoreInfoPanelAfterHover() {
+        if (selectedRobot != null) {
+            updateRobotInfoPanel(selectedRobot);
+            return;
+        }
+        infoHexMode = false;
+        setInfoModeVisibility(true);
+        if (infoTitleLabel != null) {
+            infoTitleLabel.setText("INFORMACIÓN");
+        }
+        if (ownerBadgeLabel != null) {
+            ownerBadgeLabel.setText("");
+        }
+        if (infoDetailsLabel != null) {
+            infoDetailsLabel.setText("Selecciona un robot tuyo para actuar.");
         }
     }
 
