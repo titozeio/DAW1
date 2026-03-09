@@ -17,10 +17,18 @@ public abstract class Screen {
 
     private static boolean animationsEnabled = true;
 
+    /**
+     * Actualiza animations enabled.
+     * @param enabled parametro de entrada.
+     */
     public static void setAnimationsEnabled(boolean enabled) {
         animationsEnabled = enabled;
     }
 
+    /**
+     * Ejecuta la logica de are animations enabled.
+     * @return true si la condicion evaluada se cumple; false en caso contrario.
+     */
     public static boolean areAnimationsEnabled() {
         return animationsEnabled;
     }

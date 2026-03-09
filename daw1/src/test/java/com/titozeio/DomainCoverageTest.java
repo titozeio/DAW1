@@ -100,12 +100,22 @@ class DomainCoverageTest {
         List<VictoryCondition> vcs = new ArrayList<>();
         vcs.add(new VictoryCondition() {
             @Override
+            /**
+             * Ejecuta la logica de check.
+             * @param g parametro de entrada.
+             * @return valor resultante de la operacion.
+             */
             public Player check(Game g) {
                 return null;
             }
         });
         vcs.add(new VictoryCondition() {
             @Override
+            /**
+             * Ejecuta la logica de check.
+             * @param g parametro de entrada.
+             * @return valor resultante de la operacion.
+             */
             public Player check(Game g) {
                 return g.getP2();
             }
@@ -116,7 +126,6 @@ class DomainCoverageTest {
         field.set(game, vcs);
         assertSame(np2, game.checkVictory());
 
-        game.handleInput("dummy");
 
     }
 
@@ -139,11 +148,18 @@ class DomainCoverageTest {
         boolean displayed;
 
         @Override
+        /**
+         * Ejecuta la logica de display.
+         */
         public void display() {
             displayed = true;
         }
 
         @Override
+        /**
+         * Ejecuta la logica de handle input.
+         * @param input parametro de entrada.
+         */
         public void handleInput(String input) {
         }
     }
@@ -154,10 +170,19 @@ class DomainCoverageTest {
         }
 
         @Override
+        /**
+         * Ejecuta la logica de execute.
+         * @param actor parametro de entrada.
+         * @param target parametro de entrada.
+         */
         public void execute(Robot actor, Object target) {
         }
 
         @Override
+        /**
+         * Obtiene display stats.
+         * @return valor resultante de la operacion.
+         */
         public List<String[]> getDisplayStats() {
             return java.util.Collections.singletonList(new String[] { "a", "b" });
         }

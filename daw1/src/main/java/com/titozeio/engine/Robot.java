@@ -34,6 +34,9 @@ public class Robot {
     // Estados activos: mapeados a los turnos que les quedan
     private HashMap<RobotState, Integer> activeStates;
 
+    /**
+     * Crea una nueva instancia de la clase.
+     */
     public Robot(String modelName, String description, int maxHp, int movementPoints,
             Weapon weapon, Skill skill, Player owner) {
         this.modelName = modelName;
@@ -227,42 +230,82 @@ public class Robot {
     }
 
     // Getters y Setters
+    /**
+     * Obtiene model name.
+     * @return valor resultante de la operacion.
+     */
     public String getModelName() {
         return modelName;
     }
 
+    /**
+     * Obtiene description.
+     * @return valor resultante de la operacion.
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * Obtiene max hp.
+     * @return valor resultante de la operacion.
+     */
     public int getMaxHp() {
         return maxHp;
     }
 
+    /**
+     * Obtiene current hp.
+     * @return valor resultante de la operacion.
+     */
     public int getCurrentHp() {
         return currentHp;
     }
 
+    /**
+     * Obtiene movement points.
+     * @return valor resultante de la operacion.
+     */
     public int getMovementPoints() {
         return movementPoints;
     }
 
+    /**
+     * Obtiene weapon.
+     * @return valor resultante de la operacion.
+     */
     public Weapon getWeapon() {
         return weapon;
     }
 
+    /**
+     * Obtiene skill.
+     * @return valor resultante de la operacion.
+     */
     public Skill getSkill() {
         return skill;
     }
 
+    /**
+     * Obtiene owner.
+     * @return valor resultante de la operacion.
+     */
     public Player getOwner() {
         return owner;
     }
 
+    /**
+     * Obtiene position.
+     * @return valor resultante de la operacion.
+     */
     public Hexagon getPosition() {
         return position;
     }
 
+    /**
+     * Actualiza position.
+     * @param position parametro de entrada.
+     */
     public void setPosition(Hexagon position) {
         if (this.position != position) {
             this.previousPosition = this.position;
@@ -270,31 +313,58 @@ public class Robot {
         }
     }
 
+    /**
+     * Obtiene previous position.
+     * @return valor resultante de la operacion.
+     */
     public Hexagon getPreviousPosition() {
         return previousPosition;
     }
 
+    /**
+     * Ejecuta la logica de clear previous position.
+     */
     public void clearPreviousPosition() {
         this.previousPosition = null;
     }
 
+    /**
+     * Indica si used movement.
+     * @return true si la condicion evaluada se cumple; false en caso contrario.
+     */
     public boolean isUsedMovement() {
         return usedMovement;
     }
 
+    /**
+     * Actualiza used movement.
+     * @param usedMovement parametro de entrada.
+     */
     public void setUsedMovement(boolean usedMovement) {
         this.usedMovement = usedMovement;
     }
 
+    /**
+     * Indica si used attack.
+     * @return true si la condicion evaluada se cumple; false en caso contrario.
+     */
     public boolean isUsedAttack() {
         return usedAttack;
     }
 
+    /**
+     * Actualiza used attack.
+     * @param usedAttack parametro de entrada.
+     */
     public void setUsedAttack(boolean usedAttack) {
         this.usedAttack = usedAttack;
     }
 
     @Override
+    /**
+     * Devuelve una representacion textual del objeto.
+     * @return valor resultante de la operacion.
+     */
     public String toString() {
         return modelName + " [HP:" + currentHp + "/" + maxHp + "]";
     }

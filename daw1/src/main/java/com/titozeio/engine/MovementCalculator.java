@@ -109,6 +109,11 @@ public class MovementCalculator {
         }
 
         @Override
+        /**
+         * Ejecuta la logica de compare to.
+         * @param other parametro de entrada.
+         * @return valor resultante de la operacion.
+         */
         public int compareTo(HexNode other) {
             return Integer.compare(this.cost, other.cost);
         }

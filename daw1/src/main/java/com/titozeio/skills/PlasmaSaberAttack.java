@@ -14,6 +14,9 @@ public class PlasmaSaberAttack extends Skill {
     private static final int RANGE = 1;
     private static final int DAMAGE = 10;
 
+    /**
+     * Crea una nueva instancia de la clase.
+     */
     public PlasmaSaberAttack() {
         super(
                 "Sable de Plasma",
@@ -24,6 +27,11 @@ public class PlasmaSaberAttack extends Skill {
     }
 
     @Override
+    /**
+     * Ejecuta la logica de execute.
+     * @param actor parametro de entrada.
+     * @param target parametro de entrada.
+     */
     public void execute(Robot actor, Object target) {
         if (!(target instanceof Robot)) {
             System.out.println("Sable de Plasma necesita un robot como objetivo.");
@@ -33,8 +41,10 @@ public class PlasmaSaberAttack extends Skill {
         if (actor.getPosition() == null || defender.getPosition() == null)
             return;
 
-        // TODO: validar alcance 1 con el mapa (pasarlo como parámetro en una iteración
-        // futura)
+        if (!isTargetInRange(actor, defender, RANGE)) {
+            System.out.println("Sable de Plasma fuera de alcance (" + RANGE + ").");
+            return;
+        }
         System.out.println(actor.getModelName() + " usa ¡Sable de Plasma! sobre " + defender.getModelName());
         defender.takeDamage(DAMAGE);
         actor.setUsedAttack(true);
@@ -42,15 +52,27 @@ public class PlasmaSaberAttack extends Skill {
         System.out.println("Impacto: " + DAMAGE + " puntos de daño a " + defender);
     }
 
+    /**
+     * Obtiene range.
+     * @return valor resultante de la operacion.
+     */
     public int getRange() {
         return RANGE;
     }
 
+    /**
+     * Obtiene damage.
+     * @return valor resultante de la operacion.
+     */
     public int getDamage() {
         return DAMAGE;
     }
 
     @Override
+    /**
+     * Obtiene display stats.
+     * @return valor resultante de la operacion.
+     */
     public java.util.List<String[]> getDisplayStats() {
         return java.util.List.of(
                 new String[] { "Alcance:  ", String.valueOf(RANGE) },

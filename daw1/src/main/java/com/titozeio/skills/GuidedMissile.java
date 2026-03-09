@@ -17,6 +17,9 @@ public class GuidedMissile extends Skill {
     private final boolean ignoresCover = true;
     private final boolean ignoresVisibility = true;
 
+    /**
+     * Crea una nueva instancia de la clase.
+     */
     public GuidedMissile() {
         super(
                 "Misiles Teledirigidos",
@@ -27,6 +30,11 @@ public class GuidedMissile extends Skill {
     }
 
     @Override
+    /**
+     * Ejecuta la logica de execute.
+     * @param actor parametro de entrada.
+     * @param target parametro de entrada.
+     */
     public void execute(Robot actor, Object target) {
         if (!(target instanceof Robot)) {
             System.out.println("Misiles Teledirigidos necesita un robot como objetivo.");
@@ -36,7 +44,10 @@ public class GuidedMissile extends Skill {
         if (actor.getPosition() == null || defender.getPosition() == null)
             return;
 
-        // TODO: validar alcance 5 con el mapa
+        if (!isTargetInRange(actor, defender, RANGE)) {
+            System.out.println("Misiles Teledirigidos fuera de alcance (" + RANGE + ").");
+            return;
+        }
         System.out.println(actor.getModelName() + " usa ¡Misiles Teledirigidos! sobre " + defender.getModelName()
                 + " (ignora visibilidad y cobertura).");
         // Daño directo: ignora visibilidad y cobertura
@@ -46,23 +57,43 @@ public class GuidedMissile extends Skill {
         System.out.println("Impacto: " + DAMAGE + " puntos de daño a " + defender);
     }
 
+    /**
+     * Obtiene range.
+     * @return valor resultante de la operacion.
+     */
     public int getRange() {
         return RANGE;
     }
 
+    /**
+     * Obtiene damage.
+     * @return valor resultante de la operacion.
+     */
     public int getDamage() {
         return DAMAGE;
     }
 
+    /**
+     * Indica si ignores cover.
+     * @return true si la condicion evaluada se cumple; false en caso contrario.
+     */
     public boolean isIgnoresCover() {
         return ignoresCover;
     }
 
+    /**
+     * Indica si ignores visibility.
+     * @return true si la condicion evaluada se cumple; false en caso contrario.
+     */
     public boolean isIgnoresVisibility() {
         return ignoresVisibility;
     }
 
     @Override
+    /**
+     * Obtiene display stats.
+     * @return valor resultante de la operacion.
+     */
     public java.util.List<String[]> getDisplayStats() {
         return java.util.List.of(
                 new String[] { "Alcance:  ", String.valueOf(RANGE) },

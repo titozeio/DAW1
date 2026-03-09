@@ -10,6 +10,11 @@ import com.titozeio.engine.Player;
 public class EliminationVC extends VictoryCondition {
 
     @Override
+    /**
+     * Ejecuta la logica de check.
+     * @param game parametro de entrada.
+     * @return valor resultante de la operacion.
+     */
     public Player check(Game game) {
         if (game.getP2().isEliminated())
             return game.getP1();

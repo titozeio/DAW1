@@ -13,6 +13,12 @@ public class VictoryScreen extends Screen {
     private Stage window;
     private Game game;
 
+    /**
+     * Crea una nueva instancia de la clase.
+     * @param window parametro de entrada.
+     * @param game parametro de entrada.
+     * @param winner parametro de entrada.
+     */
     public VictoryScreen(Stage window, Game game, Player winner) {
         this.window = window;
         this.game = game;
@@ -20,6 +26,9 @@ public class VictoryScreen extends Screen {
     }
 
     @Override
+    /**
+     * Ejecuta la logica de display.
+     */
     public void display() {
         System.out.println("=====================================");
         System.out.println("  ¡VICTORIA! — " + winner.getName());
@@ -28,6 +37,10 @@ public class VictoryScreen extends Screen {
     }
 
     @Override
+    /**
+     * Ejecuta la logica de handle input.
+     * @param input parametro de entrada.
+     */
     public void handleInput(String input) {
         if ("1".equals(input.trim())) {
             System.out.println("Volviendo al menú principal...");
@@ -35,6 +48,10 @@ public class VictoryScreen extends Screen {
         }
     }
 
+    /**
+     * Obtiene winner.
+     * @return valor resultante de la operacion.
+     */
     public Player getWinner() {
         return winner;
     }

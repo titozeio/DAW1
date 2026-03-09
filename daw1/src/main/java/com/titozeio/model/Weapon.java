@@ -15,6 +15,14 @@ public class Weapon {
     private String description;
     private AttackType attackType;
 
+    /**
+     * Crea una nueva instancia de la clase.
+     * @param name parametro de entrada.
+     * @param range parametro de entrada.
+     * @param damage parametro de entrada.
+     * @param description parametro de entrada.
+     * @param attackType parametro de entrada.
+     */
     public Weapon(String name, int range, int damage, String description, AttackType attackType) {
         this.name = name;
         this.range = range;
@@ -24,27 +32,51 @@ public class Weapon {
     }
 
     // Getters
+    /**
+     * Obtiene name.
+     * @return valor resultante de la operacion.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Obtiene range.
+     * @return valor resultante de la operacion.
+     */
     public int getRange() {
         return range;
     }
 
+    /**
+     * Obtiene damage.
+     * @return valor resultante de la operacion.
+     */
     public int getDamage() {
         return damage;
     }
 
+    /**
+     * Obtiene description.
+     * @return valor resultante de la operacion.
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * Obtiene attack type.
+     * @return valor resultante de la operacion.
+     */
     public AttackType getAttackType() {
         return attackType;
     }
 
     @Override
+    /**
+     * Devuelve una representacion textual del objeto.
+     * @return valor resultante de la operacion.
+     */
     public String toString() {
         return name + " [Alcance:" + range + ", Daño:" + damage + ", Tipo:" + attackType + "]";
     }

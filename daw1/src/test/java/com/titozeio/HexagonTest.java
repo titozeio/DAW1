@@ -3,7 +3,6 @@ package com.titozeio;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.titozeio.engine.Hexagon;
-import com.titozeio.engine.Map;
 import com.titozeio.enums.CoverType;
 import com.titozeio.enums.TerrainType;
 import org.junit.jupiter.api.Test;

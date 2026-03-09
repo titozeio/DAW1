@@ -118,6 +118,11 @@ public class SoundManager {
         play(fileName, DEFAULT_VOLUME);
     }
 
+    /**
+     * Ejecuta la logica de play.
+     * @param fileName parametro de entrada.
+     * @param volume parametro de entrada.
+     */
     public static void play(String fileName, double volume) {
         if (!sfxEnabled)
             return;

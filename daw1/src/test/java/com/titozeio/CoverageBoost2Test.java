@@ -124,17 +124,32 @@ class CoverageBoost2Test {
     void screenInitButtonSoundsAndEnforceUppercase() {
         class TestScreen extends Screen {
             @Override
+            /**
+             * Ejecuta la logica de display.
+             */
             public void display() {
             }
 
             @Override
+            /**
+             * Ejecuta la logica de handle input.
+             * @param i parametro de entrada.
+             */
             public void handleInput(String i) {
             }
 
+            /**
+             * Ejecuta la logica de call init sounds.
+             * @param p parametro de entrada.
+             */
             public void callInitSounds(javafx.scene.Parent p) {
                 initButtonSounds(p);
             }
 
+            /**
+             * Ejecuta la logica de call enforce uppercase.
+             * @param p parametro de entrada.
+             */
             public void callEnforceUppercase(javafx.scene.Parent p) {
                 enforceUppercaseText(p);
             }
@@ -576,12 +591,6 @@ class CoverageBoost2Test {
         assertEquals(g.getP1(), g.getOpponent(g.getP2()));
     }
 
-    @Test
-    void gameHandleInputDoesNotThrow() {
-        Game g = new Game(null);
-        assertDoesNotThrow(() -> g.handleInput(null));
-        assertDoesNotThrow(() -> g.handleInput("anything"));
-    }
 
     @Test
     void gameSetMusicEnabledFalseStopsMusic() {

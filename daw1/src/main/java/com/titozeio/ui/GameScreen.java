@@ -162,9 +162,17 @@ public class GameScreen extends Screen {
     private boolean logExpanded = false;
 
     // ── Factory ───────────────────────────────────────────────────────────────
+    /**
+     * Crea una nueva instancia de la clase.
+     */
     public GameScreen() {
     }
 
+    /**
+     * Ejecuta la logica de create.
+     * @param game parametro de entrada.
+     * @return valor resultante de la operacion.
+     */
     public static GameScreen create(Game game) {
         try {
             FXMLLoader loader = new FXMLLoader(
@@ -1004,6 +1012,9 @@ public class GameScreen extends Screen {
     }
 
     @FXML
+    /**
+     * Ejecuta la logica de handle info toggle action.
+     */
     public void handleInfoToggleAction() {
         if (selectedRobot == null) {
             return;
@@ -1016,6 +1027,9 @@ public class GameScreen extends Screen {
     }
 
     @FXML
+    /**
+     * Ejecuta la logica de handle log toggle action.
+     */
     public void handleLogToggleAction() {
         logExpanded = !logExpanded;
         if (logScrollPane == null || logToggleButton == null) {
@@ -1296,6 +1310,9 @@ public class GameScreen extends Screen {
     }
 
     @FXML
+    /**
+     * Ejecuta la logica de handle surrender action.
+     */
     public void handleSurrenderAction() {
         if (game.getPhase() != GamePhase.COMBAT) {
             return;
@@ -1314,12 +1331,21 @@ public class GameScreen extends Screen {
 
     // ── HUD ───────────────────────────────────────────────────────────────────
 
+    /**
+     * Muestra overlay message.
+     * @param title parametro de entrada.
+     * @param message parametro de entrada.
+     */
     public void showOverlayMessage(String title, String message) {
         overlayTitle.setText(title);
         overlayMessage.setText(message);
         fadeInNode(overlayPane, 200);
     }
 
+    /**
+     * Agrega log message.
+     * @param message parametro de entrada.
+     */
     public void addLogMessage(String message) {
         Label logLine = new Label("> " + message);
         logLine.setStyle("-fx-text-fill: #e1e1e1; -fx-font-family: 'Exo 2'; -fx-font-size: 12px;");
@@ -1333,12 +1359,19 @@ public class GameScreen extends Screen {
     // ── Screen ────────────────────────────────────────────────────────────────
 
     @Override
+    /**
+     * Ejecuta la logica de display.
+     */
     public void display() {
         System.out.println("Mostrando GameScreen...");
         this.window.setScene(this.scene);
     }
 
     @Override
+    /**
+     * Ejecuta la logica de handle input.
+     * @param input parametro de entrada.
+     */
     public void handleInput(String input) {
         switch (input.trim().toUpperCase()) {
             case "F":

@@ -127,11 +127,20 @@ class RobotTest {
         }
 
         @Override
+        /**
+         * Ejecuta la logica de execute.
+         * @param actor parametro de entrada.
+         * @param target parametro de entrada.
+         */
         public void execute(Robot actor, Object target) {
             executed = true;
         }
 
         @Override
+        /**
+         * Obtiene display stats.
+         * @return valor resultante de la operacion.
+         */
         public List<String[]> getDisplayStats() {
             return java.util.Collections.singletonList(new String[] { "x", "1" });
         }

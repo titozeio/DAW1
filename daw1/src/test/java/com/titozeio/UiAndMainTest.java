@@ -58,13 +58,24 @@ class UiAndMainTest {
     void screenApplyGlobalStyleDoesNotFailWhenCssExistsOrNot() {
         class TestScreen extends Screen {
             @Override
+            /**
+             * Ejecuta la logica de display.
+             */
             public void display() {
             }
 
             @Override
+            /**
+             * Ejecuta la logica de handle input.
+             * @param input parametro de entrada.
+             */
             public void handleInput(String input) {
             }
 
+            /**
+             * Ejecuta la logica de apply.
+             * @param scene parametro de entrada.
+             */
             public void apply(Scene scene) {
                 applyGlobalStyle(scene);
             }

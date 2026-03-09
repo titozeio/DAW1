@@ -6,6 +6,9 @@ package com.titozeio.ui;
 public class PauseScreen extends Screen {
 
     @Override
+    /**
+     * Ejecuta la logica de display.
+     */
     public void display() {
         System.out.println("--- PAUSA ---");
         System.out.println("[1] Reanudar");
@@ -13,6 +16,10 @@ public class PauseScreen extends Screen {
     }
 
     @Override
+    /**
+     * Ejecuta la logica de handle input.
+     * @param input parametro de entrada.
+     */
     public void handleInput(String input) {
         switch (input.trim()) {
             case "1":

@@ -10,6 +10,10 @@ public class Main extends Application {
     private Game game;
 
     @Override
+    /**
+     * Inicia la logica asociada al metodo.
+     * @param primaryStage parametro de entrada.
+     */
     public void start(Stage primaryStage) {
         // Cargar fuente personalizada
         Font.loadFont(Main.class.getResourceAsStream("/com/titozeio/fonts/Exo2-Regular.ttf"), 14);
@@ -36,6 +40,10 @@ public class Main extends Application {
         }
     }
 
+    /**
+     * Crea una nueva instancia de la clase.
+     * @param args parametro de entrada.
+     */
     public static void main(String[] args) {
         launch(args);
     }

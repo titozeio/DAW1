@@ -119,6 +119,10 @@ public class HexRenderer {
     private boolean isHealScope = false;
 
     // ── Constructor ───────────────────────────────────────────────────────────
+    /**
+     * Crea una nueva instancia de la clase.
+     * @param pane parametro de entrada.
+     */
     public HexRenderer(Pane pane) {
         this.pane = pane;
     }
@@ -693,6 +697,7 @@ public class HexRenderer {
     }
 
     /** Devuelve 2 iniciales del nombre del modelo. */
+    @Deprecated(forRemoval = true)
     private static String getInitials(String modelName) {
         String[] words = modelName.trim().split("\\s+");
         if (words.length >= 2) {

@@ -141,14 +141,26 @@ public class Map {
         return line;
     }
 
+    /**
+     * Obtiene grid.
+     * @return valor resultante de la operacion.
+     */
     public Hexagon[][] getGrid() {
         return grid;
     }
 
+    /**
+     * Obtiene objectives.
+     * @return valor resultante de la operacion.
+     */
     public List<Objective> getObjectives() {
         return objectives;
     }
 
+    /**
+     * Agrega objective.
+     * @param obj parametro de entrada.
+     */
     public void addObjective(Objective obj) {
         objectives.add(obj);
     }

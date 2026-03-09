@@ -14,6 +14,11 @@ public class Objective {
     private Player controllingPlayer;
     private int controlTurns;
 
+    /**
+     * Crea una nueva instancia de la clase.
+     * @param name parametro de entrada.
+     * @param location parametro de entrada.
+     */
     public Objective(String name, Hexagon location) {
         this.name = name;
         this.location = location;
@@ -48,23 +53,43 @@ public class Objective {
     }
 
     // Getters y Setters
+    /**
+     * Obtiene name.
+     * @return valor resultante de la operacion.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Obtiene location.
+     * @return valor resultante de la operacion.
+     */
     public Hexagon getLocation() {
         return location;
     }
 
+    /**
+     * Obtiene controlling player.
+     * @return valor resultante de la operacion.
+     */
     public Player getControllingPlayer() {
         return controllingPlayer;
     }
 
+    /**
+     * Obtiene control turns.
+     * @return valor resultante de la operacion.
+     */
     public int getControlTurns() {
         return controlTurns;
     }
 
     @Override
+    /**
+     * Devuelve una representacion textual del objeto.
+     * @return valor resultante de la operacion.
+     */
     public String toString() {
         return "Objetivo[" + name + "] controlado por: "
                 + (controllingPlayer != null ? controllingPlayer.getName() : "nadie")

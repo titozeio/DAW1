@@ -15,6 +15,9 @@ public class RepairNanobots extends Skill {
     private final int range = 1;
     private final int healAmount = 5;
 
+    /**
+     * Crea una nueva instancia de la clase.
+     */
     public RepairNanobots() {
         super(
                 "Nanobots Reparadores",
@@ -25,6 +28,11 @@ public class RepairNanobots extends Skill {
     }
 
     @Override
+    /**
+     * Ejecuta la logica de execute.
+     * @param actor parametro de entrada.
+     * @param target parametro de entrada.
+     */
     public void execute(Robot actor, Object target) {
         if (!(target instanceof Robot)) {
             System.out.println("Nanobots Reparadores necesita un robot aliado como objetivo.");
@@ -41,22 +49,37 @@ public class RepairNanobots extends Skill {
             return;
         }
 
-        // TODO: validar alcance 1 con el mapa
+        if (!isTargetInRange(actor, ally, range)) {
+            System.out.println("Nanobots Reparadores fuera de alcance (" + range + ").");
+            return;
+        }
         System.out.println(actor.getModelName() + " despliega ¡Nanobots Reparadores! sobre " + ally.getModelName());
         ally.heal(healAmount);
         actor.setUsedAttack(true);
         resetCooldown();
     }
 
+    /**
+     * Obtiene range.
+     * @return valor resultante de la operacion.
+     */
     public int getRange() {
         return range;
     }
 
+    /**
+     * Obtiene heal amount.
+     * @return valor resultante de la operacion.
+     */
     public int getHealAmount() {
         return healAmount;
     }
 
     @Override
+    /**
+     * Obtiene display stats.
+     * @return valor resultante de la operacion.
+     */
     public java.util.List<String[]> getDisplayStats() {
         return java.util.List.of(
                 new String[] { "Alcance:  ", String.valueOf(range) },

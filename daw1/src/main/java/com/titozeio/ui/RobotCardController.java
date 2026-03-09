@@ -193,6 +193,10 @@ public class RobotCardController {
         }
     }
 
+    /**
+     * Obtiene template.
+     * @return valor resultante de la operacion.
+     */
     public RobotTemplate getTemplate() {
         return template;
     }

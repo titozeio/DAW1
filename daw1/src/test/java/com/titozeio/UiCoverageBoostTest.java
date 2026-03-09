@@ -57,6 +57,10 @@ class UiCoverageBoostTest {
         }
 
         @Override
+        /**
+         * Muestra screen.
+         * @param screen parametro de entrada.
+         */
         public void displayScreen(Screen screen) {
             this.displayed = screen;
         }

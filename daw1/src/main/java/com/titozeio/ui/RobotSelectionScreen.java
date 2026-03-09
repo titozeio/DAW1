@@ -134,6 +134,12 @@ public class RobotSelectionScreen extends Screen {
     private Game game;
     private Scene scene;
 
+    /**
+     * Ejecuta la logica de create.
+     * @param window parametro de entrada.
+     * @param game parametro de entrada.
+     * @return valor resultante de la operacion.
+     */
     public static RobotSelectionScreen create(Stage window, Game game) {
         try {
             FXMLLoader loader = new FXMLLoader(
@@ -168,6 +174,7 @@ public class RobotSelectionScreen extends Screen {
 
     // Compatibilidad con tests antiguos que invocan initializeData(List) por
     // reflexión
+    @Deprecated(forRemoval = true)
     private void initializeData(List<RobotTemplate> allTemplates) {
         this.availableTemplates = new ArrayList<>(allTemplates);
         this.player1Templates = new ArrayList<>();
@@ -177,11 +184,13 @@ public class RobotSelectionScreen extends Screen {
     }
 
     // Compatibilidad con tests antiguos (sin uso en la nueva UI)
+    @Deprecated(forRemoval = true)
     private void refreshRobotCards() {
         refreshView();
     }
 
     // Compatibilidad con tests antiguos (selección por tarjeta)
+    @Deprecated(forRemoval = true)
     private void onCardClicked(RobotTemplate template, RobotCardController ignored) {
         int idx = availableTemplates.indexOf(template);
         if (idx >= 0) {
@@ -191,6 +200,9 @@ public class RobotSelectionScreen extends Screen {
     }
 
     @FXML
+    /**
+     * Ejecuta la logica de handle prev robot action.
+     */
     public void handlePrevRobotAction() {
         if (availableTemplates.isEmpty()) {
             return;
@@ -200,6 +212,9 @@ public class RobotSelectionScreen extends Screen {
     }
 
     @FXML
+    /**
+     * Ejecuta la logica de handle next robot action.
+     */
     public void handleNextRobotAction() {
         if (availableTemplates.isEmpty()) {
             return;
@@ -209,6 +224,9 @@ public class RobotSelectionScreen extends Screen {
     }
 
     @FXML
+    /**
+     * Ejecuta la logica de handle confirm action.
+     */
     public void handleConfirmAction() {
         if (availableTemplates.isEmpty()) {
             return;
@@ -234,6 +252,9 @@ public class RobotSelectionScreen extends Screen {
     }
 
     @FXML
+    /**
+     * Ejecuta la logica de handle skip action.
+     */
     public void handleSkipAction() {
         List<RobotTemplate> pool = new ArrayList<>(availableTemplates);
         Collections.shuffle(pool);
@@ -250,6 +271,9 @@ public class RobotSelectionScreen extends Screen {
     }
 
     @FXML
+    /**
+     * Ejecuta la logica de handle dismiss turn overlay.
+     */
     public void handleDismissTurnOverlay() {
         fadeOutNode(turnOverlay, 200);
     }
@@ -584,6 +608,9 @@ public class RobotSelectionScreen extends Screen {
     }
 
     @Override
+    /**
+     * Ejecuta la logica de display.
+     */
     public void display() {
         this.stage.setScene(this.scene);
     }
@@ -654,6 +681,10 @@ public class RobotSelectionScreen extends Screen {
     }
 
     @Override
+    /**
+     * Ejecuta la logica de handle input.
+     * @param input parametro de entrada.
+     */
     public void handleInput(String input) {
         // Sin uso
     }

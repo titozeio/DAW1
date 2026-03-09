@@ -22,6 +22,11 @@ public enum RobotTemplate {
 
     VICTORY_SABER {
         @Override
+        /**
+         * Crea robot.
+         * @param owner parametro de entrada.
+         * @return valor resultante de la operacion.
+         */
         public Robot createRobot(Player owner) {
             Weapon weapon = new Weapon(
                     "Cañón de plasma",
@@ -39,6 +44,11 @@ public enum RobotTemplate {
 
     BULLSEYE {
         @Override
+        /**
+         * Crea robot.
+         * @param owner parametro de entrada.
+         * @return valor resultante de la operacion.
+         */
         public Robot createRobot(Player owner) {
             Weapon weapon = new Weapon(
                     "Doble cañón automático",
@@ -57,6 +67,11 @@ public enum RobotTemplate {
 
     BULWARK {
         @Override
+        /**
+         * Crea robot.
+         * @param owner parametro de entrada.
+         * @return valor resultante de la operacion.
+         */
         public Robot createRobot(Player owner) {
             Weapon weapon = new Weapon(
                     "Cañón laser",
@@ -74,6 +89,11 @@ public enum RobotTemplate {
 
     SCOUT {
         @Override
+        /**
+         * Crea robot.
+         * @param owner parametro de entrada.
+         * @return valor resultante de la operacion.
+         */
         public Robot createRobot(Player owner) {
             Weapon weapon = new Weapon(
                     "Cañón automático",
@@ -91,6 +111,11 @@ public enum RobotTemplate {
 
     DEATH_KNIGHT {
         @Override
+        /**
+         * Crea robot.
+         * @param owner parametro de entrada.
+         * @return valor resultante de la operacion.
+         */
         public Robot createRobot(Player owner) {
             Weapon weapon = new Weapon(
                     "Martillo propulsado",
@@ -109,6 +134,11 @@ public enum RobotTemplate {
 
     ICE_AGE {
         @Override
+        /**
+         * Crea robot.
+         * @param owner parametro de entrada.
+         * @return valor resultante de la operacion.
+         */
         public Robot createRobot(Player owner) {
             Weapon weapon = new Weapon(
                     "Misiles de racimo",

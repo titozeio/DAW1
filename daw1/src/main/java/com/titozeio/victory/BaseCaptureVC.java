@@ -20,15 +20,27 @@ public class BaseCaptureVC extends VictoryCondition {
      */
     private final int turnsToCapture;
 
+    /**
+     * Crea una nueva instancia de la clase.
+     * @param turnsToCapture parametro de entrada.
+     */
     public BaseCaptureVC(int turnsToCapture) {
         this.turnsToCapture = turnsToCapture;
     }
 
+    /**
+     * Crea una nueva instancia de la clase.
+     */
     public BaseCaptureVC() {
         this(2); // Valor por defecto del GDD
     }
 
     @Override
+    /**
+     * Ejecuta la logica de check.
+     * @param game parametro de entrada.
+     * @return valor resultante de la operacion.
+     */
     public Player check(Game game) {
         // Comprobar si P1 ha capturado la base de P2
         if (checkCapture(game.getP1(), game.getP2(), game)) {
@@ -62,6 +74,10 @@ public class BaseCaptureVC extends VictoryCondition {
         return false;
     }
 
+    /**
+     * Obtiene turns to capture.
+     * @return valor resultante de la operacion.
+     */
     public int getTurnsToCapture() {
         return turnsToCapture;
     }

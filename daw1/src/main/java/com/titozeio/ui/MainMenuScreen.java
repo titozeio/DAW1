@@ -31,10 +31,19 @@ public class MainMenuScreen extends Screen {
     private Game game;
     private Scene scene;
 
+    /**
+     * Crea una nueva instancia de la clase.
+     */
     public MainMenuScreen() {
         // Constructor vacío para FXMLLoader
     }
 
+    /**
+     * Ejecuta la logica de create.
+     * @param window parametro de entrada.
+     * @param game parametro de entrada.
+     * @return valor resultante de la operacion.
+     */
     public static MainMenuScreen create(Stage window, Game game) {
         try {
             FXMLLoader loader = new FXMLLoader(
@@ -57,6 +66,9 @@ public class MainMenuScreen extends Screen {
     }
 
     @FXML
+    /**
+     * Ejecuta la logica de handle play action.
+     */
     public void handlePlayAction() {
         handleInput("PLAY");
     }
@@ -88,16 +100,25 @@ public class MainMenuScreen extends Screen {
     }
 
     @FXML
+    /**
+     * Ejecuta la logica de handle settings open action.
+     */
     public void handleSettingsOpenAction() {
         fadeInNode(settingsOverlay, 150);
     }
 
     @FXML
+    /**
+     * Ejecuta la logica de handle settings close action.
+     */
     public void handleSettingsCloseAction() {
         fadeOutNode(settingsOverlay, 150);
     }
 
     @FXML
+    /**
+     * Ejecuta la logica de handle music toggle action.
+     */
     public void handleMusicToggleAction() {
         boolean enabled = musicToggle.isSelected();
         musicToggle.setText(enabled ? "ON" : "OFF");
@@ -105,6 +126,9 @@ public class MainMenuScreen extends Screen {
     }
 
     @FXML
+    /**
+     * Ejecuta la logica de handle sfx toggle action.
+     */
     public void handleSfxToggleAction() {
         boolean enabled = sfxToggle.isSelected();
         sfxToggle.setText(enabled ? "ON" : "OFF");
@@ -113,11 +137,18 @@ public class MainMenuScreen extends Screen {
     }
 
     @Override
+    /**
+     * Ejecuta la logica de display.
+     */
     public void display() {
         this.window.setScene(this.scene);
     }
 
     @Override
+    /**
+     * Ejecuta la logica de handle input.
+     * @param input parametro de entrada.
+     */
     public void handleInput(String input) {
         if (input.equals("PLAY")) {
             System.out.println("Iniciando transicion a RobotSelectionScreen...");

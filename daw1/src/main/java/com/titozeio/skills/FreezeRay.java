@@ -17,6 +17,9 @@ public class FreezeRay extends Skill {
     private final int damage = 3;
     private final int freezeDuration = 1; // Turnos que dura el estado FROZEN
 
+    /**
+     * Crea una nueva instancia de la clase.
+     */
     public FreezeRay() {
         super(
                 "Rayo Congelador",
@@ -27,6 +30,11 @@ public class FreezeRay extends Skill {
     }
 
     @Override
+    /**
+     * Ejecuta la logica de execute.
+     * @param actor parametro de entrada.
+     * @param target parametro de entrada.
+     */
     public void execute(Robot actor, Object target) {
         if (!(target instanceof Robot)) {
             System.out.println("Rayo Congelador necesita un robot como objetivo.");
@@ -36,7 +44,10 @@ public class FreezeRay extends Skill {
         if (actor.getPosition() == null || defender.getPosition() == null)
             return;
 
-        // TODO: validar alcance 3 con el mapa
+        if (!isTargetInRange(actor, defender, range)) {
+            System.out.println("Rayo Congelador fuera de alcance (" + range + ").");
+            return;
+        }
         System.out.println(actor.getModelName() + " dispara ¡Rayo Congelador! sobre " + defender.getModelName());
         defender.takeDamage(damage);
         defender.applyState(RobotState.FROZEN, freezeDuration);
@@ -45,19 +56,35 @@ public class FreezeRay extends Skill {
         System.out.println(defender.getModelName() + " queda CONGELADO durante " + freezeDuration + " turno(s).");
     }
 
+    /**
+     * Obtiene range.
+     * @return valor resultante de la operacion.
+     */
     public int getRange() {
         return range;
     }
 
+    /**
+     * Obtiene damage.
+     * @return valor resultante de la operacion.
+     */
     public int getDamage() {
         return damage;
     }
 
+    /**
+     * Obtiene freeze duration.
+     * @return valor resultante de la operacion.
+     */
     public int getFreezeDuration() {
         return freezeDuration;
     }
 
     @Override
+    /**
+     * Obtiene display stats.
+     * @return valor resultante de la operacion.
+     */
     public java.util.List<String[]> getDisplayStats() {
         return java.util.List.of(
                 new String[] { "Alcance:  ", String.valueOf(range) },

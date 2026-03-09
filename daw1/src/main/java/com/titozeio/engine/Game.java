@@ -58,6 +58,10 @@ public class Game {
         }
     }
 
+    /**
+     * Crea una nueva instancia de la clase.
+     * @param stage parametro de entrada.
+     */
     public Game(Stage stage) {
         this.stage = stage;
         this.victoryConditions = new ArrayList<>();
@@ -81,10 +85,16 @@ public class Game {
         this.map = MapFactory.createMap1();
     }
 
+    /**
+     * Inicia la logica asociada al metodo.
+     */
     public void start() {
         displayScreen(MainMenuScreen.create(stage, this));
     }
 
+    /**
+     * Avanza al siguiente estado de turn.
+     */
     public void nextTurn() {
         this.turnCounter++;
         // Alternar jugador activo
@@ -304,55 +314,100 @@ public class Game {
         }
     }
 
-    public void handleInput(Object event) {
-        // TODO: Procesar eventos (clics, teclas)
-    }
 
     // Getters y Setters
+    /**
+     * Obtiene p1.
+     * @return valor resultante de la operacion.
+     */
     public Player getP1() {
         return p1;
     }
 
+    /**
+     * Obtiene p2.
+     * @return valor resultante de la operacion.
+     */
     public Player getP2() {
         return p2;
     }
 
+    /**
+     * Actualiza p1.
+     * @param p1 parametro de entrada.
+     */
     public void setP1(Player p1) {
         this.p1 = p1;
     }
 
+    /**
+     * Actualiza p2.
+     * @param p2 parametro de entrada.
+     */
     public void setP2(Player p2) {
         this.p2 = p2;
     }
 
+    /**
+     * Obtiene current player.
+     * @return valor resultante de la operacion.
+     */
     public Player getCurrentPlayer() {
         return currentPlayer;
     }
 
+    /**
+     * Obtiene turn counter.
+     * @return valor resultante de la operacion.
+     */
     public int getTurnCounter() {
         return turnCounter;
     }
 
+    /**
+     * Obtiene map.
+     * @return valor resultante de la operacion.
+     */
     public Map getMap() {
         return map;
     }
 
+    /**
+     * Obtiene phase.
+     * @return valor resultante de la operacion.
+     */
     public GamePhase getPhase() {
         return phase;
     }
 
+    /**
+     * Actualiza phase.
+     * @param phase parametro de entrada.
+     */
     public void setPhase(GamePhase phase) {
         this.phase = phase;
     }
 
+    /**
+     * Obtiene stage.
+     * @return valor resultante de la operacion.
+     */
     public Stage getStage() {
         return stage;
     }
 
+    /**
+     * Indica si music enabled.
+     * @return true si la condicion evaluada se cumple; false en caso contrario.
+     */
     public boolean isMusicEnabled() {
         return musicEnabled;
     }
 
+    /**
+     * Actualiza music enabled.
+     * @param musicEnabled parametro de entrada.
+     */
     public void setMusicEnabled(boolean musicEnabled) {
         this.musicEnabled = musicEnabled;
         PREFS.putBoolean(PREF_MUSIC_ENABLED, musicEnabled);
@@ -365,10 +420,18 @@ public class Game {
         }
     }
 
+    /**
+     * Indica si sfx enabled.
+     * @return true si la condicion evaluada se cumple; false en caso contrario.
+     */
     public boolean isSfxEnabled() {
         return sfxEnabled;
     }
 
+    /**
+     * Actualiza sfx enabled.
+     * @param sfxEnabled parametro de entrada.
+     */
     public void setSfxEnabled(boolean sfxEnabled) {
         this.sfxEnabled = sfxEnabled;
         PREFS.putBoolean(PREF_SFX_ENABLED, sfxEnabled);

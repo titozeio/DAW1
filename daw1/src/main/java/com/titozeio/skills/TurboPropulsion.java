@@ -14,6 +14,9 @@ public class TurboPropulsion extends Skill {
 
     private final int movementPoints = 7;
 
+    /**
+     * Crea una nueva instancia de la clase.
+     */
     public TurboPropulsion() {
         super(
                 "Turbo Propulsores",
@@ -24,6 +27,11 @@ public class TurboPropulsion extends Skill {
     }
 
     @Override
+    /**
+     * Ejecuta la logica de execute.
+     * @param actor parametro de entrada.
+     * @param target parametro de entrada.
+     */
     public void execute(Robot actor, Object target) {
         if (!(target instanceof Hexagon)) {
             System.out.println("Turbo Propulsores necesita un Hexagon como destino.");
@@ -50,11 +58,19 @@ public class TurboPropulsion extends Skill {
         resetCooldown();
     }
 
+    /**
+     * Obtiene movement points.
+     * @return valor resultante de la operacion.
+     */
     public int getMovementPoints() {
         return movementPoints;
     }
 
     @Override
+    /**
+     * Obtiene display stats.
+     * @return valor resultante de la operacion.
+     */
     public java.util.List<String[]> getDisplayStats() {
         java.util.List<String[]> stats = new java.util.ArrayList<>();
         stats.add(new String[] { "Movimiento:  ", String.valueOf(movementPoints) });

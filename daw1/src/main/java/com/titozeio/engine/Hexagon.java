@@ -24,6 +24,13 @@ public class Hexagon {
     private boolean isBaseP1;
     private boolean isBaseP2;
 
+    /**
+     * Crea una nueva instancia de la clase.
+     * @param q parametro de entrada.
+     * @param r parametro de entrada.
+     * @param terrain parametro de entrada.
+     * @param height parametro de entrada.
+     */
     public Hexagon(int q, int r, TerrainType terrain, int height) {
         this.q = q;
         this.r = r;
@@ -141,76 +148,148 @@ public class Hexagon {
     }
 
     // Coordenada cúbica derivada
+    /**
+     * Obtiene s.
+     * @return valor resultante de la operacion.
+     */
     public int getS() {
         return -q - r;
     }
 
     // Getters y Setters
+    /**
+     * Obtiene q.
+     * @return valor resultante de la operacion.
+     */
     public int getQ() {
         return q;
     }
 
+    /**
+     * Obtiene r.
+     * @return valor resultante de la operacion.
+     */
     public int getR() {
         return r;
     }
 
+    /**
+     * Obtiene terrain.
+     * @return valor resultante de la operacion.
+     */
     public TerrainType getTerrain() {
         return terrain;
     }
 
+    /**
+     * Actualiza terrain.
+     * @param terrain parametro de entrada.
+     */
     public void setTerrain(TerrainType terrain) {
         this.terrain = terrain;
     }
 
+    /**
+     * Obtiene height.
+     * @return valor resultante de la operacion.
+     */
     public int getHeight() {
         return height;
     }
 
+    /**
+     * Actualiza height.
+     * @param height parametro de entrada.
+     */
     public void setHeight(int height) {
         this.height = height;
     }
 
+    /**
+     * Obtiene occupant.
+     * @return valor resultante de la operacion.
+     */
     public Robot getOccupant() {
         return occupant;
     }
 
+    /**
+     * Actualiza occupant.
+     * @param occupant parametro de entrada.
+     */
     public void setOccupant(Robot occupant) {
         this.occupant = occupant;
     }
 
+    /**
+     * Indica si deploy zone p1.
+     * @return true si la condicion evaluada se cumple; false en caso contrario.
+     */
     public boolean isDeployZoneP1() {
         return isDeployZoneP1;
     }
 
+    /**
+     * Actualiza deploy zone p1.
+     * @param deployZoneP1 parametro de entrada.
+     */
     public void setDeployZoneP1(boolean deployZoneP1) {
         isDeployZoneP1 = deployZoneP1;
     }
 
+    /**
+     * Indica si deploy zone p2.
+     * @return true si la condicion evaluada se cumple; false en caso contrario.
+     */
     public boolean isDeployZoneP2() {
         return isDeployZoneP2;
     }
 
+    /**
+     * Actualiza deploy zone p2.
+     * @param deployZoneP2 parametro de entrada.
+     */
     public void setDeployZoneP2(boolean deployZoneP2) {
         isDeployZoneP2 = deployZoneP2;
     }
 
+    /**
+     * Indica si base p1.
+     * @return true si la condicion evaluada se cumple; false en caso contrario.
+     */
     public boolean isBaseP1() {
         return isBaseP1;
     }
 
+    /**
+     * Actualiza base p1.
+     * @param baseP1 parametro de entrada.
+     */
     public void setBaseP1(boolean baseP1) {
         isBaseP1 = baseP1;
     }
 
+    /**
+     * Indica si base p2.
+     * @return true si la condicion evaluada se cumple; false en caso contrario.
+     */
     public boolean isBaseP2() {
         return isBaseP2;
     }
 
+    /**
+     * Actualiza base p2.
+     * @param baseP2 parametro de entrada.
+     */
     public void setBaseP2(boolean baseP2) {
         isBaseP2 = baseP2;
     }
 
     @Override
+    /**
+     * Devuelve una representacion textual del objeto.
+     * @return valor resultante de la operacion.
+     */
     public String toString() {
         return "Hexagon(" + q + "," + r + ")[" + terrain + ", h=" + height + "]";
     }

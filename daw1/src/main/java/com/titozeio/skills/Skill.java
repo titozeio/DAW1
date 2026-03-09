@@ -1,5 +1,6 @@
 package com.titozeio.skills;
 
+import com.titozeio.engine.Hexagon;
 import com.titozeio.engine.Robot;
 import com.titozeio.enums.SkillType;
 
@@ -59,22 +60,42 @@ public abstract class Skill {
     }
 
     // Getters
+    /**
+     * Obtiene name.
+     * @return valor resultante de la operacion.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Obtiene type.
+     * @return valor resultante de la operacion.
+     */
     public SkillType getType() {
         return type;
     }
 
+    /**
+     * Obtiene cooldown.
+     * @return valor resultante de la operacion.
+     */
     public int getCooldown() {
         return cooldown;
     }
 
+    /**
+     * Obtiene current cooldown.
+     * @return valor resultante de la operacion.
+     */
     public int getCurrentCooldown() {
         return currentCooldown;
     }
 
+    /**
+     * Obtiene description.
+     * @return valor resultante de la operacion.
+     */
     public String getDescription() {
         return description;
     }
@@ -88,7 +109,31 @@ public abstract class Skill {
      */
     public abstract java.util.List<String[]> getDisplayStats();
 
+    /**
+     * Calcula la distancia hexagonal entre dos casillas usando coordenadas axiales.
+     */
+    protected int hexDistance(Hexagon a, Hexagon b) {
+        int dq = a.getQ() - b.getQ();
+        int dr = a.getR() - b.getR();
+        int ds = a.getS() - b.getS();
+        return (Math.abs(dq) + Math.abs(dr) + Math.abs(ds)) / 2;
+    }
+
+    /**
+     * Indica si el objetivo está dentro de alcance desde la posición del actor.
+     */
+    protected boolean isTargetInRange(Robot actor, Robot target, int range) {
+        if (actor == null || target == null || actor.getPosition() == null || target.getPosition() == null) {
+            return false;
+        }
+        return hexDistance(actor.getPosition(), target.getPosition()) <= range;
+    }
+
     @Override
+    /**
+     * Devuelve una representacion textual del objeto.
+     * @return valor resultante de la operacion.
+     */
     public String toString() {
         return name + " [" + type + ", Cooldown:" + cooldown + ", Restante:" + currentCooldown + "]";
     }
