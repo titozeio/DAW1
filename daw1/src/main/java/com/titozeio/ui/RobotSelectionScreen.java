@@ -514,6 +514,12 @@ public class RobotSelectionScreen extends Screen {
             case ICE_AGE:
                 file = "iceage.mp4";
                 break;
+            case BULWARK:
+                file = "bulwark.mp4";
+                break;
+            case DEATH_KNIGHT:
+                file = "deathknight.mp4";
+                break;
             default:
                 return null;
         }
