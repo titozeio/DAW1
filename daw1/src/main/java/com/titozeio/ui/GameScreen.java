@@ -1,5 +1,10 @@
 package com.titozeio.ui;
 
+import com.titozeio.commands.AttackCommand;
+import com.titozeio.commands.GameCommand;
+import com.titozeio.commands.MoveCommand;
+import com.titozeio.commands.SkillCommand;
+import com.titozeio.engine.ActionManager;
 import com.titozeio.engine.Game;
 import com.titozeio.engine.GamePhase;
 import com.titozeio.engine.Hexagon;
@@ -593,10 +598,13 @@ public class GameScreen extends Screen {
     // ── Ejecución de acciones ─────────────────────────────────────────────────
 
     private void executeMove(Hexagon hex) {
-        String name = selectedRobot.getModelName();
         SoundManager.play(SoundManager.MECH_MOVE);
-        selectedRobot.move(hex);
-        addLogMessage(name + " se mueve a (" + hex.getQ() + "," + hex.getR() + ").");
+
+        GameCommand moveCmd = new MoveCommand(selectedRobot, hex);
+        ActionManager.getInstance().executeCommand(moveCmd);
+
+        addLogMessage(moveCmd.getDescription());
+
         if (!selectedRobot.isUsedAttack())
             enterAttackMode();
         else
@@ -616,19 +624,19 @@ public class GameScreen extends Screen {
         // SFX del arma del atacante
         playWeaponSfx(selectedRobot);
 
-        int hpBefore = target.getCurrentHp();
-        selectedRobot.attack(target, game.getMap());
-        int damage = hpBefore - target.getCurrentHp();
+        AttackCommand attackCmd = new AttackCommand(selectedRobot, target, game.getMap());
+        ActionManager.getInstance().executeCommand(attackCmd);
+
+        int damage = attackCmd.getDamageDealt();
 
         if (damage > 0) {
             SoundManager.play(SoundManager.MECH_RECEIVE_HIT);
-            addLogMessage("💥 " + selectedRobot.getModelName() + " → " + target.getModelName()
-                    + ": " + damage + " daño. HP: " + target.getCurrentHp() + "/" + target.getMaxHp());
+            addLogMessage("💥 " + attackCmd.getDescription());
         } else {
             addLogMessage(selectedRobot.getModelName() + " ataca a " + target.getModelName() + " sin causar daño.");
         }
 
-        if (target.isDestroyed()) {
+        if (attackCmd.isFatal()) {
             targetHex.setOccupant(null);
             addLogMessage("☠ " + target.getModelName() + " ha sido DESTRUIDO.");
         }
@@ -667,7 +675,6 @@ public class GameScreen extends Screen {
         }
 
         boolean isAttackSkill = (skill.getType() == SkillType.ATTACK);
-        String skillName = skill.getName();
         String skillClass = skill.getClass().getSimpleName();
 
         // SFX de la skill antes de ejecutar
@@ -686,17 +693,18 @@ public class GameScreen extends Screen {
             }
 
             int hpBefore = target.getCurrentHp();
-            selectedRobot.useSkill(target); // skill.execute() se encarga de setUsedAttack
+            GameCommand skillAttackCmd = new SkillCommand(selectedRobot, target);
+            ActionManager.getInstance().executeCommand(skillAttackCmd);
+
             int damage = hpBefore - target.getCurrentHp();
 
             if (damage > 0) {
                 SoundManager.play(SoundManager.MECH_RECEIVE_HIT);
-                addLogMessage("⚡ " + skillName + ": " + selectedRobot.getModelName()
-                        + " → " + target.getModelName() + ": " + damage + " daño. HP: "
+                addLogMessage(skillAttackCmd.getDescription() + ": " + damage + " daño. HP: "
                         + target.getCurrentHp() + "/" + target.getMaxHp());
             } else {
                 // Puede ser curación (RepairNanobots) → HP del aliado puede haber subido
-                addLogMessage("⚡ " + skillName + " aplicada sobre " + target.getModelName()
+                addLogMessage(skillAttackCmd.getDescription() + " aplicada sobre " + target.getModelName()
                         + ". HP: " + target.getCurrentHp() + "/" + target.getMaxHp());
             }
 
@@ -706,9 +714,9 @@ public class GameScreen extends Screen {
             }
         } else {
             // Skill de movimiento: mueve al robot
-            selectedRobot.useSkill(hex);
-            addLogMessage("⚡ " + skillName + ": " + selectedRobot.getModelName()
-                    + " se teletransporta a (" + hex.getQ() + "," + hex.getR() + ").");
+            GameCommand skillMoveCmd = new SkillCommand(selectedRobot, hex);
+            ActionManager.getInstance().executeCommand(skillMoveCmd);
+            addLogMessage(skillMoveCmd.getDescription());
         }
 
         SoundManager.play(SoundManager.UI_ABILITY_COOLDOWN);

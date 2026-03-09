@@ -3,6 +3,10 @@ package com.titozeio.engine;
 import com.titozeio.enums.RobotState;
 import com.titozeio.model.Weapon;
 import com.titozeio.skills.Skill;
+import com.titozeio.states.ExhaustedState;
+import com.titozeio.states.FrozenState;
+import com.titozeio.states.NormalState;
+import com.titozeio.states.RobotStateBehavior;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -34,6 +38,9 @@ public class Robot {
     // Estados activos: mapeados a los turnos que les quedan
     private HashMap<RobotState, Integer> activeStates;
 
+    // Patrón State: Comportamiento dinámico según el estado actual
+    private RobotStateBehavior currentState;
+
     /**
      * Crea un nuevo Robot con sus estadísticas base, equipo y dueño.
      * 
@@ -58,6 +65,7 @@ public class Robot {
         this.usedMovement = false;
         this.usedAttack = false;
         this.activeStates = new HashMap<>();
+        this.currentState = new NormalState();
     }
 
     /**
@@ -67,9 +75,8 @@ public class Robot {
      * @param target hexágono destino.
      */
     public void move(Hexagon target) {
-        // test comment
-        if (usedMovement) {
-            System.out.println(modelName + " ya ha usado su movimiento este turno.");
+        if (!currentState.canMove(this)) {
+            System.out.println(modelName + " no puede mover en su estado actual.");
             return;
         }
         // Daño de caída si baja 2+ niveles
@@ -96,8 +103,8 @@ public class Robot {
      * @param map    el mapa actual (para calcular visibilidad y cobertura).
      */
     public void attack(Robot target, Map map) {
-        if (usedAttack) {
-            System.out.println(modelName + " ya ha atacado este turno.");
+        if (!currentState.canAttack(this)) {
+            System.out.println(modelName + " no puede atacar en su estado actual.");
             return;
         }
         if (!canAttack(target, map)) {
@@ -138,9 +145,8 @@ public class Robot {
             System.out.println(modelName + " no tiene ninguna skill.");
             return;
         }
-        if (!skill.isReady()) {
-            System.out.println("La skill " + skill.getName() + " está en cooldown ("
-                    + skill.getCurrentCooldown() + " turnos restantes).");
+        if (!currentState.canUseSkill(this)) {
+            System.out.println(modelName + " no puede usar habilidades en su estado actual.");
             return;
         }
         skill.execute(this, target);
@@ -226,15 +232,31 @@ public class Robot {
             }
         }
         toRemove.forEach(activeStates::remove);
+        updateStatusBehavior();
+    }
+
+    /**
+     * Actualiza el objeto de comportamiento según los estados activos.
+     * Prioridad: FROZEN > EXHAUSTED > NORMAL.
+     */
+    private void updateStatusBehavior() {
+        if (hasState(RobotState.FROZEN)) {
+            this.currentState = new FrozenState();
+        } else if (isExhausted()) {
+            this.currentState = new ExhaustedState();
+        } else {
+            this.currentState = new NormalState();
+        }
     }
 
     /** Resetea las acciones del robot al inicio de cada turno. */
     public void resetActions() {
         usedMovement = false;
         usedAttack = false;
-        tickStatusEffects();
+        tickStatusEffects(); // Esto actualizará el comportamiento a Normal si no hay estados
         if (skill != null)
             skill.tickCooldown();
+        currentState.onTurnBegin(this);
     }
 
     // Getters y Setters
@@ -363,6 +385,7 @@ public class Robot {
      */
     public void setUsedMovement(boolean usedMovement) {
         this.usedMovement = usedMovement;
+        updateStatusBehavior();
     }
 
     /**
@@ -381,6 +404,7 @@ public class Robot {
      */
     public void setUsedAttack(boolean usedAttack) {
         this.usedAttack = usedAttack;
+        updateStatusBehavior();
     }
 
     @Override

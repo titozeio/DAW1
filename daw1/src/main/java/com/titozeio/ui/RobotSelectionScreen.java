@@ -3,6 +3,7 @@ package com.titozeio.ui;
 import com.titozeio.engine.Game;
 import com.titozeio.engine.Player;
 import com.titozeio.engine.Robot;
+import com.titozeio.engine.RobotFactory;
 import com.titozeio.enums.RobotTemplate;
 import com.titozeio.model.Weapon;
 import com.titozeio.skills.Skill;
@@ -136,8 +137,9 @@ public class RobotSelectionScreen extends Screen {
 
     /**
      * Ejecuta la logica de create.
+     * 
      * @param window parametro de entrada.
-     * @param game parametro de entrada.
+     * @param game   parametro de entrada.
      * @return valor resultante de la operacion.
      */
     public static RobotSelectionScreen create(Stage window, Game game) {
@@ -599,10 +601,10 @@ public class RobotSelectionScreen extends Screen {
         p1.getUnits().clear();
         p2.getUnits().clear();
         for (RobotTemplate t : player1Templates) {
-            p1.addUnit(t.createRobot(p1));
+            p1.addUnit(RobotFactory.createRobot(t.name(), p1));
         }
         for (RobotTemplate t : player2Templates) {
-            p2.addUnit(t.createRobot(p2));
+            p2.addUnit(RobotFactory.createRobot(t.name(), p2));
         }
         game.displayScreen(GameScreen.create(game));
     }
@@ -683,6 +685,7 @@ public class RobotSelectionScreen extends Screen {
     @Override
     /**
      * Ejecuta la logica de handle input.
+     * 
      * @param input parametro de entrada.
      */
     public void handleInput(String input) {
