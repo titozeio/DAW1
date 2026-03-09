@@ -90,7 +90,7 @@ Todos los robots tienen los siguientes parámetros:
 
 - **Armas**:
 
-    - **[OMSI]** Tipo: pueden ser de energía / explosivas / cinéticas
+    - **Tipo**: pueden ser de **energía** / **explosivas** / **cinéticas**. El tipo de arma determina el efecto de sonido al disparar (implementado). ~~[OMSI]~~ ✅ *Implementado en MVP.*
 
     - Alcance: distancia en hexágonos a la que llegan las armas.
 
@@ -100,7 +100,12 @@ Todos los robots tienen los siguientes parámetros:
 
 - **HP**: Los Hit Points (Puntos de impacto) que puede recibir un robot. Cada punto de daño que recibe el robot se resta de sus HPs. Al llegar a 0, queda destruido. Los HPS de un robot NUNCA pueden ser superiores a los originales.
 
-- **Skills**: Habilidades o ataques especiales. Pueden ser de tipo movimiento o ataque, y tienen un efecto distinto con sus propias reglas. 
+- **Skills**: Habilidades o ataques especiales. Pueden ser de tipo movimiento o ataque, y tienen un efecto distinto con sus propias reglas.
+
+- **Estados**: Un robot puede verse afectado por estados que modifican su comportamiento durante uno o más turnos:
+    - **FROZEN** (congelado): el robot no puede ser seleccionado para actuar durante el número de turnos indicado. Aplicado por la skill *Rayo Congelador*.
+    - **EXHAUSTED** (agotado): el robot ha consumido sus dos acciones del turno (movimiento y ataque). Visualmente se oscurece en el mapa y no puede volver a seleccionarse en ese turno.
+    - Los estados se reducen 1 turno al inicio del turno del jugador y se eliminan al expirar.
 
 - **[OMSI] Protección**:
 
@@ -112,11 +117,18 @@ Todos los robots tienen los siguientes parámetros:
 
 En cada turno, los jugadores usan todas las acciones de sus robots, 1 por 1, en el orden que quieran, pero una vez que empiezan con uno, tienen que agotar sus acciones antes de pasar al siguiente.
 
-En un turno, los robots pueden cualquiera de estas acciones, en cualquier orden, pero solo 1 vez cada una (excepción: cuando una habilidad especial lo especifique):
+En un turno, los robots pueden realizar cualquiera de estas acciones, en cualquier orden, pero solo 1 vez cada una (excepción: cuando una habilidad especial lo especifique):
 
-- Moverse: Cada robot puede desplazarse (como máximo) un número de casillas igual a sus puntos de movimiento sobre terreno estándar. Algunas casillas aplican un coste adicional al entrar en ellas (normalmente, +1 pto de movimiento de coste).
+- **Moverse**: Cada robot puede desplazarse (como máximo) un número de casillas igual a sus puntos de movimiento sobre terreno estándar. Algunas casillas aplican un coste adicional al entrar en ellas (normalmente, +1 pto de movimiento de coste).
 
-- Atacar: Siempre que un robot tenga un enemigo al alcance (determinado por el alcance de sus armas), podrá realizar un ataque contra un enemigo.
+- **Atacar**: Siempre que un robot tenga un enemigo al alcance (determinado por el alcance de sus armas), podrá realizar un ataque contra un enemigo.
+
+> **Estado actual implementado (marzo 2026)**: Las acciones se seleccionan mediante **ciclo de modos** haciendo clic sobre el robot propio:
+> 1. **Primer clic** → modo MOVER (casillas accesibles en verde).
+> 2. **Segundo clic** → modo ATACAR (objetivos en naranja).
+> 3. **Tercer clic** → modo SKILL (objetivos en lima para movimiento, violeta para ataque).
+> 4. **Cuarto clic** → deselecciona.
+> Los modos se saltan automáticamente si la acción ya está consumida. Una vez el robot agota ambas acciones entra en estado EXHAUSTED.
 
 ## Skills:
 
@@ -128,7 +140,9 @@ Todos los robots tienen skills. En cada skill se especifica si es de movimiento 
 
 - **Efecto especial**: Si la skill tiene un efecto especial que contradice una regla establecida del juego, el efecto predomina sobre la regla. Por ejemplo, el efecto puede decir que no se tenga en cuenta la cobertura o el tipo de terreno a la hora de determinar el coste en puntos de movimiento.
 
-- **Cooldown**: Indica cuántos turnos deben transcurrir antes de poder usar la skill de nuevo. 
+- **Cooldown**: Indica cuántos turnos deben transcurrir antes de poder usar la skill de nuevo.
+
+> **Estado actual implementado (marzo 2026)**: El cooldown se gestiona mediante `Skill.tickCooldown()`, que se llama al inicio de cada turno. El panel de info muestra el cooldown restante con "dots" visuales y la etiqueta `READY!` cuando está lista. La skill sustituye a una acción del mismo tipo (movimiento o ataque), no se añade como acción adicional.
 
 - **[OMSI]** Incluir la posibilidad de que existan skills que no sean de movimiento ni de ataque, sino que sean, por ejemplo, pasivas, o reactivas (no se activan voluntariamente sino cuando ocurre algo determinado).
 
@@ -368,9 +382,39 @@ Lista de sprites, sonidos y música (importante para organizar la carpeta src/ma
 
 ## Diseño de Nivel (mapa):
 
-Elementos que puede haber en un mapa.
+### Mapa 1 — «Yermo Industrial»
 
-Un boceto o descripción del único mapa que tendrá el prototipo.
+**Dimensiones**: 11 columnas × 9 filas (coordenadas axiales q=0..10, r=0..8). Grid rectangular de hexágonos pointy-top.
+
+**Zonas especiales**:
+
+| Zona          | Posición    | Descripción                                                                |
+| ------------- | ----------- | -------------------------------------------------------------------------- |
+| Despliegue P1 | q=0, r=1-7  | 7 casillas de borde izquierdo. Zona de spawn de J1.                        |
+| Despliegue P2 | q=10, r=1-7 | 7 casillas de borde derecho. Zona de spawn de J2.                          |
+| Base P1       | q=0, r=4    | Centro del borde izquierdo. Casilla objetivo (también zona de despliegue). |
+| Base P2       | q=10, r=4   | Centro del borde derecho. Casilla objetivo (también zona de despliegue).   |
+
+**Estructura del terreno**:
+
+| Zona                   | Coordenadas              | Terreno            | Altura | Efecto                                                     |
+| ---------------------- | ------------------------ | ------------------ | ------ | ---------------------------------------------------------- |
+| Canal central          | q=5, r=1-3 y r=5-7       | Agua poco profunda | -1     | Daño recibido +25%, Daño infligido +25% (Overheat), Mov +1 |
+| Centro del canal       | q=5, r=4                 | Agua profunda      | -2     | No se puede atacar ni ser atacado, Mov +2                  |
+| Meseta izquierda baja  | q=2, r=1-7 (excepto r=4) | Normal             | 1      | Cobertura media desde nivel 0. Mov +1 al subir.            |
+| Meseta izquierda alta  | q=3, r=2 y r=6           | Normal             | 2      | Cobertura total desde nivel 0. Visibilidad elevada.        |
+| Meseta izquierda rampa | q=3, r=1,3,5,7           | Normal             | 1      | Puente entre nivel 0 y cima.                               |
+| Meseta derecha baja    | q=8, r=1-7 (excepto r=4) | Normal             | 1      | Simétrica a meseta izquierda.                              |
+| Meseta derecha alta    | q=7, r=2 y r=6           | Normal             | 2      | Simétrica a meseta izquierda.                              |
+| Meseta derecha rampa   | q=7, r=1,3,5,7           | Normal             | 1      | Simétrica a meseta izquierda.                              |
+| Vegetación izquierda   | q=1-2, r=0 y r=8         | Vegetación         | 0      | Daño recibido -25%, Mov +1. Cobertura táctica en flancos.  |
+| Vegetación derecha     | q=8-9, r=0 y r=8         | Vegetación         | 0      | Simétrica a vegetación izquierda.                          |
+| Resto del mapa         | todas las demás          | Normal             | 0      | Sin modificadores.                                         |
+
+**Concepto táctico**: El mapa es **simétrico** (espejo horizontal). Obliga a los jugadores a decidir entre tres rutas:
+1. **Ruta norte** (r=0-2): flanqueo rápido por vegetación, con cobertura pero penalización de movimiento.
+2. **Ruta central** (r=3-5): cruzar el canal de agua y las cimas de las mesetas. Control de altura = ventaja de ataque.
+3. **Ruta sur** (r=6-8): simétrica a norte.
 
 ## Lista de skills:
 
@@ -596,8 +640,10 @@ Un boceto o descripción del único mapa que tendrá el prototipo.
     - **Bloque de info adicional**: Un panel, inicalmente vacío (simplemente un label informativo de "info"), que mostrará info adicional cuando: 
       - Se pasa el ratón por encima de un robot: se muestra su nombre, estadísticas y descripción.
       - Se pasa el ratón por encima de un terreno: se muestra su descripción, el tipo, la altura.
-    - **Botón de Fin de turno**: El jugador puede pulsar este botón para indicar que ha terminado de realizar las acciones de sus robots. Al pulsarlo, se pasa al siguiente jugador. Si queda algún robot por realizar acciones, se mostrará un mensaje indicándolo: "Jugador [X], te quedan robots por realizar acciones. Seguro que quieres finalizar el turno?" con dos opciones: "Cancelar" y "Finalizar turno". Cuando al jugador no le quedan más acciones de ningún robot, se realiza el cambio de turno automáticamente, mostrándose un mensaje antes.
-    - **Botón de Pausa**: El jugador puede pulsar este botón para pausar el juego. Al pulsarlo, se muestra un menú con las opciones: "Reanudar", "Rendirse". Si pulsa "Reanudar", se vuelve a la pantalla de combate. Si pulsa "Rendirse", se muestra el mensaje de "Victoria"del oponente. 
+    - **Botón de Fin de turno**: El jugador puede pulsar este botón para indicar que ha terminado de realizar las acciones de sus robots. Al pulsarlo, se pasa al siguiente jugador. Si queda algún robot por realizar acciones, se mostrará un mensaje indicándolo: "Jugador [X], te quedan robots por realizar acciones. ¿Seguro que quieres finalizar el turno?" con dos opciones: "Cancelar" y "Finalizar turno". Cuando al jugador no le quedan más acciones de ningún robot, se realiza el cambio de turno automáticamente, mostrándose un mensaje antes.
+    > **Estado actual**: El botón «Fin de turno» siempre está disponible durante el combate; no se muestra confirmación si quedan acciones pendientes. El cambio de turno no es automático. ❗ *Pendiente de implementar la confirmación y cambio automático.*
+    - **Botón de Rendirse**: El jugador puede pulsar «Rendirse» en cualquier momento del combate. Al hacerlo, se declara la victoria del oponente y se muestra el overlay de victoria. No existe pantalla de pausa separada en la implementación actual; la opción de rendirse está integrada directamente en la barra de acciones del combate.
+    > **Estado actual**: La clase `PauseScreen` existe en el código como stub pero no se navega a ella. La lógica de rendición está en `GameScreen.handleSurrenderAction()`.
     - **Robots**: 
       - Los robots aparecen representados por figuras (a escala, de forma que quepan sobradamente en un hexágono del mapa) fuera del mapa al comienzo y luego, una vez posicionados, en las casillas elegidas. Debajo de cada robot aparece una barra de vida que indica su barra actual de HP. La barra está seccionadao en segmentos. Cada uno es 1 HP.
       - Cuando se pasa el ratón por encima de un robot, se resalta de alguna manera (y se muestra la info correspondiente en el bloque de info adicional).
