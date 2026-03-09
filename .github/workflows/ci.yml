@@ -93,3 +93,15 @@ jobs:
           replacesArtifacts: true
           artifactErrorsFailBuild: true
           generateReleaseNotes: true
+      - name: Generate Javadoc (main only)
+        if: (github.event_name == 'push' || github.event_name == 'pull_request') && github.ref == 'refs/heads/main'
+        working-directory: daw1
+        run: mvn javadoc:javadoc
+
+      - name: Deploy Javadoc to GitHub Pages (main only)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: daw1/target/site/apidocs
+          target-folder: docs/apidocs
+          branch: gh-pages
