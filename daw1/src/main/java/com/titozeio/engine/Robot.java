@@ -217,6 +217,11 @@ public class Robot {
         return activeStates.containsKey(state) && activeStates.get(state) > 0;
     }
 
+    /** @return la duración restante de un estado, o 0 si no lo tiene. */
+    public int getStateDuration(RobotState state) {
+        return activeStates.getOrDefault(state, 0);
+    }
+
     /**
      * Reduce 1 turno los contadores de estados activos y elimina los que expiren.
      * Llamar al inicio de cada turno del robot.

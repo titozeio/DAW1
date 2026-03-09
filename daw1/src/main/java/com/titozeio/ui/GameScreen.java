@@ -462,6 +462,16 @@ public class GameScreen extends Screen {
         if (hex.isOccupied()) {
             Robot robot = hex.getOccupant();
             if (robot.getOwner() == cur) {
+                // BLOQUEO: Si el robot está congelado, no se puede seleccionar para actuar
+                if (robot.hasState(com.titozeio.enums.RobotState.FROZEN)) {
+                    SoundManager.play(SoundManager.UI_INVALID);
+                    int duration = robot.getStateDuration(com.titozeio.enums.RobotState.FROZEN);
+                    // Ajustamos visualmente la duración para el log (si es 2 interno, mostramos 1)
+                    addLogMessage("¡" + robot.getModelName() + " inmovilizado durante "
+                            + (duration > 1 ? duration - 1 : duration) + " turnos!");
+                    return;
+                }
+
                 if (robot == selectedRobot)
                     cycleModes();
                 else

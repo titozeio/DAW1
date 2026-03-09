@@ -15,7 +15,7 @@ public class FreezeRay extends Skill {
 
     private final int range = 3;
     private final int damage = 3;
-    private final int freezeDuration = 1; // Turnos que dura el estado FROZEN
+    private final int freezeDuration = 2; // Seteamos 2 para que aguante el tick inicial y dure 1 turno real
 
     /**
      * Crea una nueva instancia de la clase.
@@ -32,7 +32,8 @@ public class FreezeRay extends Skill {
     @Override
     /**
      * Ejecuta la logica de execute.
-     * @param actor parametro de entrada.
+     * 
+     * @param actor  parametro de entrada.
      * @param target parametro de entrada.
      */
     public void execute(Robot actor, Object target) {
@@ -53,11 +54,12 @@ public class FreezeRay extends Skill {
         defender.applyState(RobotState.FROZEN, freezeDuration);
         actor.setUsedAttack(true);
         resetCooldown();
-        System.out.println(defender.getModelName() + " queda CONGELADO durante " + freezeDuration + " turno(s).");
+        System.out.println(defender.getModelName() + " queda CONGELADO durante 1 turno(s).");
     }
 
     /**
      * Obtiene range.
+     * 
      * @return valor resultante de la operacion.
      */
     public int getRange() {
@@ -66,6 +68,7 @@ public class FreezeRay extends Skill {
 
     /**
      * Obtiene damage.
+     * 
      * @return valor resultante de la operacion.
      */
     public int getDamage() {
@@ -74,6 +77,7 @@ public class FreezeRay extends Skill {
 
     /**
      * Obtiene freeze duration.
+     * 
      * @return valor resultante de la operacion.
      */
     public int getFreezeDuration() {
@@ -83,6 +87,7 @@ public class FreezeRay extends Skill {
     @Override
     /**
      * Obtiene display stats.
+     * 
      * @return valor resultante de la operacion.
      */
     public java.util.List<String[]> getDisplayStats() {

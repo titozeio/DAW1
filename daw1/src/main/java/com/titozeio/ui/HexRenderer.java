@@ -416,6 +416,9 @@ public class HexRenderer {
 
         Node hpBarNode = renderHpBar(cx, cy + HEX_SIZE * 0.55, robot);
 
+        // 0. Aplicar efectos de estado visuales persistentes
+        applyRobotStatusVisuals(robotNode, robot);
+
         // 1. Animación de aterrizaje (despliegue)
         if (robot.getPosition() != null && robot.getPosition().equals(landingHex)) {
             applyLandingAnimation(robotNode, hpBarNode);
@@ -431,8 +434,26 @@ public class HexRenderer {
                 applyRecoilAnimation(robotNode, hpBarNode, targetHexScope);
                 drawLaserTracer(attackerHexScope, targetHexScope, isHealScope);
             } else if (robot.getPosition().equals(targetHexScope)) {
-                applyImpactAnimation(robotNode, hpBarNode, isHealScope);
+                applyImpactAnimation(robotNode, hpBarNode, isHealScope, robot);
             }
+        }
+    }
+
+    /**
+     * Aplica los efectos visuales correspondientes a los estados del robot (ej:
+     * tinte azul si está congelado).
+     */
+    private void applyRobotStatusVisuals(Node robotNode, Robot robot) {
+        if (robot == null || robotNode == null)
+            return;
+        if (robot.hasState(com.titozeio.enums.RobotState.FROZEN)) {
+            ColorAdjust ice = new ColorAdjust();
+            ice.setBrightness(0.35); // Tinta blanca/clara
+            ice.setSaturation(-0.2); // Desaturar un poco
+            ice.setHue(-0.05); // Toque azulado frío
+            robotNode.setEffect(ice);
+        } else {
+            robotNode.setEffect(null);
         }
     }
 
@@ -499,7 +520,7 @@ public class HexRenderer {
         }
     }
 
-    private void applyImpactAnimation(Node robot, Node hpBar, boolean isHeal) {
+    private void applyImpactAnimation(Node robotNode, Node hpBar, boolean isHeal, Robot robot) {
         ColorAdjust flashEffect = new ColorAdjust();
         flashEffect.setBrightness(0.0);
         if (isHeal) {
@@ -508,16 +529,16 @@ public class HexRenderer {
             flashEffect.setHue(-0.05); // Un toque rojizo
         }
         flashEffect.setSaturation(0.6);
-        robot.setEffect(flashEffect);
+        robotNode.setEffect(flashEffect);
 
         Timeline flash = new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(flashEffect.brightnessProperty(), 0.0)),
                 new KeyFrame(Duration.millis(100), new KeyValue(flashEffect.brightnessProperty(), 0.8)),
                 new KeyFrame(Duration.millis(300), new KeyValue(flashEffect.brightnessProperty(), 0.0)));
-        flash.setOnFinished(e -> robot.setEffect(null));
+        flash.setOnFinished(e -> applyRobotStatusVisuals(robotNode, robot));
         flash.play();
 
-        TranslateTransition shake = new TranslateTransition(Duration.millis(50), robot);
+        TranslateTransition shake = new TranslateTransition(Duration.millis(50), robotNode);
         shake.setByX(4);
         shake.setAutoReverse(true);
         shake.setCycleCount(4);
