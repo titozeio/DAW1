@@ -111,6 +111,29 @@
                               <Label fx:id="skillDetailLine2Label" textFill="WHITE" />
                            </children>
                         </VBox>
+                        <VBox fx:id="hexInfoBox" spacing="5.0" visible="false" managed="false">
+                           <children>
+                              <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                 <children>
+                                    <StackPane prefWidth="90.0" prefHeight="90.0" styleClass="robot-frame, robot-frame-portrait">
+                                       <children>
+                                          <ImageView fx:id="hexInfoImage" fitWidth="82.0" fitHeight="82.0" preserveRatio="false" />
+                                       </children>
+                                    </StackPane>
+                                    <VBox spacing="4.0" prefWidth="250.0">
+                                       <children>
+                                          <HBox spacing="6.0" alignment="CENTER_LEFT"><children><Label text="TERRENO" textFill="#57C0EF"/><Label fx:id="hexTerrainTypeLabel" textFill="WHITE"/></children></HBox>
+                                          <HBox spacing="6.0" alignment="CENTER_LEFT"><children><Label text="ALTURA" textFill="#57C0EF"/><Label fx:id="hexHeightValueLabel" textFill="WHITE"/></children></HBox>
+                                          <HBox spacing="6.0" alignment="CENTER_LEFT"><children><Label text="DAÑO REC." textFill="#57C0EF"/><Label fx:id="hexDamageTakenValueLabel" textFill="WHITE"/></children></HBox>
+                                          <HBox spacing="6.0" alignment="CENTER_LEFT"><children><Label text="DAÑO INF." textFill="#57C0EF"/><Label fx:id="hexDamageDealtValueLabel" textFill="WHITE"/></children></HBox>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </HBox>
+                              <Label fx:id="hexCoverInfoLabel" textFill="#E1E1E1" wrapText="true" />
+                              <Label fx:id="hexZoneInfoLabel" textFill="#E1E1E1" wrapText="true" />
+                           </children>
+                        </VBox>
                         <HBox fx:id="skillFooterBox" alignment="CENTER_LEFT" spacing="6.0" style="-fx-background-color: rgba(30,35,40,0.85);">
                            <padding><Insets left="6.0" right="6.0" top="4.0" bottom="4.0"/></padding>
                            <children>

@@ -14,6 +14,7 @@ import com.titozeio.engine.Robot;
 import com.titozeio.engine.SoundManager;
 import com.titozeio.enums.AttackType;
 import com.titozeio.enums.SkillType;
+import com.titozeio.enums.TerrainType;
 import com.titozeio.skills.JetpackBoost;
 import com.titozeio.skills.Skill;
 import com.titozeio.skills.TurboPropulsion;
@@ -99,11 +100,29 @@ public class GameScreen extends Screen {
     @FXML
     private VBox skillInfoBox;
     @FXML
+    private VBox hexInfoBox;
+    @FXML
     private Label skillTypeInfoLabel;
     @FXML
     private Label skillDetailLine1Label;
     @FXML
     private Label skillDetailLine2Label;
+    @FXML
+    private HBox skillFooterBox;
+    @FXML
+    private ImageView hexInfoImage;
+    @FXML
+    private Label hexTerrainTypeLabel;
+    @FXML
+    private Label hexHeightValueLabel;
+    @FXML
+    private Label hexDamageTakenValueLabel;
+    @FXML
+    private Label hexDamageDealtValueLabel;
+    @FXML
+    private Label hexCoverInfoLabel;
+    @FXML
+    private Label hexZoneInfoLabel;
     @FXML
     private Label latestLogLabel;
     @FXML
@@ -165,6 +184,7 @@ public class GameScreen extends Screen {
     private SelectionMode selectionMode = SelectionMode.NONE;
     private boolean infoSkillMode = false;
     private boolean logExpanded = false;
+    private boolean infoHexMode = false;
 
     // ── Factory ───────────────────────────────────────────────────────────────
     /**
@@ -918,6 +938,8 @@ public class GameScreen extends Screen {
     // ── Paneles de información ────────────────────────────────────────────────
 
     private void updateRobotInfoPanel(Robot robot) {
+        infoHexMode = false;
+        setInfoModeVisibility(true);
         if (robot == null) {
             if (infoTitleLabel != null) {
                 infoTitleLabel.setText("INFORMACIÓN");
@@ -949,14 +971,8 @@ public class GameScreen extends Screen {
         renderSkillCooldown(sk);
 
         if (infoSkillMode) {
-            if (robotInfoBox != null) {
-                robotInfoBox.setVisible(false);
-                robotInfoBox.setManaged(false);
-            }
-            if (skillInfoBox != null) {
-                skillInfoBox.setVisible(true);
-                skillInfoBox.setManaged(true);
-            }
+            setNodeVisibleManaged(robotInfoBox, false);
+            setNodeVisibleManaged(skillInfoBox, true);
             if (moveValueLabel != null)
                 moveValueLabel.setText("-");
             if (rangeValueLabel != null)
@@ -992,14 +1008,8 @@ public class GameScreen extends Screen {
                 }
             }
         } else {
-            if (robotInfoBox != null) {
-                robotInfoBox.setVisible(true);
-                robotInfoBox.setManaged(true);
-            }
-            if (skillInfoBox != null) {
-                skillInfoBox.setVisible(false);
-                skillInfoBox.setManaged(false);
-            }
+            setNodeVisibleManaged(robotInfoBox, true);
+            setNodeVisibleManaged(skillInfoBox, false);
             if (moveValueLabel != null)
                 moveValueLabel.setText(String.valueOf(robot.getMovementPoints()));
             if (rangeValueLabel != null)
@@ -1035,7 +1045,7 @@ public class GameScreen extends Screen {
      * Ejecuta la logica de handle info toggle action.
      */
     public void handleInfoToggleAction() {
-        if (selectedRobot == null) {
+        if (selectedRobot == null || infoHexMode) {
             return;
         }
         infoSkillMode = !infoSkillMode;
@@ -1248,6 +1258,7 @@ public class GameScreen extends Screen {
     private void clearSelection() {
         selectedRobot = null;
         infoSkillMode = false;
+        infoHexMode = false;
         if (infoToggleButton != null)
             infoToggleButton.setText("+info");
         selectionMode = SelectionMode.NONE;
@@ -1262,20 +1273,113 @@ public class GameScreen extends Screen {
             ownerBadgeLabel.setText("");
         if (infoPanel != null)
             infoPanel.setOpacity(1.0);
+        setInfoModeVisibility(true);
     }
 
     private void showTerrainInfo(Hexagon hex) {
+        infoHexMode = true;
+        infoSkillMode = false;
+        setInfoModeVisibility(false);
+        if (infoTitleLabel != null) {
+            infoTitleLabel.setText("CASILLA (" + hex.getQ() + ", " + hex.getR() + ")");
+        }
+        if (ownerBadgeLabel != null) {
+            ownerBadgeLabel.setText("");
+        }
+        if (infoDetailsLabel != null) {
+            infoDetailsLabel.setText("");
+        }
+        if (hexInfoImage != null) {
+            hexInfoImage.setImage(loadTerrainImage(hex));
+        }
+        if (hexTerrainTypeLabel != null) {
+            hexTerrainTypeLabel.setText(terrainName(hex));
+        }
+        if (hexHeightValueLabel != null) {
+            hexHeightValueLabel.setText(String.valueOf(hex.getHeight()));
+        }
+        if (hexDamageTakenValueLabel != null) {
+            hexDamageTakenValueLabel.setText(formatModifierText(hex.getDamageModifier()));
+        }
+        if (hexDamageDealtValueLabel != null) {
+            hexDamageDealtValueLabel.setText(formatModifierText(hex.getAttackDamageModifier()));
+        }
+        if (hexCoverInfoLabel != null) {
+            hexCoverInfoLabel.setText("Cobertura por altura: +1 nivel = media, +2 niveles = total.");
+        }
+        if (hexZoneInfoLabel != null) {
+            hexZoneInfoLabel.setText(resolveZoneAndCombatInfo(hex));
+        }
+    }
+
+    private void setInfoModeVisibility(boolean robotMode) {
+        setNodeVisibleManaged(robotInfoBox, robotMode && !infoSkillMode);
+        setNodeVisibleManaged(skillInfoBox, robotMode && infoSkillMode);
+        setNodeVisibleManaged(hexInfoBox, !robotMode);
+        setNodeVisibleManaged(skillFooterBox, robotMode);
+        if (infoToggleButton != null) {
+            infoToggleButton.setDisable(!robotMode || selectedRobot == null);
+            infoToggleButton.setVisible(robotMode);
+            infoToggleButton.setManaged(robotMode);
+        }
+    }
+
+    private void setNodeVisibleManaged(Node node, boolean visible) {
+        if (node == null) {
+            return;
+        }
+        node.setVisible(visible);
+        node.setManaged(visible);
+    }
+
+    private String formatModifierText(float modifier) {
+        int percent = Math.round((modifier - 1f) * 100f);
+        if (percent == 0) {
+            return "x1.00 (0%)";
+        }
+        String sign = percent > 0 ? "+" : "";
+        return String.format("x%.2f (%s%d%%)", modifier, sign, percent);
+    }
+
+    private String resolveZoneAndCombatInfo(Hexagon hex) {
         StringBuilder sb = new StringBuilder();
-        sb.append("Casilla (").append(hex.getQ()).append(", ").append(hex.getR()).append(")\n");
-        sb.append("Terreno: ").append(terrainName(hex)).append("\n");
-        sb.append("Altura: ").append(hex.getHeight());
-        if (hex.isBaseP1())
-            sb.append("\n⚑ BASE JUGADOR 1");
-        if (hex.isBaseP2())
-            sb.append("\n⚑ BASE JUGADOR 2");
-        infoDetailsLabel.setText(sb.toString());
-        if (infoTitleLabel != null)
-            infoTitleLabel.setText("INFORMACIÓN");
+        if (hex.getTerrain() == TerrainType.WATER_DEEP) {
+            sb.append("Combate no permitido: agua profunda.");
+        } else {
+            sb.append("Combate permitido.");
+        }
+        if (hex.isBaseP1()) {
+            sb.append(" | Base J1");
+        }
+        if (hex.isBaseP2()) {
+            sb.append(" | Base J2");
+        }
+        if (hex.isDeployZoneP1()) {
+            sb.append(" | Zona despliegue J1");
+        }
+        if (hex.isDeployZoneP2()) {
+            sb.append(" | Zona despliegue J2");
+        }
+        return sb.toString();
+    }
+
+    private Image loadTerrainImage(Hexagon hex) {
+        String path;
+        switch (hex.getTerrain()) {
+            case VEGETATION:
+                path = "/com/titozeio/images/bg1.jpg";
+                break;
+            case WATER_SHALLOW:
+            case WATER_DEEP:
+                path = "/com/titozeio/images/bg2.jpg";
+                break;
+            default:
+                path = hex.getHeight() > 0
+                        ? "/com/titozeio/ui/ui_kit/panel_stats_bg.png"
+                        : "/com/titozeio/ui/panel.png";
+        }
+        var res = getClass().getResource(path);
+        return res == null ? null : new Image(res.toExternalForm());
     }
 
     private static String terrainName(Hexagon hex) {
