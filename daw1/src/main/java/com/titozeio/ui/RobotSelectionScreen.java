@@ -487,22 +487,22 @@ public class RobotSelectionScreen extends Screen {
         String file;
         switch (template) {
             case VICTORY_SABER:
-                file = "saberprime.png";
+                file = "saberprime.jpg";
                 break;
             case BULLSEYE:
-                file = "bullseye.png";
+                file = "bullseye.jpg";
                 break;
             case BULWARK:
-                file = "bulwark.png";
+                file = "bulwark.jpg";
                 break;
             case SCOUT:
-                file = "scout.png";
+                file = "scout.jpg";
                 break;
             case DEATH_KNIGHT:
-                file = "deathknight.png";
+                file = "deathknight.jpg";
                 break;
             case ICE_AGE:
-                file = "iceage.png";
+                file = "iceage.jpg";
                 break;
             default:
                 return null;

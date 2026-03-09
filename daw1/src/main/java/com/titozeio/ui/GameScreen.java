@@ -1124,17 +1124,17 @@ public class GameScreen extends Screen {
         String model = robot.getModelName().toLowerCase().replace(" ", "");
         String file;
         if (model.contains("saber")) {
-            file = "saberprime.png";
+            file = "saberprime.jpg";
         } else if (model.contains("bullseye")) {
-            file = "bullseye.png";
+            file = "bullseye.jpg";
         } else if (model.contains("bulwark")) {
-            file = "bulwark.png";
+            file = "bulwark.jpg";
         } else if (model.contains("scout")) {
-            file = "scout.png";
+            file = "scout.jpg";
         } else if (model.contains("death")) {
-            file = "deathknight.png";
+            file = "deathknight.jpg";
         } else if (model.contains("ice")) {
-            file = "iceage.png";
+            file = "iceage.jpg";
         } else {
             return null;
         }
