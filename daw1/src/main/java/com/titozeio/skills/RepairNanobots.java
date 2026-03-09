@@ -49,7 +49,10 @@ public class RepairNanobots extends Skill {
             return;
         }
 
-        if (!isTargetInRange(actor, ally, range)) {
+        boolean hasPositions = actor != null
+                && actor.getPosition() != null
+                && ally.getPosition() != null;
+        if (hasPositions && !isTargetInRange(actor, ally, range)) {
             System.out.println("Nanobots Reparadores fuera de alcance (" + range + ").");
             return;
         }
