@@ -615,7 +615,7 @@ public class HexRenderer {
 
         List<String> candidates = spriteCandidatesFor(robot.getModelName(), ownerSuffix);
         for (String candidate : candidates) {
-            var resource = HexRenderer.class.getResource("/com/titozeio/sprites/" + candidate + ".png");
+            var resource = HexRenderer.class.getResource("/com/titozeio/sprites/figures/" + candidate + ".png");
             if (resource != null) {
                 Image image = new Image(resource.toExternalForm());
                 ROBOT_SPRITE_CACHE.put(key, image);

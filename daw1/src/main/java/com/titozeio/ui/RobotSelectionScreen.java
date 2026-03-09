@@ -487,27 +487,27 @@ public class RobotSelectionScreen extends Screen {
         String file;
         switch (template) {
             case VICTORY_SABER:
-                file = "face_saberprime.png";
+                file = "saberprime.png";
                 break;
             case BULLSEYE:
-                file = "face_bullseye.png";
+                file = "bullseye.png";
                 break;
             case BULWARK:
-                file = "face_bulwark.png";
+                file = "bulwark.png";
                 break;
             case SCOUT:
-                file = "face_scout.png";
+                file = "scout.png";
                 break;
             case DEATH_KNIGHT:
-                file = "face_deathknight.png";
+                file = "deathknight.png";
                 break;
             case ICE_AGE:
-                file = "face_iceage.png";
+                file = "iceage.png";
                 break;
             default:
                 return null;
         }
-        var res = getClass().getResource("/com/titozeio/sprites/" + file);
+        var res = getClass().getResource("/com/titozeio/sprites/faces/" + file);
         return res == null ? null : new Image(res.toExternalForm());
     }
 
