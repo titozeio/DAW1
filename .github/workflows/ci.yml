@@ -65,6 +65,7 @@ jobs:
             --main-jar "daw1-1.0-SNAPSHOT-all.jar" `
             --main-class "com.titozeio.engine.Launcher" `
             --dest "daw1/target/dist" `
+            --icon "daw1/src/main/resources/com/titozeio/icons/daw1.ico" `
             --vendor "titozeio" `
             --app-version "1.0.${{ github.run_number }}" `
             --java-options "--enable-native-access=ALL-UNNAMED"

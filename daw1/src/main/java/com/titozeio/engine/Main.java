@@ -21,6 +21,7 @@ public class Main extends Application {
         // remote change directly done in github.com
 
         primaryStage.setTitle("Devastation AI Wars 1");
+        addAppIcons(primaryStage);
         primaryStage.setWidth(1280);
         primaryStage.setHeight(755);
         primaryStage.setResizable(false);
@@ -46,5 +47,15 @@ public class Main extends Application {
      */
     public static void main(String[] args) {
         launch(args);
+    }
+
+    private void addAppIcons(Stage stage) {
+        String[] sizes = { "16", "32", "48", "64", "128", "256" };
+        for (String s : sizes) {
+            var res = Main.class.getResource("/com/titozeio/icons/daw1_" + s + ".png");
+            if (res != null) {
+                stage.getIcons().add(new javafx.scene.image.Image(res.toExternalForm()));
+            }
+        }
     }
 }
