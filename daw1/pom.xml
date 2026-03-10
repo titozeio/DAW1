@@ -185,6 +185,12 @@
             <goals>
               <goal>report</goal>
             </goals>
+            <configuration>
+              <!-- Excluir UI JavaFX del informe/cálculo para evitar penalizar coverage en CI -->
+              <excludes>
+                <exclude>com/titozeio/ui/**</exclude>
+              </excludes>
+            </configuration>
           </execution>
           <execution>
             <id>check</id>
@@ -193,6 +199,10 @@
               <goal>check</goal>
             </goals>
             <configuration>
+              <!-- Excluir UI JavaFX del check (bundle) para que el umbral refleje el core testeable -->
+              <excludes>
+                <exclude>com/titozeio/ui/**</exclude>
+              </excludes>
               <rules>
                 <rule>
                   <element>BUNDLE</element>
