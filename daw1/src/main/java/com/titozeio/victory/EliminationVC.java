@@ -16,9 +16,17 @@ public class EliminationVC extends VictoryCondition {
      * @return valor resultante de la operacion.
      */
     public Player check(Game game) {
-        if (game.getP2().isEliminated())
+        boolean p1Eliminated = game.getP1().isEliminated();
+        boolean p2Eliminated = game.getP2().isEliminated();
+
+        // Si ambos están eliminados, no hay ganador claro
+        if (p1Eliminated && p2Eliminated) {
+            return null;
+        }
+
+        if (p2Eliminated)
             return game.getP1();
-        if (game.getP1().isEliminated())
+        if (p1Eliminated)
             return game.getP2();
         return null;
     }

@@ -15,7 +15,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
+import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
@@ -86,11 +86,11 @@ public class RobotSelectionScreen extends Screen {
     @FXML
     private Label descSkillLabel;
     @FXML
-    private Button confirmButton;
+    private Control confirmButton;
     @FXML
-    private Button prevRobotButton;
+    private Control prevRobotButton;
     @FXML
-    private Button nextRobotButton;
+    private Control nextRobotButton;
     @FXML
     private ImageView p1Slot1Image;
     @FXML
@@ -749,7 +749,9 @@ public class RobotSelectionScreen extends Screen {
      * Ejecuta la logica de display.
      */
     public void display() {
-        this.stage.setScene(this.scene);
+        if (this.stage != null && this.scene != null) {
+            this.stage.setScene(this.scene);
+        }
     }
 
     /**

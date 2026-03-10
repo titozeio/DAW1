@@ -1420,6 +1420,12 @@ public class GameScreen extends Screen {
     }
 
     private Image loadTerrainImage(Hexagon hex) {
+        // Guardar frente a valores nulos usados en tests de cobertura
+        if (hex == null) {
+            var fallback = getClass().getResource("/com/titozeio/ui/panel.png");
+            return fallback == null ? null : new Image(fallback.toExternalForm());
+        }
+
         String path = terrainImagePath(hex);
         var res = getClass().getResource(path);
         if (res != null) {
@@ -1430,6 +1436,9 @@ public class GameScreen extends Screen {
     }
 
     private String terrainImagePath(Hexagon hex) {
+        if (hex == null || hex.getTerrain() == null) {
+            return "/com/titozeio/images/terrain/plain.png";
+        }
         switch (hex.getTerrain()) {
             case VEGETATION:
                 return "/com/titozeio/images/terrain/vegetation.png";
@@ -1449,6 +1458,9 @@ public class GameScreen extends Screen {
     }
 
     private static String terrainName(Hexagon hex) {
+        if (hex == null || hex.getTerrain() == null) {
+            return "Desconocido";
+        }
         switch (hex.getTerrain()) {
             case VEGETATION:
                 return "Vegetación";
@@ -1555,7 +1567,9 @@ public class GameScreen extends Screen {
      */
     public void display() {
         System.out.println("Mostrando GameScreen...");
-        this.window.setScene(this.scene);
+        if (this.window != null && this.scene != null) {
+            this.window.setScene(this.scene);
+        }
     }
 
     @Override
