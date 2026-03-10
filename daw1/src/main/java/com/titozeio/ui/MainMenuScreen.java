@@ -152,6 +152,7 @@ public class MainMenuScreen extends Screen {
     public void handleInput(String input) {
         if (input.equals("PLAY")) {
             System.out.println("Iniciando transicion a RobotSelectionScreen...");
+            game.resetForNewMatch();
             this.game.displayScreen(RobotSelectionScreen.create(window, game));
         }
     }

@@ -95,6 +95,26 @@ public class Game {
     }
 
     /**
+     * Resetea el estado de la partida para comenzar una nueva desde cero.
+     */
+    public void resetForNewMatch() {
+        this.turnCounter = 1;
+        this.currentPlayer = p1;
+        this.phase = GamePhase.DEPLOYING;
+        this.map = MapFactory.createMap1();
+        if (p1 != null) {
+            p1.getUnits().clear();
+            p1.setBaseLocation(null);
+            p1.resetBaseControlTurns();
+        }
+        if (p2 != null) {
+            p2.getUnits().clear();
+            p2.setBaseLocation(null);
+            p2.resetBaseControlTurns();
+        }
+    }
+
+    /**
      * Avanza al siguiente estado de turn.
      */
     public void nextTurn() {
