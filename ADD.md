@@ -302,6 +302,28 @@ La altura debe percibirse claramente mediante:
 - bordes elevados
 - cambio de textura
 
+## 4.4. Posibles prompts:
+
+**Gemini v1**
+
+Top-down orthographic view, perfectly regular hexagon tile (pointy-top or flat-top, specify one), flat terrain with zero elevation. 
+
+Cartoon-style EGETATION — dense cover: deep forest green base, clustered low bushes only at edges, dark shadow mass, keeps center clear. 
+
+Exaggerated cracks and scattered small rocks near the edges; center mostly clean. 
+
+Thin 1-pixel gray outline around the hexagon; minimal border details. 
+
+Flat lighting, no shadows, no perspective, strictly top-down. 
+
+Soft hand-painted style, readable and slightly cartoonish textures. 
+
+Tiles must align perfectly edge-to-edge with other hexagons. 
+
+Background transparent or neutral dark for preview. 
+
+Output resolution: 640x640 px. 
+
 ---
 
 # 5. UI / HUD
