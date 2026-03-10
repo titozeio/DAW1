@@ -186,6 +186,7 @@ public class GameScreen extends Screen {
     private boolean logExpanded = false;
     private boolean infoHexMode = false;
     private boolean hoverHexPreviewActive = false;
+    private Hexagon lockedRobotInfoHex;
 
     // ── Factory ───────────────────────────────────────────────────────────────
     /**
@@ -502,6 +503,7 @@ public class GameScreen extends Screen {
             } else {
                 clearSelection();
                 updateRobotInfoPanel(robot);
+                lockedRobotInfoHex = hex;
                 if (infoPanel != null) {
                     infoPanel.setOpacity(0.7);
                 }
@@ -516,6 +518,7 @@ public class GameScreen extends Screen {
 
     private void selectRobot(Robot robot) {
         selectedRobot = robot;
+        lockedRobotInfoHex = robot.getPosition();
         SoundManager.play(SoundManager.UI_UNIT_SELECT);
         if (infoPanel != null) {
             infoPanel.setOpacity(1.0);
@@ -636,6 +639,7 @@ public class GameScreen extends Screen {
 
         GameCommand moveCmd = new MoveCommand(selectedRobot, hex);
         ActionManager.getInstance().executeCommand(moveCmd);
+        lockedRobotInfoHex = selectedRobot.getPosition();
 
         addLogMessage(moveCmd.getDescription());
 
@@ -1263,6 +1267,7 @@ public class GameScreen extends Screen {
     private void clearSelection() {
         endHoverHexPreview();
         selectedRobot = null;
+        lockedRobotInfoHex = null;
         infoSkillMode = false;
         infoHexMode = false;
         if (infoToggleButton != null)
@@ -1319,8 +1324,11 @@ public class GameScreen extends Screen {
     }
 
     private void onHexHovered(Hexagon hex) {
-        if (!shouldPreviewHexOnHover()) {
+        if (lockedRobotInfoHex == hex) {
             return;
+        }
+        if (lockedRobotInfoHex != null && lockedRobotInfoHex != hex) {
+            lockedRobotInfoHex = null;
         }
         hoverHexPreviewActive = true;
         showTerrainInfo(hex);
@@ -1338,19 +1346,11 @@ public class GameScreen extends Screen {
         restoreInfoPanelAfterHover();
     }
 
-    private boolean shouldPreviewHexOnHover() {
-        if (game.getPhase() != GamePhase.COMBAT || selectedRobot == null) {
-            return false;
-        }
-        if (selectionMode == SelectionMode.MOVE) {
-            return true;
-        }
-        return selectionMode == SelectionMode.SKILL
-                && selectedRobot.getSkill() != null
-                && selectedRobot.getSkill().getType() == SkillType.MOVEMENT;
-    }
-
     private void restoreInfoPanelAfterHover() {
+        if (game.getPhase() == GamePhase.DEPLOYING) {
+            updateDeployHud();
+            return;
+        }
         if (selectedRobot != null) {
             updateRobotInfoPanel(selectedRobot);
             return;
