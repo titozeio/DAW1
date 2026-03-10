@@ -47,6 +47,7 @@ class UiCoverageBoostTest {
         } catch (IllegalStateException ignored) {
             // JavaFX toolkit already initialized.
         }
+        Screen.setAnimationsEnabled(false);
     }
 
     static class TestGame extends Game {

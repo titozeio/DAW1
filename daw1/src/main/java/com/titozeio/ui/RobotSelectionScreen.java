@@ -500,6 +500,10 @@ public class RobotSelectionScreen extends Screen {
     }
 
     private Media loadConceptAnimation(RobotTemplate template) {
+        if (!Screen.areAnimationsEnabled()) {
+            return null;
+        }
+
         String file;
         switch (template) {
             case VICTORY_SABER:
@@ -524,7 +528,17 @@ public class RobotSelectionScreen extends Screen {
                 return null;
         }
         var res = getClass().getResource("/com/titozeio/animations/" + file);
-        return res == null ? null : new Media(res.toExternalForm());
+        if (res == null) {
+            return null;
+        }
+
+        try {
+            return new Media(res.toExternalForm());
+        } catch (Throwable t) {
+            // Falla en CI/headless si el sistema no soporta códecs MP4 o el módulo Media
+            System.err.println("[RobotSelectionScreen] No se pudo cargar animación: " + file);
+            return null;
+        }
     }
 
     private void updateConceptVisual(RobotTemplate template) {
