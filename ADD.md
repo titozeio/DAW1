@@ -15,6 +15,7 @@
 - [4. Diseño del Tablero](#4-diseño-del-tablero)
   - [4.1 Estilo del mapa](#41-estilo-del-mapa)
   - [4.2 Hexágonos](#42-hexágonos)
+    - [Estilo Recomendado: "Flat Industrial High-Contrast".](#estilo-recomendado-flat-industrial-high-contrast)
   - [4.3 Tipos de terreno](#43-tipos-de-terreno)
     - [Terreno normal](#terreno-normal)
     - [Vegetación espesa](#vegetación-espesa)
@@ -26,8 +27,10 @@
   - [5.3 Estilo de paneles](#53-estilo-de-paneles)
   - [5.4 Indicadores](#54-indicadores)
     - [Barra de vida (HP)](#barra-de-vida-hp)
+  - [5.5 Iconos](#55-iconos)
     - [Robot seleccionado](#robot-seleccionado)
     - [Robots agotados](#robots-agotados)
+  - [5.6 Referencias de "Sensación" (UX) (a futuro)](#56-referencias-de-sensación-ux-a-futuro)
 - [6. Efectos Visuales](#6-efectos-visuales)
   - [Daño](#daño)
   - [Habilidades](#habilidades)
@@ -39,7 +42,8 @@
   - [Efectos](#efectos)
 - [9. Limitaciones del MVP](#9-limitaciones-del-mvp)
 - [10. Design Language (Lenguaje de Diseño)](#10-design-language-lenguaje-de-diseño)
-  - [10.1 Filosofía general](#101-filosofía-general)
+  - [10.1 Filosofía general del tipo Battletech:](#101-filosofía-general-del-tipo-battletech)
+  - [10.2 Filosofía general del tipo Robotech:](#102-filosofía-general-del-tipo-robotech)
   - [10.2 Categorías de Silueta](#102-categorías-de-silueta)
     - [1. Mechs tipo "Tanque con patas"](#1-mechs-tipo-tanque-con-patas)
     - [2. Mechs semi-humanoides](#2-mechs-semi-humanoides)
@@ -88,7 +92,7 @@ El objetivo del arte de **Devastation AI Wars 1** es representar batallas tácti
 
 El estilo visual busca un equilibrio entre:
 
-- **Realismo militar industrial**
+- **Estilo militar industrial**
 - **Escala y potencia visual**
 - **Siluetas claras y reconocibles**
 
@@ -111,7 +115,7 @@ Elementos característicos:
 - cables y conexiones visibles
 - sensores ópticos y cámaras
 
-Los robots deben transmitir **robustez y funcionalidad**, como máquinas diseñadas exclusivamente para el combate.
+Los robots deben transmitir **robustez y funcionalidad**, como máquinas diseñadas para el combate.
 
 También se busca transmitir **escala y peso**, mediante:
 
@@ -204,19 +208,8 @@ Esto justifica:
 
 ## 4.1 Estilo del mapa
 
-El mapa representa un **campo de batalla abandonado o zona de conflicto industrial**.
-
-Elementos visuales posibles:
-
-- instalaciones industriales en ruinas
-- estructuras metálicas
-- restos de maquinaria
-- carreteras destruidas
-- vegetación invadiendo instalaciones
-
-La estética debe reforzar la sensación de **campo de batalla post-industrial**.
-
----
+En un futuro hay planes para diversos mapas. Desde zonas áridas, ciudades destruidas, complejos industriales...
+Por ahora solo tenemos un mapa que representa una **zona árida con montañas, río/lago, mesetas y zonas boscosas**.
 
 ## 4.2 Hexágonos
 
@@ -227,6 +220,7 @@ Los hexágonos deben ser:
 - visibles
 - discretos
 - no intrusivos visualmente
+El mapa estará conformado por hexágonos pointy-top de unos 100x100 pixeles. Eso hace que cualquier detalle pequeño genere más ruido que aportar riqueza visual.
 
 Recomendaciones visuales:
 
@@ -239,7 +233,14 @@ Evitar:
 - grids demasiado gruesos
 - texturas demasiado complejas que dificulten la lectura del mapa.
 
----
+### Estilo Recomendado: "Flat Industrial High-Contrast".
+
+Este estilo se basa en formas geométricas claras, paletas de colores desaturadas pero con acentos de luz (neones o indicadores) y superficies lisas.
+1. **El Concepto Visual: "Diorama Táctico"**
+   Imagina que el mapa no es un paisaje realista, sino una mesa de guerra holográfica o física de alta tecnología.Bordes biselados (Bevel): En lugar de texturas de tierra o hierba, usa bordes sutilmente resaltados en los hexágonos para dar profundidad sin usar líneas negras gruesas.
+2. **Micro-detalles funcionales:**
+   Piedras o briznas de hierba (pequeñas líneas de panel, tornillos o rejillas de ventilación en mapas futuros).
+
 
 ## 4.3 Tipos de terreno
 
@@ -247,9 +248,9 @@ Evitar:
 
 Aspecto:
 
-- tierra
-- roca
-- hormigón
+- tierra (mapa actual)
+- roca (futuro)
+- hormigón (futuro)
 
 Colores:
 
@@ -292,14 +293,11 @@ En niveles más profundos el agua se vuelve visualmente **más oscura**.
 
 Las diferencias de altura se representan mediante:
 
-- colinas
-- acantilados
-- plataformas
-- desniveles
+- Representación "meta": Ligera elevación de altura del hexágono sobre los hexágonos normales. Como si el haxágono sobresaliera ligeramente en 3d verticalmente en el tablero. Cuanto mayor sea la altura, más se elevará el hexágono.
+- Representación "interna": Colinas, montículos, etc. para elevación 1. Mesetas para 2. Montañas grandes para superiores.
 
 La altura debe percibirse claramente mediante:
 
-- sombras
 - bordes elevados
 - cambio de textura
 
@@ -313,17 +311,21 @@ La interfaz sigue un principio clave:
 
 Inspiraciones:
 
-- interfaces militares
-- HUDs de mechas
-- paneles de control de IA
+- Gears Tactics (sobre todo)
+- Battletech (videojuego).
+- Armroed Core 6.
 
-El objetivo es que la UI **no distraiga del tablero**, pero proporcione toda la información necesaria.
+El objetivo es que la UI **no distraiga del tablero** (ni del resto de pantallas), pero proporcione toda la información necesaria.
+
+**Militarismo Funcional:** Cada línea o recuadro debe parecer que tiene una función técnica (refrigeración, telemetría, estado del chasis).
+
+**Estética "Hard Surface":** Evita los bordes redondeados orgánicos. Usa chaflanes (cortes a 90° o 45°), bordes limpios de 1 pixel o dos, fondos planos, ligeros effectos de glow para hovers y otros efectos.
 
 ---
 
 ## 5.1 Paleta de UI
 
-Colores principales:
+Colores básicos:
 
 | Color               | Uso          |
 | ------------------- | ------------ |
@@ -333,7 +335,13 @@ Colores principales:
 | Amarillo            | Advertencias |
 | Blanco              | Texto        |
 
----
+
+En estos juegos, el color es funcional, no solo estético:
+
+Base: Tonos muy oscuros (Gris carbón, azul petróleo) con un 100% de opacidad para los botones, y un 40-60% de opacidad para paneles.
+
+
+Alertas: Naranja quemado o Rojo sangre (solo para daño crítico o munición baja). Para distintos efectos de combate, colores que tengan sentido. Por ejemplo, el rayo congelador es azulo blanco, el rayo de plasma es rojo, etc.
 
 ## 5.2 Tipografía
 
@@ -353,20 +361,14 @@ Características:
 
 ---
 
+**Alternativa más limpia aun:**
+Usa fuentes Sans-Serif monoespaciadas (tipo Roboto Mono o JetBrains Mono). Esto da la sensación de código o terminal de datos.
+
 ## 5.3 Estilo de paneles
 
-Los paneles de la interfaz son **semi transparentes** para no ocultar el mapa.
+Misma filosofía que botones: paneles limpios, cortes de 90 grados, bordes grises de 1 o 2 pixeles. Fondo de color azul oscuro con un alfa del 40-60%.
 
-Ejemplo visual:
-background: rgba(0,0,0,0.4)
-border: 1px solid rgba(78,226,201,0.4)
-
-
-Características:
-
-- bordes suaves
-- iluminación sutil
-- estilo tecnológico
+Para algunos marcos de imágene so animaciones (como los de caras de robots o concepts) fondo transparante con 1 o 2 pixeles mayor que el contenido y luego el borde, para dejar aire entre el continente y el contenido.
 
 ---
 
@@ -377,22 +379,28 @@ Características:
 Cada robot tiene una barra de vida segmentada.
 
 - cada segmento representa **1 HP**
+- Los segmentos son cuadrados y separados entre sí por 1 pixel.
+- Un marco de exactamente 1 pixel de color gris (como el de los botones y paneles) enmarca todos los segmentos, como si fuera el borde de la barra.
+- Cuando el robot pierde vida, el segmento no se pierde, se le aplica un alfa de 30-60%.
 
-Colores:
+Colores: 
 
-- verde → HP alto
-- amarillo → HP medio
-- rojo → HP crítico
+- segmento de vida: verde (porbar con azul oscuro como los botones por coherencia)
+- Marco: gris del mismo tipo que el borde de los botones.
 
 ---
+## 5.5 Iconos
+
+A la hora del pulido se irán incorporando iconos a distintos elementos del juego. Prioridades: flechas >> skills >> acciones (movimiento/ataque) >> aspas >> check >> música >> sfx >> barras de progreso/hp
+
 
 ### Robot seleccionado
 
 Un robot seleccionado se resalta mediante:
 
-- halo turquesa
 - contorno luminoso
 - ligera iluminación
+- Hexágono en el que está, destacado.
 
 ---
 
@@ -405,6 +413,14 @@ Cuando un robot ha usado todas sus acciones:
 - no puede volver a seleccionarse
 
 ---
+
+## 5.6 Referencias de "Sensación" (UX) (a futuro)
+
+Delay de carga: Los menús no aparecen de golpe; se "dibujan" mediante líneas de escaneo en 0.1s.
+
+Glitches: Si el jugador recibe un impacto fuerte, la UI debe parpadear o mostrar estática momentánea.
+
+Sonido: Clicks metálicos, pitidos de baja frecuencia y ruido de estática al navegar.
 
 # 6. Efectos Visuales
 
@@ -434,14 +450,14 @@ Cuando un robot recibe daño:
 
 ## Habilidades
 
-Cada habilidad tiene **un color característico** para facilitar su identificación.
+Cada habilidad tiene **un color característico** para facilitar su identificación en función del tipo:
 
-| Skill                 | Color      |
-| --------------------- | ---------- |
-| Retropropulsores      | azul       |
-| Sable de plasma       | naranja    |
-| Misiles teledirigidos | amarillo   |
-| Rayo congelador       | azul claro |
+- Ataque: rojo.
+- Movimiento: Azul.
+- Reparación / curación: verde.
+
+Además, cada skill tiene un icono representativo asociado que apercerá en distintas partes (bottón de skill, panel de info,...).
+
 
 ---
 
@@ -483,7 +499,9 @@ Tiles para:
 - terreno normal
 - vegetación
 - agua
-- niveles de altura
+- agua profunda
+- altura 1
+- altura 2
 
 ---
 
@@ -533,15 +551,14 @@ En futuras versiones se podrían incluir:
 
 # 10. Design Language (Lenguaje de Diseño)
 
-El diseño de los robots de **Devastation AI Wars 1** está fuertemente inspirado en el estilo de **mechs militares industriales**, con una clara influencia de universos como *Battletech* y, en menor medida, *Pacific Rim*.
-
-El objetivo es que los robots se perciban como **máquinas de guerra funcionales**, no como personajes estilizados o heroicos.
+El diseño de los robots de **Devastation AI Wars 1** está fuertemente inspirado en el estilo de **mechs militares industriales**, con una clara influencia de universos como *Battletech* y, en menor medida, *Robotech*. 
+En realidad, por lore, podemos encontrar robots muy del estilo Battletech (figuras funcionales, muy militares orientadas, estética muy occidental, pintures de camuflaje) y otros robots muy del estilo Robotech (más humanoides, más tipo "heroico" y detalles fantásticos no tan funcionales).
 
 El lenguaje de diseño se basa en los siguientes principios.
 
 ---
 
-## 10.1 Filosofía general
+## 10.1 Filosofía general del tipo Battletech:
 
 Los robots deben parecer:
 
@@ -564,7 +581,27 @@ Evitar:
 - proporciones exageradamente humanas
 - estética demasiado "anime"
 
----
+## 10.2 Filosofía general del tipo Robotech:
+
+Los robots deben parecer:
+
+- Predominantemente humanoides
+- Colores acordes a su lore y no necesariamente de camuflaje.
+- Elementos decorativos que realcen el heroismo.
+- DEtalles de desgaste, pero no tanto como los del otro tipo.
+
+Elementos comunes:
+
+- placas de blindaje gruesas
+- armas no integradas en el chasis
+- caras muy tipo Robotech, transformers o incluso Mazinger.
+
+Evitar:
+
+- diseños demasiado tipo maquinaria
+- estética demasiado "occidental"
+
+
 
 ## 10.2 Categorías de Silueta
 
@@ -615,8 +652,9 @@ Sensación visual:
 
 Inspirados en:
 
-- Phoenix Hawk
-- Black Knight
+- Mazinger Z
+- Optimus Prime
+- Victory Saber
 
 Características:
 
@@ -627,7 +665,7 @@ Características:
 
 Sensación visual:
 
-**caballero mecánico futurista**
+**robot heroico futurista un poco anime**
 
 ---
 
@@ -714,18 +752,21 @@ Inspiración:
 
 - caballeros mecánicos
 - mechs humanoides clásicos
+- Victory Saber y Optimus Prime (de las sagas de Transformers de los 80)
 
 Concepto visual:
 
-Saber Prime es un robot de vanguardia con una silueta heroica y atlética, inspirado en la estética clásica de los grandes mechas pero con tecnología militar moderna.
+Saber Prime es un robot de vanguardia con una silueta heroica y atlética, inspirado en la estética clásica de los mechas anime.
 
 Características visuales:
 
 - Cabeza inspirada en el estilo icónico de "Victory Saber" (antenas/máscara).
-- Torso blindado estilizado (menos 'bulky').
+- Torso blindado estilizado pero robusto.
 - Brazos completos y atléticos.
 - Sable de plasma de energía pura y chisporroteante en la mano derecha.
 - Cañón de plasma compacto en la mano izquierda.
+- Colores azul y rojo
+- Mini retropropulsores (no funcionales) en la espalda con pequeños alerones.
 
 Sensación visual:
 
@@ -746,14 +787,15 @@ Concepto visual:
 
 Bullseye es un robot diseñado exclusivamente para **ataque a distancia**.
 
-En lugar de brazos convencionales, sus extremidades superiores han sido sustituidas por **dos enormes cañones automáticos rotatorios**.
+En lugar de brazos convencionales, sus extremidades superiores han sido sustituidas por **dos enormes cañones automáticos**.
 
 Características visuales:
 
 - torso compacto
-- cañón automático principal y ópticas de precisión
+- cañones automáticos enormes en lugar de brazos y ópticas de precisión
 - sensor óptico central de color ROJO INTENSO con efecto lens flare
 - piernas relativamente ligeras y móviles
+- Pintura de camuflaje gris y verde claro.
 
 Sensación visual:
 
@@ -784,8 +826,11 @@ Características visuales:
 
 - torso masivo
 - blindaje muy grueso
-- brazo utilitario con herramientas de reparación
-- módulos de nanobots integrados
+- módulos de nanobots integrados en el dorso de los antebrazos.
+- Cabeza pequeña, plana, sin cuello, casi incrustada en el pecho. 
+- El ojo es una tira horizontal celeste.
+- Cañón láser enorme en el hombro derecho.
+- Pintura de camuflaje verde oliva / verde oscuro.
 
 Sensación visual:
 
@@ -815,9 +860,10 @@ Su estructura es:
 Características visuales:
 
 - piernas largas de estilo digitígrado
-- retropropulsores de plasma azul en la espalda
-- cañón automático integrado en el brazo derecho
+- retropropulsores de plasma azul en la espalda que le perimten realizar saltos que casi podrían ser vuelo.
+- cañón automático integrado en el brazo izquierdo.
 - array multisensor cian en la cabeza
+- Pintura de camuflaje color marrópn tierra y verde oliva.
 
 Sensación visual:
 
@@ -847,11 +893,11 @@ Su estructura es:
 Características visuales:
 
 - blindaje negro obsidiana y gris carbón (monocromático)
-- silueta medieval-gótica (inspirada en Black Knight de Elden Ring)
-- cabeza híbrida con boca tipo Mazinger (rejilla horizontal) y sin cuernos laterales
-- ojos/sensores rojo intenso con lens flare
+- silueta medieval-gótica (inspirada en Night Rider de Elden Ring), pero sin pinchos.
+- cabeza híbrida con boca tipo Mazinger (rejilla vertical) y sin cuernos laterales, con una "cresta" metálica (parecida  a la que lleva Chichi de niña pequeña en Dragon Ball, pero negra y con la joya del centro de color rojo oscuro).
+- ojos/sensores rojo intenso con lens flare.
 - pies sobredimensionados con retropropulsores integrados en los TALONES
-- martillo gigantesco con motores de cohete activos
+- martillo gigantesco con motores de cohete.
 
 Sensación visual:
 
@@ -861,16 +907,16 @@ Sensación visual:
 
 ## 11.6 Ice Age
 
-**Tipo de silueta:** Semi-humanoide angular
+**Tipo de silueta:** humanoide angular
 
 Inspiración:
 
 - mechs tecnológicos
-- plataformas de armamento especializado
+- humanoides de armamento especializado
 
 Concepto visual:
 
-Ice Age tiene un diseño **muy angular y agresivo**, con placas de blindaje en forma de cuña.
+Ice Age tiene un diseño **muy angular y agresivo**, con placas de blindaje en forma de cuña. Hombreras con esa forma.
 
 Su arma principal es un **rifle criogénico pesado**, sostenido con ambos brazos.
 
@@ -879,7 +925,7 @@ Características visuales:
 - armadura blanco ártico y azul marino
 - rifle criogénico técnico de alta precisión con tubos de refrigeración
 - lanzamisiles de hombro compactos
-- casco técnico con visor de línea horizontal única (estilo Robocop) en azul intenso
+- casco técnico con visor de línea horizontal única (estilo Robocop) en azul celeste intenso con lens flare
 
 Sensación visual:
 
@@ -964,7 +1010,7 @@ Paleta:
 - rojo vibrante (acentos)
 - metal expuesto y arañazos de veteranía
 - energía pura chisporroteante (sable)
-- ojos/sensores rojos con lens flare
+- ojos azules
 
 Sensación:
 
@@ -1020,7 +1066,7 @@ Paleta:
 
 - negro obsidiana y gris carbón (monocromático)
 - NO USAR ROJO en armadura
-- ojos/sensores rojo intenso con lens flare
+- ojos rojo intenso con lens flare
 - fuego naranja de los propulsores (martillo y talones)
 
 Sensación:
@@ -1035,7 +1081,7 @@ Paleta:
 
 - blanco ártico (base)
 - azul marino oscuro (acentos)
-- sensores AZUL INTENSO con lens flare
+- sensores AZUL CELESTE INTENSO con lens flare
 - línea de visor horizontal única
 
 Sensación:
@@ -1045,103 +1091,25 @@ Sensación:
 ---
 
 # 14. Concept Art Prompts
-
-Esta sección define **prompts de concept art** que pueden utilizarse para generar ilustraciones de los robots mediante herramientas de IA.
-
-Objetivo:
-
-- crear referencias visuales
-- generar concept art rápido
-- mantener coherencia estética
-
-Estilo base recomendado:
-
-- realistic mech design
-- industrial military mech
-- heavy armor
-- battletech inspired
-- cinematic lighting
-- weathered paint, scratches, impact marks, exposed metal
-- no faction insignias, no logos, no decals inventados
-
----
+//TODO: Rehacer. Esta parte estaba regular y no conseguía consistencia cuando intentaba replicar con otras formas/poses intentos posteriores.
+Guardar cada prompt exitoso.
 
 ## 14.1 Saber Prime
 
-```text
-Hard-surface mecha concept art sheet, strict canon.
-Robot: Saber Prime. Vanguard humanoid mech with heroic/athletic silhouette.
-Mandatory: crackling energy plasma saber in RIGHT hand, 'Victory Saber' inspired head.
-Palette: VIBRANT royal blue base, red accents, battle-worn edges.
-Sensors: Glowing red eyes with lens flare.
-Style: Battletech/Pacific Rim military-industrial, heroic anime influence.
-Output: full body front / 3-4 / back, neutral pose, clean background.
-```
-
 ## 14.2 Bullseye
 
-```text
-Hard-surface mecha concept art sheet, strict canon.
-Robot: Bullseye. Glass-cannon artillery platform.
-Mandatory: centralized VIBRANT RED optic sensor with lens flare.
-Silhouette: compact torso, integrated automatic cannons as arms.
-Palette: dark gray + olive camouflage, heavy industrial weathering.
-Style: Battletech military-industrial, realistic battle damage.
-Output: full body front / 3-4 / back, neutral pose, clean background.
-```
 
 ## 14.3 Bulwark
 
-```text
-Hard-surface mecha concept art sheet, strict canon.
-Robot: Bulwark. Heavy support and survival unit.
-Mandatory: right shoulder laser cannon, visible repair nanobot utility modules.
-Silhouette: broad, bulky, armored, slow but stable.
-Palette: olive green camouflage, steel gray joints, cyan technical lights.
-Style: Battletech/Pacific Rim military-industrial, scratched armor, impact marks.
-No faction insignias, no logos, no agile assassin proportions.
-Output: full body front / 3-4 / back, neutral pose, clean background.
-```
 
 ## 14.4 Scout
 
-```text
-Hard-surface mecha concept art sheet, strict canon.
-Robot: Scout. Lightweight recon and rapid flanking unit.
-Mandatory: automatic cannon integrated in right arm, back retro-thrusters.
-Silhouette: slim, agile, long legs, compact torso.
-Palette: brown + green camouflage, light metallic wear.
-Style: Battletech/Pacific Rim military-industrial with realistic dirt and scratches.
-No faction insignias, no logos, no heavy tank silhouette.
-Output: full body front / 3-4 / back, neutral pose, clean background.
-```
-
 ## 14.5 Death Knight
 
-```text
-Hard-surface mecha concept art sheet, strict canon.
-Robot: Death Knight. Medieval-gothic assault mech.
-Mandatory: giant two-handed propelled war hammer, rocket thrusters in HEELS, no back thrusters.
-Silhouette: Elden Ring 'Black Knight' inspired plate armor, massive shoulders.
-Face: Hybrid Mazinger style (vents/crest), NO horns.
-Sensors: Glowing red eyes/slots with lens flare.
-Palette: Monochromatic obsidian black and charcoal gray. Heavy battle damage.
-Style: Cinematic military-industrial with dark fantasy silhouette.
-Output: full body front / 3-4 / back, neutral pose, clean background.
-```
+
 
 ## 14.6 Ice Age
 
-```text
-Hard-surface mecha concept art sheet, strict canon.
-Robot: Ice Age. Angular aggressive control unit.
-Mandatory: two-handed cryo rifle, shoulder cluster missile launchers.
-Silhouette: angular semi-humanoid, tactical medium frame.
-Palette: white + light blue + dark blue.
-Style: Battletech/Pacific Rim military-industrial, realistic weathering and chipped paint.
-No faction insignias, no logos, no extra melee weapons.
-Output: full body front / 3-4 / back, neutral pose, clean background.
-```
 
 ## 14.7 Gemini Quick Prompts (1 línea)
 
@@ -1166,63 +1134,14 @@ Ice Age — concept sheet front/3-4/back, industrial technical, streamlined angu
 
 ## 14.8 Prompt UI Kit (Gemini)
 
-Prompt recomendado para generar un kit completo de UI coherente con DAW1:
-
-```text
-Generate a complete UI kit for a turn-based tactical mech game (JavaFX desktop, 16:9), focused on clarity and military-industrial style.
-
-STYLE DIRECTION:
-- Clean modern UI, not pixel art
-- Military-industrial sci-fi, inspired by Battletech/Pacific Rim interfaces
-- Functional, readable, tactical
-- Subtle wear on frames/panels (light scratches), but keep text areas clean
-- No faction insignias, no random logos, no placeholder gibberish text
-
-COLOR / MATERIAL:
-- Dark graphite and steel base panels
-- Cyan/teal accents for interactive elements
-- Orange/red for warnings and enemy states
-- Green/yellow/red HP states
-- High contrast and accessibility-first readability
-
-DELIVERABLE (single coherent UI kit):
-1. Primary buttons: normal, hover, pressed, disabled
-2. Secondary buttons and icon buttons (pause, end turn, skill)
-3. Panel system: card panel, HUD panel, modal/overlay panel, tooltip panel
-4. Labels and badges: turn indicator, objective badge, cooldown badge, selected state badge
-5. Bars/meters: HP bar segmented, cooldown bar, progress bar
-6. Tabs and list items for combat log
-7. Hex highlight overlays (movement, attack, skill) with clear distinct colors
-8. Selection frames for robot cards (normal/selected/disabled)
-9. Window background plates and separators/dividers
-10. End-of-match victory modal with title, reason, turn number
-
-LAYOUT PREVIEWS TO INCLUDE:
-- Main menu screen mockup
-- Robot selection screen mockup (cards + description panel + confirm button)
-- Combat screen HUD mockup (top turn/objective, right info panel, bottom combat log, map overlays)
-- Victory popup mockup
-
-TECHNICAL CONSTRAINTS:
-- Flat/semi-flat assets suitable for slicing in JavaFX
-- Export-friendly, no baked perspective distortion in UI components
-- Consistent spacing system (8px grid feel)
-- Components reusable and modular
-- IMPORTANT: most image generators do not handle transparency well. Do NOT use transparent backgrounds. Place all UI assets over a single uniform chroma background color (#00FF00), with no gradients and no background shadows, so elements can be cut out easily.
-
-OUTPUT FORMAT:
-- Clean UI kit sheet + 3 screen mockups
-- Background must stay solid chroma green (#00FF00) across all outputs
-- Resolution target: 1920x1080 reference
-```
----
+//TODO: Lo mismoq ue con los otros prompts. Pendiente encontrar algo consistente.
 
 # 15. Futuras ampliaciones del apartado artístico
 
 En versiones futuras del proyecto el apartado artístico podría ampliarse con:
 
-- facciones con esquemas de color propios
-- variaciones visuales de los robots
+- facciones con esquemas de color propios y estilos de robots propios.
+- Nuevos modelos de robots
 - skins alternativas
 - efectos visuales más complejos
 - animaciones avanzadas
