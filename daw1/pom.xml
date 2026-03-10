@@ -173,6 +173,10 @@
               <includes>
                 <include>com/titozeio/**</include>
               </includes>
+              <excludes>
+                <!-- JavaFX UI: difícil de cubrir de forma robusta en CI/headless -->
+                <exclude>com/titozeio/ui/**</exclude>
+              </excludes>
             </configuration>
           </execution>
           <execution>
@@ -196,7 +200,7 @@
                     <limit>
                       <counter>INSTRUCTION</counter>
                       <value>COVEREDRATIO</value>
-                      <minimum>0.70</minimum>
+                      <minimum>0.80</minimum>
                     </limit>
                   </limits>
                 </rule>
