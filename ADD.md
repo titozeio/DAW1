@@ -30,7 +30,8 @@
   - [5.5 Iconos](#55-iconos)
     - [Robot seleccionado](#robot-seleccionado)
     - [Robots agotados](#robots-agotados)
-  - [5.6 Referencias de "Sensación" (UX) (a futuro)](#56-referencias-de-sensación-ux-a-futuro)
+  - [5.6 Claves para la Generación (Prompts)](#56-claves-para-la-generación-prompts)
+  - [5.7 Referencias de "Sensación" (UX) (a futuro)](#57-referencias-de-sensación-ux-a-futuro)
 - [6. Efectos Visuales](#6-efectos-visuales)
   - [Daño](#daño)
   - [Habilidades](#habilidades)
@@ -413,8 +414,18 @@ Cuando un robot ha usado todas sus acciones:
 - no puede volver a seleccionarse
 
 ---
+## 5.6 Claves para la Generación (Prompts)
 
-## 5.6 Referencias de "Sensación" (UX) (a futuro)
+Evitar palabras como "hyper-realistic" o "detailed". Usar términos de diseño industrial y minimalismo:
+
+Palabras clave: Isometric hexagonal tile, flat design, hard surface, industrial minimalism, sci-fi modular architecture, matte finish, bevelled edges, low-frequency detail.
+
+A evitar: Photorealistic, messy, organic textures, high grain, grass, mud.
+
+4. La Regla de Oro: El "Espacio Negativo"
+A 100 px, cada hexágono debe tener al menos un 60-70% de color plano o degradado muy suave. El detalle (una rejilla, un cable, una luz) debe ocupar solo el 30% restante y preferiblemente estar cerca de los bordes del hexágono. Esto crea un "marco" natural que ayuda al ojo a distinguir la rejilla táctica sin esfuerzo.
+
+## 5.7 Referencias de "Sensación" (UX) (a futuro)
 
 Delay de carga: Los menús no aparecen de golpe; se "dibujan" mediante líneas de escaneo en 0.1s.
 
