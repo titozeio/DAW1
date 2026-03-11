@@ -189,6 +189,12 @@ public class GameScreen extends Screen {
     private boolean infoHexMode = false;
     private boolean hoverHexPreviewActive = false;
     private Hexagon lockedRobotInfoHex;
+    /** Direcciones axiales (pointy-top) para cálculos de movimiento. */
+    private static final int[][] AXIAL_DIRS = {
+            { 1, 0 }, { -1, 0 },
+            { 0, 1 }, { 0, -1 },
+            { 1, -1 }, { -1, 1 }
+    };
 
     // ── Factory ───────────────────────────────────────────────────────────────
     /**
@@ -757,11 +763,19 @@ public class GameScreen extends Screen {
             // Skill de movimiento: mueve al robot
             GameCommand skillMoveCmd = new SkillCommand(selectedRobot, hex);
             ActionManager.getInstance().executeCommand(skillMoveCmd);
+            lockedRobotInfoHex = selectedRobot.getPosition();
             addLogMessage(skillMoveCmd.getDescription());
         }
 
         SoundManager.play(SoundManager.UI_ABILITY_COOLDOWN);
-        clearSelection();
+        if (isAttackSkill) {
+            clearSelection();
+        } else {
+            if (!selectedRobot.isUsedAttack())
+                enterAttackMode();
+            else
+                clearSelection();
+        }
         checkAndShowVictory("eliminación");
     }
 
@@ -795,7 +809,7 @@ public class GameScreen extends Screen {
 
     /**
      * Para skills de MOVIMIENTO: casillas vacías a las que el robot puede saltar
-     * usando el radio especial de la skill (JetpackBoost=3, TurboPropulsion=7).
+     * usando el radio especial de la skill (JetpackBoost=3, TurboPropulsion=5).
      * Las skills de movimiento ignoran restricciones normales de terreno/altura.
      */
     private Set<Hexagon> getSkillMovementTargets(Robot robot) {
@@ -811,6 +825,10 @@ public class GameScreen extends Screen {
         if (origin == null)
             return results;
 
+        if (skill instanceof TurboPropulsion) {
+            return getSkillMovementTargetsWithTerrain(robot, skillRange);
+        }
+
         for (Hexagon[] row : game.getMap().getGrid()) {
             for (Hexagon hex : row) {
                 if (hex == null || hex.isOccupied() || hex == origin)
@@ -821,6 +839,67 @@ public class GameScreen extends Screen {
             }
         }
         return results;
+    }
+
+    private Set<Hexagon> getSkillMovementTargetsWithTerrain(Robot robot, int maxMP) {
+        Hexagon origin = robot.getPosition();
+        if (origin == null)
+            return new HashSet<>();
+
+        java.util.Map<Hexagon, Integer> dist = new java.util.HashMap<>();
+        dist.put(origin, 0);
+        java.util.PriorityQueue<HexNode> queue = new java.util.PriorityQueue<>();
+        queue.add(new HexNode(origin, 0));
+
+        while (!queue.isEmpty()) {
+            HexNode current = queue.poll();
+            if (current.cost >= maxMP)
+                continue;
+
+            for (int[] dir : AXIAL_DIRS) {
+                int nq = current.hex.getQ() + dir[0];
+                int nr = current.hex.getR() + dir[1];
+                Hexagon neighbor = game.getMap().getHexagon(nq, nr);
+                if (neighbor == null)
+                    continue;
+                if (neighbor.getTerrain() == TerrainType.WATER_DEEP)
+                    continue;
+                if (!neighbor.isReachableFrom(current.hex.getHeight()))
+                    continue;
+                if (neighbor.isOccupied())
+                    continue;
+
+                int moveCost = current.cost
+                        + neighbor.getMovementCost(robot, current.hex.getHeight());
+                if (moveCost <= maxMP) {
+                    Integer prev = dist.get(neighbor);
+                    if (prev == null || moveCost < prev) {
+                        dist.put(neighbor, moveCost);
+                        queue.add(new HexNode(neighbor, moveCost));
+                    }
+                }
+            }
+        }
+
+        Set<Hexagon> reachable = new HashSet<>(dist.keySet());
+        reachable.remove(origin);
+        return reachable;
+    }
+
+    /** Nodo auxiliar para Dijkstra en skills de movimiento. */
+    private static class HexNode implements Comparable<HexNode> {
+        final Hexagon hex;
+        final int cost;
+
+        HexNode(Hexagon hex, int cost) {
+            this.hex = hex;
+            this.cost = cost;
+        }
+
+        @Override
+        public int compareTo(HexNode other) {
+            return Integer.compare(this.cost, other.cost);
+        }
     }
 
     /**
@@ -1333,6 +1412,13 @@ public class GameScreen extends Screen {
     }
 
     private void onHexHovered(Hexagon hex) {
+        if (game.getPhase() == GamePhase.DEPLOYING) {
+            if (hex.isOccupied()) {
+                updateRobotInfoPanel(hex.getOccupant());
+                hoverHexPreviewActive = true;
+            }
+            return;
+        }
         if (lockedRobotInfoHex == hex) {
             return;
         }
