@@ -161,7 +161,7 @@
                   <!-- Registro de Combate (Log) -->
                   <VBox fx:id="logPanelBox" alignment="BOTTOM_LEFT" prefHeight="36.0" minHeight="36.0" maxHeight="36.0" prefWidth="420.0" spacing="5.0" style="-fx-background-color: rgba(0, 0, 0, 0.4); -fx-background-radius: 6;">
                      <children>
-                        <ScrollPane fx:id="logScrollPane" fitToWidth="true" hbarPolicy="NEVER" prefHeight="130.0" vbarPolicy="ALWAYS" visible="false" managed="false">
+                        <ScrollPane fx:id="logScrollPane" fitToWidth="true" hbarPolicy="NEVER" prefHeight="130.0" vbarPolicy="NEVER" visible="false" managed="false" styleClass="log-scroll-pane">
                            <content>
                               <VBox fx:id="combatLogContent" spacing="2.0">
                                  <!-- Las líneas de log se añadirán aquí dinámicamente -->

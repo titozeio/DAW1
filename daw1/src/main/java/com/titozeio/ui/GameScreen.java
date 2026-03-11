@@ -1075,6 +1075,13 @@ public class GameScreen extends Screen {
         }
         logScrollPane.setManaged(logExpanded);
         logScrollPane.setVisible(logExpanded);
+        // Desactivar mouseTransparent si está expandido para capturar el scroll del
+        // ratón
+        logScrollPane.setMouseTransparent(!logExpanded);
+        if (combatLogContent != null) {
+            combatLogContent.setMouseTransparent(!logExpanded);
+        }
+
         logToggleButton.setText(logExpanded ? "-" : "+");
         if (logPanelBox != null) {
             logPanelBox.setAlignment(javafx.geometry.Pos.BOTTOM_LEFT);
