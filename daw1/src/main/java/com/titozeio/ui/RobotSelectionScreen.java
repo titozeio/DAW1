@@ -7,6 +7,7 @@ import com.titozeio.engine.RobotFactory;
 import com.titozeio.enums.RobotTemplate;
 import com.titozeio.model.Weapon;
 import com.titozeio.skills.Skill;
+import com.titozeio.engine.SoundManager;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.PauseTransition;
@@ -59,6 +60,8 @@ public class RobotSelectionScreen extends Screen {
     private ImageView conceptImageView;
     @FXML
     private MediaView conceptMediaView;
+    @FXML
+    private javafx.scene.layout.VBox conceptLoadingOverlay;
     @FXML
     private StackPane conceptVisualContainer;
     @FXML
@@ -144,6 +147,8 @@ public class RobotSelectionScreen extends Screen {
     private MediaPlayer conceptMediaPlayer;
     private PauseTransition conceptReplayPause;
     private boolean conceptWaitingReplay = false;
+    private java.util.Map<RobotTemplate, Media> mediaCache = new java.util.HashMap<>();
+    private Timeline loadingPulse;
 
     /**
      * Ejecuta la logica de create.
@@ -542,15 +547,38 @@ public class RobotSelectionScreen extends Screen {
     }
 
     private void updateConceptVisual(RobotTemplate template) {
-        Media media = loadConceptAnimation(template);
-        if (media != null && conceptMediaView != null) {
-            playConceptAnimation(media);
-            if (conceptImageView != null) {
-                conceptImageView.setVisible(false);
-                conceptImageView.setManaged(false);
+        // Fallback inmediato a la imagen por si la animación tarda o falla
+        if (conceptImageView != null) {
+            conceptImageView.setImage(loadConceptImage(template));
+            conceptImageView.setVisible(true);
+            conceptImageView.setManaged(true);
+            animateHologramPulse(conceptImageView);
+        }
+
+        // Si las animaciones están desactivadas, nos quedamos en la imagen
+        if (!Screen.areAnimationsEnabled()) {
+            stopConceptMediaPlayback();
+            if (conceptMediaView != null) {
+                conceptMediaView.setVisible(false);
+                conceptMediaView.setManaged(false);
             }
-            conceptMediaView.setVisible(true);
-            conceptMediaView.setManaged(true);
+            return;
+        }
+
+        // Intento de carga de animación (con caché)
+        Media media = mediaCache.computeIfAbsent(template, this::loadConceptAnimation);
+
+        if (media != null && conceptMediaView != null) {
+            // Mostramos el indicador de carga
+            if (conceptLoadingOverlay != null) {
+                conceptLoadingOverlay.setVisible(true);
+                conceptLoadingOverlay.setManaged(true);
+                animateLoadingPulse();
+            }
+            playConceptAnimation(media);
+            // IMPORTANTE: No ocultamos la conceptImageView todavía.
+            // Esperamos a que el MediaPlayer esté READY en playConceptAnimation.
+
             conceptMediaView.setOnMouseClicked(e -> {
                 if (conceptWaitingReplay && conceptMediaPlayer != null) {
                     conceptWaitingReplay = false;
@@ -564,41 +592,86 @@ public class RobotSelectionScreen extends Screen {
             return;
         }
 
+        // Si no hay media, aseguramos que la mediaView y el overlay estén ocultos
         stopConceptMediaPlayback();
         if (conceptMediaView != null) {
             conceptMediaView.setVisible(false);
             conceptMediaView.setManaged(false);
-            conceptMediaView.setMediaPlayer(null);
         }
-        if (conceptImageView != null) {
-            conceptImageView.setVisible(true);
-            conceptImageView.setManaged(true);
-            conceptImageView.setImage(loadConceptImage(template));
-            animateHologramPulse(conceptImageView);
+        if (conceptLoadingOverlay != null) {
+            conceptLoadingOverlay.setVisible(false);
+            conceptLoadingOverlay.setManaged(false);
         }
     }
 
     private void playConceptAnimation(Media media) {
         stopConceptMediaPlayback();
         conceptWaitingReplay = false;
-        conceptMediaPlayer = new MediaPlayer(media);
-        conceptMediaPlayer.setCycleCount(1);
-        conceptMediaView.setMediaPlayer(conceptMediaPlayer);
 
-        conceptMediaPlayer.setOnEndOfMedia(() -> {
-            conceptWaitingReplay = true;
-            conceptReplayPause = new PauseTransition(Duration.seconds(5));
-            conceptReplayPause.setOnFinished(e -> {
-                if (conceptWaitingReplay && conceptMediaPlayer != null) {
-                    conceptWaitingReplay = false;
-                    conceptMediaPlayer.seek(Duration.ZERO);
-                    conceptMediaPlayer.play();
+        try {
+            conceptMediaPlayer = new MediaPlayer(media);
+            conceptMediaPlayer.setVolume(SoundManager.isEnabled() ? 1.0 : 0.0);
+            conceptMediaPlayer.setCycleCount(1);
+            conceptMediaView.setMediaPlayer(conceptMediaPlayer);
+
+            // Transición suave: Solo mostramos el video cuando está listo para reproducir
+            conceptMediaPlayer.setOnReady(() -> {
+                if (conceptMediaView != null) {
+                    conceptMediaView.setVisible(true);
+                    conceptMediaView.setManaged(true);
+                }
+                if (conceptLoadingOverlay != null) {
+                    conceptLoadingOverlay.setVisible(false);
+                    conceptLoadingOverlay.setManaged(false);
+                    stopLoadingPulse();
+                }
+                if (conceptImageView != null) {
+                    conceptImageView.setVisible(false);
+                    conceptImageView.setManaged(false);
                 }
             });
-            conceptReplayPause.play();
-        });
 
-        conceptMediaPlayer.play();
+            // En caso de error en el player (códecs, archivo corrupto...), volvemos a la
+            // imagen
+            conceptMediaPlayer.setOnError(() -> {
+                System.err.println("[RobotSelectionScreen] Error en MediaPlayer: " + conceptMediaPlayer.getError());
+                stopConceptMediaPlayback();
+                if (conceptLoadingOverlay != null) {
+                    conceptLoadingOverlay.setVisible(false);
+                    conceptLoadingOverlay.setManaged(false);
+                    stopLoadingPulse();
+                }
+                if (conceptMediaView != null) {
+                    conceptMediaView.setVisible(false);
+                    conceptMediaView.setManaged(false);
+                }
+                if (conceptImageView != null) {
+                    conceptImageView.setVisible(true);
+                    conceptImageView.setManaged(true);
+                }
+            });
+
+            conceptMediaPlayer.setOnEndOfMedia(() -> {
+                conceptWaitingReplay = true;
+                conceptReplayPause = new PauseTransition(Duration.seconds(5));
+                conceptReplayPause.setOnFinished(e -> {
+                    if (conceptWaitingReplay && conceptMediaPlayer != null) {
+                        conceptWaitingReplay = false;
+                        conceptMediaPlayer.seek(Duration.ZERO);
+                        conceptMediaPlayer.play();
+                    }
+                });
+                conceptReplayPause.play();
+            });
+
+            conceptMediaPlayer.play();
+        } catch (Exception e) {
+            System.err.println("[RobotSelectionScreen] Error al crear MediaPlayer: " + e.getMessage());
+            if (conceptImageView != null) {
+                conceptImageView.setVisible(true);
+                conceptImageView.setManaged(true);
+            }
+        }
     }
 
     private void stopConceptMediaPlayback() {
@@ -817,6 +890,29 @@ public class RobotSelectionScreen extends Screen {
                     label.setText(finalValue);
                 }));
         flicker.play();
+    }
+
+    private void animateLoadingPulse() {
+        stopLoadingPulse();
+        if (conceptLoadingOverlay == null)
+            return;
+
+        loadingPulse = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(conceptLoadingOverlay.opacityProperty(), 0.4)),
+                new KeyFrame(Duration.millis(800), new KeyValue(conceptLoadingOverlay.opacityProperty(), 1.0)),
+                new KeyFrame(Duration.millis(1600), new KeyValue(conceptLoadingOverlay.opacityProperty(), 0.4)));
+        loadingPulse.setCycleCount(Timeline.INDEFINITE);
+        loadingPulse.play();
+    }
+
+    private void stopLoadingPulse() {
+        if (loadingPulse != null) {
+            loadingPulse.stop();
+            loadingPulse = null;
+        }
+        if (conceptLoadingOverlay != null) {
+            conceptLoadingOverlay.setOpacity(1.0);
+        }
     }
 
     @Override

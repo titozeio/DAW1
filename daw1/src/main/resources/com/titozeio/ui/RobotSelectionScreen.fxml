@@ -46,6 +46,14 @@
                      <children>
                         <ImageView fx:id="conceptImageView" fitWidth="378.0" fitHeight="378.0" preserveRatio="true" />
                         <MediaView fx:id="conceptMediaView" fitWidth="378.0" fitHeight="378.0" preserveRatio="true" visible="false" />
+                        <VBox fx:id="conceptLoadingOverlay" alignment="CENTER" spacing="10.0" visible="false" managed="false" styleClass="loading-overlay">
+                           <children>
+                              <Label text="CARGANDO DATOS..." textFill="#57C0EF" styleClass="loading-text">
+                                 <font><Font name="Exo 2 Bold" size="18.0" /></font>
+                              </Label>
+                              <Region prefHeight="2.0" prefWidth="120.0" maxWidth="120.0" styleClass="loading-bar" />
+                           </children>
+                        </VBox>
                      </children>
                   </StackPane>
                   <VBox spacing="10.0" prefWidth="325.0">

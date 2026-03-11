@@ -4,7 +4,11 @@
     -fx-snap-to-pixel: true;
 }
 
-.label, .button, .text, .text-flow, .scroll-pane {
+.label,
+.button,
+.text,
+.text-flow,
+.scroll-pane {
     -fx-font-family: "Exo 2";
 }
 
@@ -13,7 +17,8 @@
     -fx-font-smoothing-type: lcd;
 }
 
-.label, .button {
+.label,
+.button {
     -fx-effect: null;
 }
 
@@ -24,7 +29,7 @@
     -fx-border-width: 1;
     -fx-background-radius: 0;
     -fx-border-radius: 0;
-    -fx-effect: innershadow(three-pass-box, rgba(255,255,255,0.12), 3, 0.0, 0, 0);
+    -fx-effect: innershadow(three-pass-box, rgba(255, 255, 255, 0.12), 3, 0.0, 0, 0);
 }
 
 /* Botones principales (Cian) */
@@ -164,7 +169,8 @@
     -fx-font-weight: 600;
 }
 
-#confirmButton, #randomFinishButton {
+#confirmButton,
+#randomFinishButton {
     -fx-font-size: 26px;
     -fx-font-weight: 700;
 }
@@ -193,7 +199,7 @@
     -fx-border-width: 0;
 }
 
-.log-scroll-pane > .viewport {
+.log-scroll-pane>.viewport {
     -fx-background-color: transparent;
 }
 
@@ -238,6 +244,26 @@
     -fx-border-style: solid;
     -fx-effect: dropshadow(gaussian, rgba(87, 192, 239, 0.55), 14, 0.35, 0, 0);
 }
+
+/* Indicadores de carga (RobotSelectionScreen) */
+.loading-overlay {
+    -fx-background-color: rgba(0, 5, 10, 0.7);
+    -fx-background-radius: 0;
+}
+
+.loading-text {
+    -fx-font-family: "Exo 2";
+    -fx-font-weight: bold;
+    -fx-text-fill: #57C0EF;
+    -fx-effect: dropshadow(gaussian, rgba(87, 192, 239, 0.6), 8, 0, 0, 0);
+}
+
+.loading-bar {
+    -fx-background-color: linear-gradient(to right, transparent, #57C0EF, transparent);
+    -fx-opacity: 0.8;
+}
+
+/* Nota: Las animaciones complejas se gestionan via Timeline en Java para maxima compatibilidad */
 
 /* Flechas navegación selección de robots */
 .nav-arrow-button {
