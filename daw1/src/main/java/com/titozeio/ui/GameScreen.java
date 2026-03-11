@@ -140,6 +140,8 @@ public class GameScreen extends Screen {
     @FXML
     private TutorialOverlayController tutorialOverlayComponentController;
     @FXML
+    private SettingsOverlayController settingsOverlayComponentController;
+    @FXML
     private Button surrenderButton;
     @FXML
     private HBox actionButtonsBox;
@@ -1742,6 +1744,13 @@ public class GameScreen extends Screen {
     public void handleTutorialOpenAction() {
         if (tutorialOverlayComponentController != null) {
             tutorialOverlayComponentController.show();
+        }
+    }
+
+    @FXML
+    public void handleSettingsOpenAction() {
+        if (settingsOverlayComponentController != null) {
+            settingsOverlayComponentController.show(game);
         }
     }
 

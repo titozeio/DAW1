@@ -44,52 +44,72 @@ public class MapFactory {
         }
 
         // 2. Canal de agua central (columna q=5)
-        for (int r = 1; r <= 7; r++) {
+        for (int r = 0; r <= 8; r++) {
             // Centro: agua profunda en r=4
-            TerrainType water = (r == 4) ? TerrainType.WATER_DEEP : TerrainType.WATER_SHALLOW;
-            int height = (r == 4) ? -2 : -1;
+            TerrainType water = (r == 4 || r == 5) ? TerrainType.WATER_DEEP : TerrainType.WATER_SHALLOW;
+            int height = (r == 4 || r == 5) ? -2 : -1;
             map.setHexagon(5, r, new Hexagon(5, r, water, height));
         }
 
-        // 3. Mesetas — lado izquierdo (q=2 y q=3)
+        // Agua en q=4, r=4-6, q=6, r=3-6
+        map.setHexagon(4, 4, new Hexagon(4, 4, TerrainType.WATER_SHALLOW, 1));
+        map.setHexagon(4, 5, new Hexagon(4, 5, TerrainType.WATER_SHALLOW, 1));
+        map.setHexagon(4, 6, new Hexagon(4, 6, TerrainType.WATER_SHALLOW, 1));
+        map.setHexagon(6, 3, new Hexagon(6, 3, TerrainType.WATER_SHALLOW, 1));
+        map.setHexagon(6, 4, new Hexagon(6, 4, TerrainType.WATER_SHALLOW, 1));
+        map.setHexagon(6, 5, new Hexagon(6, 5, TerrainType.WATER_SHALLOW, 1));
+        map.setHexagon(6, 6, new Hexagon(6, 6, TerrainType.WATER_SHALLOW, 1));
+
+        // 3. Mesetas q=2 y q=3
         // Altura 1 en q=2 (filas 1-7 excepto 4)
-        for (int r = 1; r <= 7; r++) {
-            if (r != 4) {
-                map.setHexagon(2, r, new Hexagon(2, r, TerrainType.NORMAL, 1));
-            }
-        }
-        // Altura 2 → cimas en q=3, r=2 y r=6
+        map.setHexagon(2, 1, new Hexagon(2, 1, TerrainType.NORMAL, 1));
+        map.setHexagon(2, 2, new Hexagon(2, 2, TerrainType.NORMAL, 1));
+        map.setHexagon(2, 5, new Hexagon(2, 5, TerrainType.NORMAL, 1));
+        map.setHexagon(2, 6, new Hexagon(2, 6, TerrainType.NORMAL, 2));
+        map.setHexagon(2, 7, new Hexagon(2, 7, TerrainType.NORMAL, 2));
+
+        // Altura 2 en q=3 (filas 1-7 excepto 4 y 5)
         map.setHexagon(3, 1, new Hexagon(3, 1, TerrainType.NORMAL, 1));
         map.setHexagon(3, 2, new Hexagon(3, 2, TerrainType.NORMAL, 2));
-        map.setHexagon(3, 3, new Hexagon(3, 3, TerrainType.NORMAL, 1));
         map.setHexagon(3, 5, new Hexagon(3, 5, TerrainType.NORMAL, 1));
         map.setHexagon(3, 6, new Hexagon(3, 6, TerrainType.NORMAL, 2));
-        map.setHexagon(3, 7, new Hexagon(3, 7, TerrainType.NORMAL, 1));
+        map.setHexagon(3, 7, new Hexagon(3, 7, TerrainType.NORMAL, 2));
 
-        // 4. Mesetas — lado derecho (q=8 y q=7), simétricas
-        for (int r = 1; r <= 7; r++) {
-            if (r != 4) {
-                map.setHexagon(8, r, new Hexagon(8, r, TerrainType.NORMAL, 1));
-            }
-        }
+        // Mesetas q=7 y q=8
+        // Altura 1 en q=8 (filas 1-7 excepto 4)
+        // Altura 2 en q=7 (filas 1-7 excepto 4 y 5)
+        map.setHexagon(8, 1, new Hexagon(8, 1, TerrainType.NORMAL, 2));
+        map.setHexagon(8, 2, new Hexagon(8, 2, TerrainType.NORMAL, 2));
+        map.setHexagon(8, 5, new Hexagon(8, 5, TerrainType.NORMAL, 1));
+        map.setHexagon(8, 6, new Hexagon(8, 6, TerrainType.NORMAL, 2));
+
+        map.setHexagon(6, 2, new Hexagon(6, 2, TerrainType.NORMAL, 1));
         map.setHexagon(7, 1, new Hexagon(7, 1, TerrainType.NORMAL, 1));
         map.setHexagon(7, 2, new Hexagon(7, 2, TerrainType.NORMAL, 2));
-        map.setHexagon(7, 3, new Hexagon(7, 3, TerrainType.NORMAL, 1));
-        map.setHexagon(7, 5, new Hexagon(7, 5, TerrainType.NORMAL, 1));
+        map.setHexagon(7, 5, new Hexagon(7, 5, TerrainType.NORMAL, 2));
         map.setHexagon(7, 6, new Hexagon(7, 6, TerrainType.NORMAL, 2));
         map.setHexagon(7, 7, new Hexagon(7, 7, TerrainType.NORMAL, 1));
 
-        // 5. Vegetación en flancos exteriores
-        // Lado izquierdo superior/inferior
-        map.setHexagon(1, 0, new Hexagon(1, 0, TerrainType.VEGETATION, 0));
-        map.setHexagon(2, 0, new Hexagon(2, 0, TerrainType.VEGETATION, 0));
-        map.setHexagon(1, 8, new Hexagon(1, 8, TerrainType.VEGETATION, 0));
-        map.setHexagon(2, 8, new Hexagon(2, 8, TerrainType.VEGETATION, 0));
-        // Lado derecho superior/inferior
-        map.setHexagon(8, 0, new Hexagon(8, 0, TerrainType.VEGETATION, 0));
-        map.setHexagon(9, 0, new Hexagon(9, 0, TerrainType.VEGETATION, 0));
+        map.setHexagon(6, 7, new Hexagon(6, 7, TerrainType.NORMAL, 1));
+        map.setHexagon(6, 8, new Hexagon(6, 8, TerrainType.NORMAL, 1));
+
+        // 5. Vegetación
+        // P1 section: q=3, r=0-2
+        // P2 section: q=7, r=5-8
+        map.setHexagon(3, 0, new Hexagon(3, 0, TerrainType.VEGETATION, 0));
+        map.setHexagon(4, 0, new Hexagon(4, 0, TerrainType.VEGETATION, 0));
+        map.setHexagon(4, 1, new Hexagon(4, 1, TerrainType.VEGETATION, 0));
+        map.setHexagon(4, 2, new Hexagon(4, 2, TerrainType.VEGETATION, 0));
+
+        map.setHexagon(9, 2, new Hexagon(9, 2, TerrainType.VEGETATION, 0));
+        map.setHexagon(9, 3, new Hexagon(9, 3, TerrainType.VEGETATION, 0));
+        map.setHexagon(9, 4, new Hexagon(9, 4, TerrainType.VEGETATION, 0));
+        map.setHexagon(8, 4, new Hexagon(8, 4, TerrainType.VEGETATION, 0));
+        map.setHexagon(8, 3, new Hexagon(8, 3, TerrainType.VEGETATION, 0));
+
         map.setHexagon(8, 8, new Hexagon(8, 8, TerrainType.VEGETATION, 0));
-        map.setHexagon(9, 8, new Hexagon(9, 8, TerrainType.VEGETATION, 0));
+        map.setHexagon(7, 8, new Hexagon(7, 8, TerrainType.VEGETATION, 0));
+        map.setHexagon(4, 7, new Hexagon(4, 7, TerrainType.VEGETATION, 0));
 
         // 6. Zonas de despliegue P1 (q=0, r=1-7)
         for (int r = 1; r <= 7; r++) {

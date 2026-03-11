@@ -61,6 +61,15 @@
                         <Font name="Exo 2 Bold" size="16.0" />
                      </font>
                   </Button>
+                  <Button fx:id="settingsIconButton" mnemonicParsing="false" onAction="#handleSettingsOpenAction" prefHeight="34.0" prefWidth="34.0" styleClass="scifi-button-outline">
+                     <graphic>
+                        <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@gear.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
                </children>
                <padding>
                   <Insets left="20.0" right="20.0" />
@@ -277,6 +286,7 @@
             </VBox>
          </children>
       </StackPane>
+      <fx:include fx:id="settingsOverlayComponent" source="SettingsOverlay.fxml" />
       <fx:include fx:id="tutorialOverlayComponent" source="TutorialOverlay.fxml" />
    </children>
 </StackPane>
