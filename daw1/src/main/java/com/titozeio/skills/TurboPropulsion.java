@@ -7,12 +7,12 @@ import com.titozeio.enums.SkillType;
 /**
  * Skill: Turbo Propulsores — Death Knight.
  *
- * Tipo: Movimiento | Puntos de movimiento: 7 | Cooldown: 1 turno.
- * Efecto especial GDD: Ninguno (movimiento normal pero con 7 puntos).
+ * Tipo: Movimiento | Puntos de movimiento: 5 | Cooldown: 1 turno.
+ * Efecto especial GDD: Ninguno (movimiento normal pero con 5 puntos).
  */
 public class TurboPropulsion extends Skill {
 
-    private final int movementPoints = 7;
+    private final int movementPoints = 5;
 
     /**
      * Crea una nueva instancia de la clase.
@@ -45,7 +45,7 @@ public class TurboPropulsion extends Skill {
         }
 
         System.out.println(actor.getModelName() + " activa ¡Turbo Propulsores! "
-                + "(7 puntos de movimiento) → " + destination);
+                + "(5 puntos de movimiento) → " + destination);
 
         // Movimiento normal aplicando reglas de terreno y altura (gestionado
         // externamente)

@@ -266,6 +266,22 @@ public class HexRenderer {
 
         // 1. Polígono base (borde + interacción)
         Polygon base = buildHexPolygon(cx, cy, HEX_SIZE);
+
+        // Variedad extra: volteo horizontal determinista (50% de probabilidad)
+        // EXCEPCIÓN: h1, h2 y vegetation_2 (tienen sombras direccionales que no deben
+        // invertirse)
+        int variantHash = stableVariantIndex(hex.getQ(), hex.getR());
+        boolean hasShadows = (hex.getHeight() > 0);
+        if (hex.getTerrain() == com.titozeio.enums.TerrainType.VEGETATION) {
+            // vegetation_2 es la segunda variante (indice 1 de 3 en hexTileCandidates)
+            if (Math.floorMod(variantHash, 3) == 1) {
+                hasShadows = true;
+            }
+        }
+
+        if (!hasShadows && Math.abs(variantHash) % 2 == 0) {
+            base.setScaleX(-1.0);
+        }
         Image terrainTile = resolveHexTileImage(hex);
         if (terrainTile == null) {
             base.setFill(terrainColor(hex));
@@ -428,6 +444,7 @@ public class HexRenderer {
         Image sprite = resolveRobotSprite(robot);
 
         Node robotNode = null;
+        Color borderColor = resolveOwnerBorderColor(robot);
         if (sprite != null) {
             ImageView spriteView = new ImageView(sprite);
             spriteView.setFitWidth(spriteSize);
@@ -443,7 +460,7 @@ public class HexRenderer {
             // Fallback si no se encuentra el sprite de prueba
             javafx.scene.shape.Circle fallback = new javafx.scene.shape.Circle(cx, cy, HEX_SIZE * 0.4);
             fallback.setFill(Color.web("#333333"));
-            fallback.setStroke(Color.WHITE);
+            fallback.setStroke(borderColor != null ? borderColor : Color.WHITE);
             fallback.setStrokeWidth(1.0);
             fallback.setMouseTransparent(true);
             pane.getChildren().add(fallback);
@@ -453,6 +470,9 @@ public class HexRenderer {
         Node hpBarNode = renderHpBar(cx, cy + HEX_SIZE * 0.55, robot);
 
         // 0. Aplicar efectos de estado visuales persistentes
+        if (borderColor != null) {
+            robotNode.getProperties().put("ownerBorderColor", borderColor);
+        }
         applyRobotStatusVisuals(robotNode, robot);
 
         // 1. Animación de aterrizaje (despliegue)
@@ -482,14 +502,24 @@ public class HexRenderer {
     private void applyRobotStatusVisuals(Node robotNode, Robot robot) {
         if (robot == null || robotNode == null)
             return;
+        javafx.scene.effect.Effect baseEffect = null;
+        Object borderObj = robotNode.getProperties().get("ownerBorderColor");
+        if (borderObj instanceof Color borderColor) {
+            javafx.scene.effect.DropShadow outline = new javafx.scene.effect.DropShadow();
+            outline.setRadius(1.0);
+            outline.setSpread(1.0);
+            outline.setColor(borderColor);
+            baseEffect = outline;
+        }
         if (robot.hasState(com.titozeio.enums.RobotState.FROZEN)) {
             ColorAdjust ice = new ColorAdjust();
             ice.setBrightness(0.35); // Tinta blanca/clara
             ice.setSaturation(-0.2); // Desaturar un poco
             ice.setHue(-0.05); // Toque azulado frío
+            ice.setInput(baseEffect);
             robotNode.setEffect(ice);
         } else {
-            robotNode.setEffect(null);
+            robotNode.setEffect(baseEffect);
         }
     }
 
@@ -643,13 +673,12 @@ public class HexRenderer {
     }
 
     private static Image resolveRobotSprite(Robot robot) {
-        String ownerSuffix = ownerSuffix(robot);
-        String key = robot.getModelName() + "|" + ownerSuffix;
+        String key = robot == null ? "" : robot.getModelName();
         if (ROBOT_SPRITE_CACHE.containsKey(key)) {
             return ROBOT_SPRITE_CACHE.get(key);
         }
 
-        List<String> candidates = spriteCandidatesFor(robot.getModelName(), ownerSuffix);
+        List<String> candidates = spriteCandidatesFor(robot == null ? null : robot.getModelName());
         for (String candidate : candidates) {
             var resource = HexRenderer.class.getResource("/com/titozeio/sprites/figures/" + candidate + ".png");
             if (resource != null) {
@@ -663,66 +692,53 @@ public class HexRenderer {
         return null;
     }
 
-    private static String ownerSuffix(Robot robot) {
+    private static List<String> spriteCandidatesFor(String modelName) {
+        String normalized = modelName == null ? "" : modelName.trim().toLowerCase();
+        switch (normalized) {
+            case "victory saber":
+                return withFallbacks("saberprime");
+            case "death knight":
+                return withFallbacks("death_knight");
+            case "scout":
+                return withFallbacks("scout");
+            case "bullseye":
+                return withFallbacks("bullseye");
+            case "bulwark":
+                return withFallbacks("bulwark", "Bulwark");
+            case "ice age":
+                return withFallbacks("ice_age");
+            default:
+                return withFallbacks("saberprime");
+        }
+    }
+
+    private static List<String> withFallbacks(String primaryBase) {
+        return withFallbacks(primaryBase, primaryBase);
+    }
+
+    private static List<String> withFallbacks(String primaryBase, String altPrimaryBase) {
+        return List.of(
+                primaryBase,
+                altPrimaryBase,
+                "saberprime",
+                "death_knight",
+                "scout");
+    }
+
+    private static Color resolveOwnerBorderColor(Robot robot) {
         if (robot == null || robot.getOwner() == null || robot.getOwner().getName() == null) {
-            return "";
+            return null;
         }
         String ownerName = robot.getOwner().getName().trim().toLowerCase().replace(" ", "");
         if (ownerName.contains("jugador1") || ownerName.contains("player1") || ownerName.contains("p1")
                 || ownerName.endsWith("1")) {
-            return "_p1";
+            return Color.web("#ff4444");
         }
         if (ownerName.contains("jugador2") || ownerName.contains("player2") || ownerName.contains("p2")
                 || ownerName.endsWith("2")) {
-            return "_p2";
+            return Color.web("#4488ff");
         }
-        return "";
-    }
-
-    private static List<String> spriteCandidatesFor(String modelName, String ownerSuffix) {
-        String normalized = modelName == null ? "" : modelName.trim().toLowerCase();
-        switch (normalized) {
-            case "victory saber":
-                return withFallbacks("saberprime", ownerSuffix);
-            case "death knight":
-                return withFallbacks("death_knight", ownerSuffix);
-            case "scout":
-                return withFallbacks("scout", ownerSuffix);
-            case "bullseye":
-                return withFallbacks("bullseye", ownerSuffix);
-            case "bulwark":
-                return withFallbacks("bulwark", ownerSuffix, "Bulwark");
-            case "ice age":
-                return withFallbacks("ice_age", ownerSuffix);
-            default:
-                return withFallbacks("saberprime", ownerSuffix);
-        }
-    }
-
-    private static List<String> withFallbacks(String primaryBase, String ownerSuffix) {
-        return withFallbacks(primaryBase, ownerSuffix, primaryBase);
-    }
-
-    private static List<String> withFallbacks(String primaryBase, String ownerSuffix, String altPrimaryBase) {
-        if (ownerSuffix == null || ownerSuffix.isBlank()) {
-            return List.of(
-                    primaryBase,
-                    altPrimaryBase,
-                    "saberprime",
-                    "death_knight",
-                    "scout");
-        }
-        return List.of(
-                primaryBase + ownerSuffix,
-                altPrimaryBase + ownerSuffix,
-                primaryBase,
-                altPrimaryBase,
-                "saberprime" + ownerSuffix,
-                "death_knight" + ownerSuffix,
-                "scout" + ownerSuffix,
-                "saberprime",
-                "death_knight",
-                "scout");
+        return null;
     }
 
     private Node renderHpBar(double cx, double barY, Robot robot) {
@@ -815,18 +831,21 @@ public class HexRenderer {
     // ── Tiles de terreno ─────────────────────────────────────────────────────
 
     private static Image resolveHexTileImage(Hexagon hex) {
-        String key = hex.getTerrain().name() + "|h" + hex.getHeight();
-        if (HEX_TILE_CACHE.containsKey(key)) {
-            return HEX_TILE_CACHE.get(key);
-        }
-
         List<String> candidates = hexTileCandidates(hex);
         for (String candidate : candidates) {
+            if (HEX_TILE_CACHE.containsKey(candidate)) {
+                Image cached = HEX_TILE_CACHE.get(candidate);
+                if (cached != null) {
+                    return cached;
+                }
+                continue; // Ya se intentó y falló
+            }
+
             var resource = HexRenderer.class.getResource(candidate);
             if (resource != null) {
                 Image image = new Image(resource.toExternalForm(), false);
                 if (!image.isError() && image.getWidth() > 0 && image.getHeight() > 0) {
-                    HEX_TILE_CACHE.put(key, image);
+                    HEX_TILE_CACHE.put(candidate, image);
                     if (DEBUG_HEX_TILES) {
                         System.out.println("[HexRenderer] Loaded tile " + candidate + " -> "
                                 + (int) image.getWidth() + "x" + (int) image.getHeight());
@@ -836,7 +855,7 @@ public class HexRenderer {
             } else {
                 Image image = tryLoadFromFile(candidate);
                 if (image != null) {
-                    HEX_TILE_CACHE.put(key, image);
+                    HEX_TILE_CACHE.put(candidate, image);
                     if (DEBUG_HEX_TILES) {
                         System.out.println("[HexRenderer] Loaded tile (fs) " + candidate + " -> "
                                 + (int) image.getWidth() + "x" + (int) image.getHeight());
@@ -844,14 +863,14 @@ public class HexRenderer {
                     return image;
                 }
             }
+            // Marcar como no disponible para no reintentar
+            HEX_TILE_CACHE.put(candidate, null);
         }
 
         if (DEBUG_HEX_TILES) {
-            System.out.println("[HexRenderer] No tile found for key=" + key + " candidates=" + candidates
-                    + " user.dir=" + System.getProperty("user.dir"));
+            System.out.println("[HexRenderer] No tile found for hex at (" + hex.getQ() + "," + hex.getR() + ") among "
+                    + candidates);
         }
-
-        HEX_TILE_CACHE.put(key, null);
         return null;
     }
 
@@ -950,7 +969,8 @@ public class HexRenderer {
             return fallbacks == null ? List.of() : fallbacks;
         }
         int offset = Math.floorMod(startIndex, variants.size());
-        java.util.ArrayList<String> ordered = new java.util.ArrayList<>(variants.size() + (fallbacks == null ? 0 : fallbacks.size()));
+        java.util.ArrayList<String> ordered = new java.util.ArrayList<>(
+                variants.size() + (fallbacks == null ? 0 : fallbacks.size()));
         for (int i = 0; i < variants.size(); i++) {
             ordered.add(variants.get((offset + i) % variants.size()));
         }
