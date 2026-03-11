@@ -40,6 +40,11 @@
                         <Font name="Exo 2 Regular" size="22.0" />
                      </font>
                   </Button>
+                  <Button fx:id="helpButton" maxHeight="56.0" maxWidth="320.0" minHeight="56.0" minWidth="320.0" mnemonicParsing="false" onAction="#handleTutorialOpenAction" prefHeight="56.0" prefWidth="320.0" styleClass="scifi-button-outline" text="How to Play">
+                     <font>
+                        <Font name="Exo 2 Regular" size="22.0" />
+                     </font>
+                  </Button>
                </children>
             </VBox>
          </children>
@@ -52,7 +57,7 @@
          <children>
             <VBox alignment="TOP_LEFT" maxHeight="180.0" maxWidth="360.0" minHeight="180.0" minWidth="360.0" prefHeight="180.0" prefWidth="360.0" spacing="22.0" styleClass="scifi-panel">
                <padding>
-                  <Insets bottom="24.0" left="24.0" right="24.0" top="18.0" />
+                   <Insets bottom="24.0" left="24.0" right="24.0" top="18.0" />
                </padding>
                <children>
                   <HBox alignment="CENTER_LEFT">
@@ -94,5 +99,7 @@
             </VBox>
          </children>
       </StackPane>
+
+      <fx:include fx:id="tutorialOverlayComponent" source="TutorialOverlay.fxml" />
    </children>
 </StackPane>

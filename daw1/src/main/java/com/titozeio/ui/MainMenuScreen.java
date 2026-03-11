@@ -20,6 +20,8 @@ public class MainMenuScreen extends Screen {
 
     @FXML
     private StackPane settingsOverlay;
+    @FXML
+    private TutorialOverlayController tutorialOverlayComponentController;
 
     @FXML
     private CheckBox musicToggle;
@@ -40,8 +42,9 @@ public class MainMenuScreen extends Screen {
 
     /**
      * Ejecuta la logica de create.
+     * 
      * @param window parametro de entrada.
-     * @param game parametro de entrada.
+     * @param game   parametro de entrada.
      * @return valor resultante de la operacion.
      */
     public static MainMenuScreen create(Stage window, Game game) {
@@ -116,6 +119,20 @@ public class MainMenuScreen extends Screen {
     }
 
     @FXML
+    public void handleTutorialOpenAction() {
+        if (tutorialOverlayComponentController != null) {
+            tutorialOverlayComponentController.show();
+        }
+    }
+
+    @FXML
+    public void handleTutorialCloseAction() {
+        if (tutorialOverlayComponentController != null) {
+            tutorialOverlayComponentController.close();
+        }
+    }
+
+    @FXML
     /**
      * Ejecuta la logica de handle music toggle action.
      */
@@ -147,6 +164,7 @@ public class MainMenuScreen extends Screen {
     @Override
     /**
      * Ejecuta la logica de handle input.
+     * 
      * @param input parametro de entrada.
      */
     public void handleInput(String input) {

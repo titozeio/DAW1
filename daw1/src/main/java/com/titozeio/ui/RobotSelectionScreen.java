@@ -150,6 +150,9 @@ public class RobotSelectionScreen extends Screen {
     private java.util.Map<RobotTemplate, Media> mediaCache = new java.util.HashMap<>();
     private Timeline loadingPulse;
 
+    @FXML
+    private TutorialOverlayController tutorialOverlayComponentController;
+
     /**
      * Ejecuta la logica de create.
      * 
@@ -912,6 +915,13 @@ public class RobotSelectionScreen extends Screen {
         }
         if (conceptLoadingOverlay != null) {
             conceptLoadingOverlay.setOpacity(1.0);
+        }
+    }
+
+    @FXML
+    public void handleTutorialOpenAction() {
+        if (tutorialOverlayComponentController != null) {
+            tutorialOverlayComponentController.show();
         }
     }
 

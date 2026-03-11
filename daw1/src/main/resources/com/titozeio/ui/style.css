@@ -169,6 +169,12 @@
     -fx-font-weight: 600;
 }
 
+#helpButton {
+    -fx-font-family: "Exo 2 Regular";
+    -fx-font-size: 22px;
+    -fx-font-weight: 600;
+}
+
 #confirmButton,
 #randomFinishButton {
     -fx-font-size: 26px;

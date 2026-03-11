@@ -138,6 +138,8 @@ public class GameScreen extends Screen {
     @FXML
     private Button endTurnButton;
     @FXML
+    private TutorialOverlayController tutorialOverlayComponentController;
+    @FXML
     private Button surrenderButton;
     @FXML
     private HBox actionButtonsBox;
@@ -1576,6 +1578,13 @@ public class GameScreen extends Screen {
             surrenderButton.setDisable(true);
         }
         addLogMessage("🏆 ¡" + winner.getName() + " gana por " + reason + "!");
+    }
+
+    @FXML
+    public void handleTutorialOpenAction() {
+        if (tutorialOverlayComponentController != null) {
+            tutorialOverlayComponentController.show();
+        }
     }
 
     @FXML
