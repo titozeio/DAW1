@@ -369,3 +369,49 @@
     -fx-font-family: "Exo 2 Bold";
     -fx-font-size: 14px;
 }
+
+/* CheckBox Sci-fi Customization */
+.check-box {
+    -fx-padding: 5;
+    -fx-cursor: hand;
+}
+
+.check-box .label {
+    -fx-text-fill: #EAFBFF;
+    -fx-font-size: 16px;
+    -fx-padding: 0 0 0 10;
+}
+
+.check-box .box {
+    -fx-background-color: #2A2111;
+    -fx-border-color: #8A6A24;
+    -fx-border-width: 1;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-min-width: 24px;
+    -fx-min-height: 24px;
+    -fx-pref-width: 24px;
+    -fx-pref-height: 24px;
+}
+
+.check-box:hover .box {
+    -fx-background-color: #352A14;
+    -fx-border-color: #F4D9A3;
+}
+
+.check-box .mark {
+    -fx-background-color: transparent;
+    -fx-shape: "M0 0 H10 V10 H0 Z";
+    /* Casilla rellena cuadrada para el check */
+    -fx-scale-x: 0.6;
+    -fx-scale-y: 0.6;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: #F3D48A;
+}
+
+.check-box:pressed .box {
+    -fx-background-color: #5A4316;
+    -fx-border-color: #BB8612;
+}

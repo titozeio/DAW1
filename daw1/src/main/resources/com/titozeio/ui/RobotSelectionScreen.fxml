@@ -72,7 +72,7 @@
                               </Label>
                               <HBox alignment="CENTER_LEFT" spacing="8.0"><children><Label text="HP:" textFill="#57C0EF"><font><Font size="18.0" /></font></Label><Label fx:id="statHpValueLabel" textFill="WHITE"><font><Font size="18.0" /></font></Label></children></HBox>
                               <HBox alignment="CENTER_LEFT" spacing="8.0"><children><Label text="Movimiento:" textFill="#57C0EF"><font><Font size="18.0" /></font></Label><Label fx:id="statMoveValueLabel" textFill="WHITE"><font><Font size="18.0" /></font></Label></children></HBox>
-                              <HBox alignment="CENTER_LEFT" spacing="8.0"><children><Label text="Danio:" textFill="#57C0EF"><font><Font size="18.0" /></font></Label><Label fx:id="statDamageValueLabel" textFill="WHITE"><font><Font size="18.0" /></font></Label></children></HBox>
+                              <HBox alignment="CENTER_LEFT" spacing="8.0"><children><Label text="Daño:" textFill="#57C0EF"><font><Font size="18.0" /></font></Label><Label fx:id="statDamageValueLabel" textFill="WHITE"><font><Font size="18.0" /></font></Label></children></HBox>
                               <HBox alignment="CENTER_LEFT" spacing="8.0"><children><Label text="Alcance:" textFill="#57C0EF"><font><Font size="18.0" /></font></Label><Label fx:id="statRangeValueLabel" textFill="WHITE"><font><Font size="18.0" /></font></Label></children></HBox>
                            </children>
                         </VBox>
