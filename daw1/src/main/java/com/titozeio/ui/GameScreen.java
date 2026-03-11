@@ -184,6 +184,7 @@ public class GameScreen extends Screen {
     }
 
     private SelectionMode selectionMode = SelectionMode.NONE;
+    private SelectionMode previousModeBeforeSkill = SelectionMode.NONE;
     private boolean infoSkillMode = false;
     private boolean logExpanded = false;
     private boolean infoHexMode = false;
@@ -241,6 +242,7 @@ public class GameScreen extends Screen {
 
         endTurnButton.setDisable(true);
         skillButton.setDisable(true);
+        skillButton.setOnAction(e -> handleSkillButtonAction());
         if (surrenderButton != null) {
             surrenderButton.setDisable(true);
         }
@@ -582,6 +584,7 @@ public class GameScreen extends Screen {
 
     private void enterMoveMode() {
         selectionMode = SelectionMode.MOVE;
+        updateSkillButton(selectedRobot);
         Set<Hexagon> reachable = MovementCalculator.getReachable(selectedRobot, game.getMap());
         hexRenderer.setMoveHighlightedHexes(reachable);
         hexRenderer.setAttackHighlightedHexes(new HashSet<>());
@@ -593,6 +596,7 @@ public class GameScreen extends Screen {
 
     private void enterAttackMode() {
         selectionMode = SelectionMode.ATTACK;
+        updateSkillButton(selectedRobot);
         Set<Hexagon> targets = getAttackableHexes(selectedRobot);
         hexRenderer.setMoveHighlightedHexes(new HashSet<>());
         hexRenderer.setAttackHighlightedHexes(targets);
@@ -615,18 +619,31 @@ public class GameScreen extends Screen {
     private void enterSkillMode() {
         Skill skill = selectedRobot.getSkill();
         if (!canUseSkill(selectedRobot)) {
-            clearSelection();
+            updateSkillButton(selectedRobot);
             return;
+        }
+        if (selectionMode != SelectionMode.SKILL) {
+            previousModeBeforeSkill = selectionMode;
         }
 
         SoundManager.play(SoundManager.UI_ABILITY_READY);
         selectionMode = SelectionMode.SKILL;
+        updateSkillButton(selectedRobot);
         boolean isAttackSkill = (skill.getType() == SkillType.ATTACK);
 
         Set<Hexagon> targets = isAttackSkill
                 ? getSkillAttackTargets(selectedRobot)
                 : getSkillMovementTargets(selectedRobot);
 
+        if (targets.isEmpty()) {
+            SoundManager.play(SoundManager.UI_INVALID);
+            addLogMessage("⚡ " + skill.getName() + ": sin objetivos en rango.");
+            exitSkillModeToPreviousMode();
+            return;
+        }
+
+        selectionMode = SelectionMode.SKILL;
+        updateSkillButton(selectedRobot);
         hexRenderer.setMoveHighlightedHexes(new HashSet<>());
         hexRenderer.setAttackHighlightedHexes(new HashSet<>());
         hexRenderer.setSkillHighlightedHexes(targets, isAttackSkill);
@@ -635,8 +652,6 @@ public class GameScreen extends Screen {
         String colorHint = isAttackSkill ? "violeta" : "lima";
         addLogMessage("⚡ " + skill.getName() + " activada. "
                 + targets.size() + " objetivo(s) " + colorHint + ".");
-        if (targets.isEmpty())
-            addLogMessage("Sin objetivos en rango para la skill.");
     }
 
     // ── Ejecución de acciones ─────────────────────────────────────────────────
@@ -648,6 +663,7 @@ public class GameScreen extends Screen {
         GameCommand moveCmd = new MoveCommand(selectedRobot, hex);
         ActionManager.getInstance().executeCommand(moveCmd);
         lockedRobotInfoHex = selectedRobot.getPosition();
+        updateSkillButton(selectedRobot);
 
         addLogMessage(moveCmd.getDescription());
 
@@ -717,7 +733,7 @@ public class GameScreen extends Screen {
         endHoverHexPreview();
         Skill skill = selectedRobot.getSkill();
         if (skill == null || !skill.isReady()) {
-            clearSelection();
+            updateSkillButton(selectedRobot);
             return;
         }
 
@@ -768,6 +784,7 @@ public class GameScreen extends Screen {
         }
 
         SoundManager.play(SoundManager.UI_ABILITY_COOLDOWN);
+        updateSkillButton(selectedRobot);
         if (isAttackSkill) {
             clearSelection();
         } else {
@@ -1007,6 +1024,7 @@ public class GameScreen extends Screen {
             skillButton.setText("SKILL");
             skillButton.setGraphic(null);
             skillButton.setDisable(true);
+            skillButton.getStyleClass().remove("skill-button-active");
             return;
         }
         Skill sk = robot.getSkill();
@@ -1021,7 +1039,59 @@ public class GameScreen extends Screen {
         } else {
             skillButton.setText("⚡ " + sk.getName());
             skillButton.setDisable(false);
-            skillButton.setOnAction(e -> enterSkillMode());
+        }
+        setSkillButtonActiveVisual(selectionMode == SelectionMode.SKILL && canUseSkill(robot));
+    }
+
+    private void handleSkillButtonAction() {
+        if (selectedRobot == null || !canUseSkill(selectedRobot)) {
+            updateSkillButton(selectedRobot);
+            return;
+        }
+        if (selectionMode != SelectionMode.SKILL) {
+            enterSkillMode();
+        } else {
+            exitSkillModeToPreviousMode();
+        }
+    }
+
+    private void exitSkillModeToPreviousMode() {
+        if (selectedRobot == null) {
+            clearSelection();
+            return;
+        }
+
+        SelectionMode modeToRestore = previousModeBeforeSkill;
+        previousModeBeforeSkill = SelectionMode.NONE;
+
+        if (modeToRestore == SelectionMode.MOVE && !selectedRobot.isUsedMovement()) {
+            enterMoveMode();
+            return;
+        }
+        if (modeToRestore == SelectionMode.ATTACK && !selectedRobot.isUsedAttack()) {
+            enterAttackMode();
+            return;
+        }
+
+        if (!selectedRobot.isUsedAttack()) {
+            enterAttackMode();
+        } else if (!selectedRobot.isUsedMovement()) {
+            enterMoveMode();
+        } else {
+            clearSelection();
+        }
+    }
+
+    private void setSkillButtonActiveVisual(boolean active) {
+        if (skillButton == null) {
+            return;
+        }
+        if (active) {
+            if (!skillButton.getStyleClass().contains("skill-button-active")) {
+                skillButton.getStyleClass().add("skill-button-active");
+            }
+        } else {
+            skillButton.getStyleClass().remove("skill-button-active");
         }
     }
 
@@ -1355,6 +1425,7 @@ public class GameScreen extends Screen {
     private void clearSelection() {
         endHoverHexPreview();
         selectedRobot = null;
+        previousModeBeforeSkill = SelectionMode.NONE;
         lockedRobotInfoHex = null;
         infoSkillMode = false;
         infoHexMode = false;
@@ -1364,6 +1435,7 @@ public class GameScreen extends Screen {
         skillButton.setText("SKILL");
         skillButton.setGraphic(null);
         skillButton.setDisable(true);
+        setSkillButtonActiveVisual(false);
         clearAllHighlights();
         infoDetailsLabel.setText("Selecciona un robot tuyo para actuar.");
         if (infoTitleLabel != null)

@@ -112,6 +112,23 @@
     -fx-opacity: 0.5;
 }
 
+.skill-button-active {
+    -fx-background-color: #5A4316;
+    -fx-border-color: #F4D9A3;
+    -fx-text-fill: #FFE7A9;
+    -fx-effect: dropshadow(gaussian, rgba(244, 217, 163, 0.95), 12, 0.45, 0, 0);
+}
+
+#skillButton,
+#skillButton:hover,
+#skillButton:pressed,
+#skillButton:disabled,
+#skillButton.skill-button-active {
+    -fx-font-family: "Exo 2 Bold";
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+}
+
 /* Boton SKILL dinamico por tipo */
 .skill-button-base {
     -fx-border-width: 1;
