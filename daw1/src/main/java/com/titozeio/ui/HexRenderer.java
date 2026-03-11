@@ -75,6 +75,9 @@ public class HexRenderer {
     private static final double STROKE_WIDTH = 1.2;
     /** Cache de sprites cargados por nombre de modelo de robot. */
     private static final java.util.Map<String, Image> ROBOT_SPRITE_CACHE = new HashMap<>();
+    /** Cache de tiles de hexágonos por clave de terreno/altura. */
+    private static final java.util.Map<String, Image> HEX_TILE_CACHE = new HashMap<>();
+    private static final boolean DEBUG_HEX_TILES = true;
 
     // ── Estado interno ────────────────────────────────────────────────────────
     /** Pane objetivo donde se dibujan los nodos. */
@@ -261,9 +264,22 @@ public class HexRenderer {
         double cx = center[0];
         double cy = center[1];
 
-        // 1. Polígono base (terreno + altura)
+        // 1. Polígono base (borde + interacción)
         Polygon base = buildHexPolygon(cx, cy, HEX_SIZE);
-        base.setFill(terrainColor(hex));
+        Image terrainTile = resolveHexTileImage(hex);
+        if (terrainTile == null) {
+            base.setFill(terrainColor(hex));
+        } else {
+            double tileW = Math.sqrt(3) * HEX_SIZE;
+            double tileH = 2.0 * HEX_SIZE;
+            base.setFill(new javafx.scene.paint.ImagePattern(
+                    terrainTile,
+                    cx - tileW / 2.0,
+                    cy - tileH / 2.0,
+                    tileW,
+                    tileH,
+                    false));
+        }
         base.setStroke(C_STROKE);
         base.setStrokeType(StrokeType.INSIDE);
         base.setStrokeWidth(STROKE_WIDTH);
@@ -293,7 +309,7 @@ public class HexRenderer {
 
         pane.getChildren().add(base);
 
-        // 2. Overlay de zona especial (encima del terreno)
+        // 3. Overlay de zona especial (encima del terreno)
         Color overlayColor = zoneOverlayColor(hex);
         if (overlayColor != null) {
             Polygon overlay = buildHexPolygon(cx, cy, HEX_SIZE - 1.5);
@@ -303,7 +319,7 @@ public class HexRenderer {
             pane.getChildren().add(overlay);
         }
 
-        // 3. Overlay de resaltado de despliegue (verde)
+        // 4. Overlay de resaltado de despliegue (verde)
         if (highlighted.contains(hex)) {
             Polygon hl = buildHexPolygon(cx, cy, HEX_SIZE - 1);
             boolean isP1Deploy = hex.isDeployZoneP1();
@@ -317,7 +333,7 @@ public class HexRenderer {
             pane.getChildren().add(hl);
         }
 
-        // 3b. Overlay de rango de movimiento (azul-cian)
+        // 4b. Overlay de rango de movimiento (azul-cian)
         if (moveHighlighted.contains(hex)) {
             Polygon hl = buildHexPolygon(cx, cy, HEX_SIZE - 1);
             hl.setFill(Color.web("#00ccff", 0.22));
@@ -328,7 +344,7 @@ public class HexRenderer {
             pane.getChildren().add(hl);
         }
 
-        // 3c. Overlay de objetivo de ataque (naranja-rojo)
+        // 4c. Overlay de objetivo de ataque (naranja-rojo)
         if (attackHighlighted.contains(hex)) {
             Polygon hl = buildHexPolygon(cx, cy, HEX_SIZE - 1);
             hl.setFill(Color.web("#ff4400", 0.25));
@@ -339,7 +355,7 @@ public class HexRenderer {
             pane.getChildren().add(hl);
         }
 
-        // 3d. Overlay de skill activa (lima=movimiento, violeta=ataque)
+        // 4d. Overlay de skill activa (lima=movimiento, violeta=ataque)
         if (skillHighlighted.contains(hex)) {
             String fill = skillHighlightAttack ? "#cc44ff" : "#aaff00";
             String stroke = skillHighlightAttack ? "#dd88ff" : "#ccff44";
@@ -352,12 +368,12 @@ public class HexRenderer {
             pane.getChildren().add(hl);
         }
 
-        // 4. Indicador de altura (triángulos ascendentes, semi-transparentes)
-        if (hex.getHeight() > 0) {
+        // 5. Indicador de altura (triángulos ascendentes, semi-transparentes)
+        if (hex.getHeight() > 0 && terrainTile == null) {
             addHeightLabel(cx, cy, hex.getHeight());
         }
 
-        // 5. Borde luminoso en bases
+        // 6. Borde luminoso en bases
         if (hex.isBaseP1() || hex.isBaseP2()) {
             Polygon rim = buildHexPolygon(cx, cy, HEX_SIZE);
             rim.setFill(Color.TRANSPARENT);
@@ -794,5 +810,160 @@ public class HexRenderer {
         if (hex.isDeployZoneP2())
             return C_DEPLOY_P2;
         return null;
+    }
+
+    // ── Tiles de terreno ─────────────────────────────────────────────────────
+
+    private static Image resolveHexTileImage(Hexagon hex) {
+        String key = hex.getTerrain().name() + "|h" + hex.getHeight();
+        if (HEX_TILE_CACHE.containsKey(key)) {
+            return HEX_TILE_CACHE.get(key);
+        }
+
+        List<String> candidates = hexTileCandidates(hex);
+        for (String candidate : candidates) {
+            var resource = HexRenderer.class.getResource(candidate);
+            if (resource != null) {
+                Image image = new Image(resource.toExternalForm(), false);
+                if (!image.isError() && image.getWidth() > 0 && image.getHeight() > 0) {
+                    HEX_TILE_CACHE.put(key, image);
+                    if (DEBUG_HEX_TILES) {
+                        System.out.println("[HexRenderer] Loaded tile " + candidate + " -> "
+                                + (int) image.getWidth() + "x" + (int) image.getHeight());
+                    }
+                    return image;
+                }
+            } else {
+                Image image = tryLoadFromFile(candidate);
+                if (image != null) {
+                    HEX_TILE_CACHE.put(key, image);
+                    if (DEBUG_HEX_TILES) {
+                        System.out.println("[HexRenderer] Loaded tile (fs) " + candidate + " -> "
+                                + (int) image.getWidth() + "x" + (int) image.getHeight());
+                    }
+                    return image;
+                }
+            }
+        }
+
+        if (DEBUG_HEX_TILES) {
+            System.out.println("[HexRenderer] No tile found for key=" + key + " candidates=" + candidates
+                    + " user.dir=" + System.getProperty("user.dir"));
+        }
+
+        HEX_TILE_CACHE.put(key, null);
+        return null;
+    }
+
+    private static Image tryLoadFromFile(String resourcePath) {
+        String userDir = System.getProperty("user.dir");
+        if (userDir == null || userDir.isBlank()) {
+            return null;
+        }
+        String normalized = resourcePath.startsWith("/") ? resourcePath.substring(1) : resourcePath;
+
+        java.nio.file.Path direct = java.nio.file.Paths.get(userDir, "src", "main", "resources", normalized);
+        Image image = loadImageIfExists(direct);
+        if (image != null) {
+            return image;
+        }
+
+        java.nio.file.Path nested = java.nio.file.Paths.get(userDir, "daw1", "src", "main", "resources", normalized);
+        return loadImageIfExists(nested);
+    }
+
+    private static Image loadImageIfExists(java.nio.file.Path path) {
+        if (path == null || !java.nio.file.Files.exists(path)) {
+            return null;
+        }
+        Image image = new Image(path.toUri().toString(), false);
+        if (image.isError() || image.getWidth() <= 0 || image.getHeight() <= 0) {
+            return null;
+        }
+        return image;
+    }
+
+    private static List<String> hexTileCandidates(Hexagon hex) {
+        int variantIndex = stableVariantIndex(hex.getQ(), hex.getR());
+        switch (hex.getTerrain()) {
+            case VEGETATION:
+                return rotatedVariants(variantIndex,
+                        List.of(
+                                "/com/titozeio/ui/hexes/vegetation_1.png",
+                                "/com/titozeio/ui/hexes/vegetation_2.png",
+                                "/com/titozeio/ui/hexes/vegetation.png"),
+                        List.of(
+                                "/com/titozeio/images/terrain/vegetation.png"));
+            case WATER_SHALLOW:
+                return List.of(
+                        "/com/titozeio/ui/hexes/water_shallow_1.png",
+                        "/com/titozeio/ui/hexes/water_shallow1.png",
+                        "/com/titozeio/ui/hexes/water_shallow.png",
+                        "/com/titozeio/images/terrain/water_shallow.png");
+            case WATER_DEEP:
+                return List.of(
+                        "/com/titozeio/ui/hexes/water_deep_1.png",
+                        "/com/titozeio/ui/hexes/water_deep1.png",
+                        "/com/titozeio/ui/hexes/water_deep.png",
+                        "/com/titozeio/images/terrain/water_deep.png");
+            default:
+                break;
+        }
+
+        switch (hex.getHeight()) {
+            case 2:
+                return rotatedVariants(variantIndex,
+                        List.of(
+                                "/com/titozeio/ui/hexes/normal_h2__1.png",
+                                "/com/titozeio/ui/hexes/normal_h2__2.png",
+                                "/com/titozeio/ui/hexes/normal_h2.png"),
+                        List.of(
+                                "/com/titozeio/images/terrain/plateau_h2.png",
+                                "/com/titozeio/ui/hexes/normal_1.png",
+                                "/com/titozeio/ui/hexes/normal_2.png",
+                                "/com/titozeio/ui/hexes/normal.png",
+                                "/com/titozeio/images/terrain/plain.png"));
+            case 1:
+                return rotatedVariants(variantIndex,
+                        List.of(
+                                "/com/titozeio/ui/hexes/normal_h1_1.png",
+                                "/com/titozeio/ui/hexes/normal_h1.png"),
+                        List.of(
+                                "/com/titozeio/images/terrain/hill_h1.png",
+                                "/com/titozeio/ui/hexes/normal_1.png",
+                                "/com/titozeio/ui/hexes/normal_2.png",
+                                "/com/titozeio/ui/hexes/normal.png",
+                                "/com/titozeio/images/terrain/plain.png"));
+            default:
+                return rotatedVariants(variantIndex,
+                        List.of(
+                                "/com/titozeio/ui/hexes/normal_1.png",
+                                "/com/titozeio/ui/hexes/normal_2.png",
+                                "/com/titozeio/ui/hexes/normal.png"),
+                        List.of(
+                                "/com/titozeio/images/terrain/plain.png"));
+        }
+    }
+
+    private static List<String> rotatedVariants(int startIndex, List<String> variants, List<String> fallbacks) {
+        if (variants == null || variants.isEmpty()) {
+            return fallbacks == null ? List.of() : fallbacks;
+        }
+        int offset = Math.floorMod(startIndex, variants.size());
+        java.util.ArrayList<String> ordered = new java.util.ArrayList<>(variants.size() + (fallbacks == null ? 0 : fallbacks.size()));
+        for (int i = 0; i < variants.size(); i++) {
+            ordered.add(variants.get((offset + i) % variants.size()));
+        }
+        if (fallbacks != null) {
+            ordered.addAll(fallbacks);
+        }
+        return ordered;
+    }
+
+    private static int stableVariantIndex(int q, int r) {
+        int h = 17;
+        h = 31 * h + q;
+        h = 31 * h + r;
+        return h;
     }
 }

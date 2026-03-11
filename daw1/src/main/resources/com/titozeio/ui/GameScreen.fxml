@@ -117,7 +117,7 @@
                                  <children>
                                     <StackPane prefWidth="90.0" prefHeight="90.0" styleClass="robot-frame, robot-frame-portrait">
                                        <children>
-                                          <ImageView fx:id="hexInfoImage" fitWidth="82.0" fitHeight="82.0" preserveRatio="false" />
+                                          <ImageView fx:id="hexInfoImage" fitWidth="64.0" fitHeight="64.0" preserveRatio="true" />
                                        </children>
                                     </StackPane>
                                     <VBox spacing="4.0" prefWidth="250.0">
