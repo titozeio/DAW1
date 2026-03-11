@@ -100,9 +100,9 @@
                                     <VBox spacing="4.0" prefWidth="250.0">
                                        <children>
                                           <HBox spacing="6.0" alignment="CENTER_LEFT"><children><Label text="HP" textFill="#57C0EF"/><StackPane fx:id="hpBarContainer" prefWidth="130.0" prefHeight="10.0" style="-fx-background-color: rgba(45,45,45,0.8);" /><Label fx:id="hpValueLabel" textFill="WHITE"/></children></HBox>
-                                          <HBox spacing="6.0" alignment="CENTER_LEFT"><children><Label text="MOV" textFill="#57C0EF"/><Label fx:id="moveValueLabel" textFill="WHITE"/></children></HBox>
-                                          <HBox spacing="6.0" alignment="CENTER_LEFT"><children><Label text="ALC" textFill="#57C0EF"/><Label fx:id="rangeValueLabel" textFill="WHITE"/></children></HBox>
-                                          <HBox spacing="6.0" alignment="CENTER_LEFT"><children><Label text="DAN" textFill="#57C0EF"/><Label fx:id="damageValueLabel" textFill="WHITE"/></children></HBox>
+                                          <HBox spacing="6.0" alignment="CENTER_LEFT"><children><Label text="MOVIMIENTO" textFill="#57C0EF"/><Label fx:id="moveValueLabel" textFill="WHITE"/></children></HBox>
+                                          <HBox spacing="6.0" alignment="CENTER_LEFT"><children><Label text="ALCANCE" textFill="#57C0EF"/><Label fx:id="rangeValueLabel" textFill="WHITE"/></children></HBox>
+                                          <HBox spacing="6.0" alignment="CENTER_LEFT"><children><Label text="DAÑO" textFill="#57C0EF"/><Label fx:id="damageValueLabel" textFill="WHITE"/></children></HBox>
                                        </children>
                                     </VBox>
                                  </children>

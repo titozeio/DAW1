@@ -370,48 +370,76 @@
     -fx-font-size: 14px;
 }
 
-/* CheckBox Sci-fi Customization */
-.check-box {
-    -fx-padding: 5;
+/* Clean Redo of Settings Styling - Rock Solid Version */
+
+.scifi-label-cyan {
+    -fx-text-fill: #57C0EF !important;
+    -fx-font-weight: bold !important;
+}
+
+.scifi-checkbox {
+    -fx-padding: 0 !important;
     -fx-cursor: hand;
+    -fx-text-fill: #57C0EF !important;
+    -fx-font-weight: bold !important;
 }
 
-.check-box .label {
-    -fx-text-fill: #EAFBFF;
-    -fx-font-size: 16px;
-    -fx-padding: 0 0 0 10;
+.scifi-checkbox .label {
+    -fx-text-fill: #57C0EF !important;
+    -fx-font-size: 16px !important;
+    -fx-padding: 0 0 0 12 !important;
+    -fx-font-weight: bold !important;
+    -fx-background-insets: 0 !important;
+    -fx-border-insets: 0 !important;
 }
 
-.check-box .box {
-    -fx-background-color: #2A2111;
-    -fx-border-color: #8A6A24;
-    -fx-border-width: 1;
-    -fx-background-radius: 0;
-    -fx-border-radius: 0;
-    -fx-min-width: 24px;
-    -fx-min-height: 24px;
-    -fx-pref-width: 24px;
-    -fx-pref-height: 24px;
+.scifi-checkbox .box {
+    -fx-background-color: #2A2111 !important;
+    -fx-border-color: #8A6A24 !important;
+    -fx-border-width: 1 !important;
+    -fx-background-radius: 0 !important;
+    -fx-border-radius: 0 !important;
+    -fx-min-width: 24px !important;
+    -fx-max-width: 24px !important;
+    -fx-min-height: 24px !important;
+    -fx-max-height: 24px !important;
+    -fx-background-insets: 0 !important;
+    -fx-border-insets: 0 !important;
 }
 
-.check-box:hover .box {
-    -fx-background-color: #352A14;
-    -fx-border-color: #F4D9A3;
+/* Forzar insets a 0 en TODOS los estados para evitar saltos */
+.scifi-checkbox:hover .box,
+.scifi-checkbox:focused .box,
+.scifi-checkbox:pressed .box,
+.scifi-checkbox:selected .box,
+.scifi-checkbox:hover,
+.scifi-checkbox:focused,
+.scifi-checkbox:pressed,
+.scifi-checkbox:selected {
+    -fx-background-insets: 0 !important;
+    -fx-border-insets: 0 !important;
 }
 
-.check-box .mark {
-    -fx-background-color: transparent;
-    -fx-shape: "M0 0 H10 V10 H0 Z";
-    /* Casilla rellena cuadrada para el check */
-    -fx-scale-x: 0.6;
-    -fx-scale-y: 0.6;
+.scifi-checkbox:hover .box,
+.scifi-checkbox:focused .box {
+    -fx-background-color: #352A14 !important;
+    -fx-border-color: #F4D9A3 !important;
 }
 
-.check-box:selected .mark {
-    -fx-background-color: #F3D48A;
+.scifi-checkbox:pressed .box {
+    -fx-background-color: #5A4316 !important;
+    -fx-border-color: #BB8612 !important;
 }
 
-.check-box:pressed .box {
-    -fx-background-color: #5A4316;
-    -fx-border-color: #BB8612;
+.scifi-checkbox .mark {
+    -fx-background-color: transparent !important;
+    -fx-shape: "M0 0 H10 V10 H0 Z" !important;
+    -fx-scale-x: 0.65 !important;
+    -fx-scale-y: 0.65 !important;
+    -fx-background-insets: 0 !important;
+    -fx-border-insets: 0 !important;
+}
+
+.scifi-checkbox:selected .mark {
+    -fx-background-color: #F3D48A !important;
 }
