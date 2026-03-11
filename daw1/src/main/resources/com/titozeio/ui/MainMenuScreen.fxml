@@ -74,25 +74,25 @@
 
                   <HBox alignment="CENTER_LEFT" spacing="14.0">
                      <children>
-                        <Label text="Music" textFill="#C9D4DB">
+                        <Label styleClass="scifi-label-cyan" text="Music" textFill="#57C0EF">
                            <font>
                               <Font name="Exo 2 Regular" size="18.0" />
                            </font>
                         </Label>
                         <Region HBox.hgrow="ALWAYS" />
-                        <CheckBox fx:id="musicToggle" mnemonicParsing="false" onAction="#handleMusicToggleAction" selected="true" text="ON" textFill="#4EE2C9" />
+                        <CheckBox fx:id="musicToggle" minWidth="65.0" mnemonicParsing="false" onAction="#handleMusicToggleAction" prefWidth="65.0" selected="true" styleClass="scifi-checkbox" text="ON" />
                      </children>
                   </HBox>
 
                   <HBox alignment="CENTER_LEFT" spacing="14.0">
                      <children>
-                        <Label text="SFX" textFill="#C9D4DB">
+                        <Label styleClass="scifi-label-cyan" text="SFX" textFill="#57C0EF">
                            <font>
                               <Font name="Exo 2 Regular" size="18.0" />
                            </font>
                         </Label>
                         <Region HBox.hgrow="ALWAYS" />
-                        <CheckBox fx:id="sfxToggle" mnemonicParsing="false" onAction="#handleSfxToggleAction" selected="true" text="ON" textFill="#4EE2C9" />
+                        <CheckBox fx:id="sfxToggle" minWidth="65.0" mnemonicParsing="false" onAction="#handleSfxToggleAction" prefWidth="65.0" selected="true" styleClass="scifi-checkbox" text="ON" />
                      </children>
                   </HBox>
                </children>
