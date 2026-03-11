@@ -1420,41 +1420,102 @@ public class GameScreen extends Screen {
     }
 
     private Image loadTerrainImage(Hexagon hex) {
-        // Guardar frente a valores nulos usados en tests de cobertura
-        if (hex == null) {
-            var fallback = getClass().getResource("/com/titozeio/ui/panel.png");
-            return fallback == null ? null : new Image(fallback.toExternalForm());
-        }
-
-        String path = terrainImagePath(hex);
-        var res = getClass().getResource(path);
-        if (res != null) {
-            return new Image(res.toExternalForm());
+        for (String path : terrainImageCandidates(hex)) {
+            var res = getClass().getResource(path);
+            if (res != null) {
+                Image image = new Image(res.toExternalForm(), false);
+                if (!image.isError() && image.getWidth() > 0 && image.getHeight() > 0) {
+                    return image;
+                }
+            }
         }
         var fallback = getClass().getResource("/com/titozeio/ui/panel.png");
         return fallback == null ? null : new Image(fallback.toExternalForm());
     }
 
-    private String terrainImagePath(Hexagon hex) {
-        if (hex == null || hex.getTerrain() == null) {
-            return "/com/titozeio/images/terrain/plain.png";
-        }
+    private java.util.List<String> terrainImageCandidates(Hexagon hex) {
+        int variantIndex = stableVariantIndex(hex.getQ(), hex.getR());
         switch (hex.getTerrain()) {
             case VEGETATION:
-                return "/com/titozeio/images/terrain/vegetation.png";
+                return rotatedVariants(variantIndex,
+                        java.util.List.of(
+                                "/com/titozeio/ui/hexes/vegetation_1.png",
+                                "/com/titozeio/ui/hexes/vegetation_2.png",
+                                "/com/titozeio/ui/hexes/vegetation.png"),
+                        java.util.List.of(
+                                "/com/titozeio/images/terrain/vegetation.png"));
             case WATER_SHALLOW:
-                return "/com/titozeio/images/terrain/water_shallow.png";
+                return java.util.List.of(
+                        "/com/titozeio/ui/hexes/water_shallow_1.png",
+                        "/com/titozeio/ui/hexes/water_shallow1.png",
+                        "/com/titozeio/ui/hexes/water_shallow.png",
+                        "/com/titozeio/images/terrain/water_shallow.png");
             case WATER_DEEP:
-                return "/com/titozeio/images/terrain/water_deep.png";
+                return java.util.List.of(
+                        "/com/titozeio/ui/hexes/water_deep_1.png",
+                        "/com/titozeio/ui/hexes/water_deep1.png",
+                        "/com/titozeio/ui/hexes/water_deep.png",
+                        "/com/titozeio/images/terrain/water_deep.png");
             default:
-                if (hex.getHeight() >= 2) {
-                    return "/com/titozeio/images/terrain/plateau_h2.png";
-                }
-                if (hex.getHeight() == 1) {
-                    return "/com/titozeio/images/terrain/hill_h1.png";
-                }
-                return "/com/titozeio/images/terrain/plain.png";
+                break;
         }
+
+        if (hex.getHeight() >= 2) {
+            return rotatedVariants(variantIndex,
+                    java.util.List.of(
+                            "/com/titozeio/ui/hexes/normal_h2__1.png",
+                            "/com/titozeio/ui/hexes/normal_h2__2.png",
+                            "/com/titozeio/ui/hexes/normal_h2.png"),
+                    java.util.List.of(
+                            "/com/titozeio/images/terrain/plateau_h2.png",
+                            "/com/titozeio/ui/hexes/normal_1.png",
+                            "/com/titozeio/ui/hexes/normal_2.png",
+                            "/com/titozeio/ui/hexes/normal.png",
+                            "/com/titozeio/images/terrain/plain.png"));
+        }
+        if (hex.getHeight() == 1) {
+            return rotatedVariants(variantIndex,
+                    java.util.List.of(
+                            "/com/titozeio/ui/hexes/normal_h1_1.png",
+                            "/com/titozeio/ui/hexes/normal_h1.png"),
+                    java.util.List.of(
+                            "/com/titozeio/images/terrain/hill_h1.png",
+                            "/com/titozeio/ui/hexes/normal_1.png",
+                            "/com/titozeio/ui/hexes/normal_2.png",
+                            "/com/titozeio/ui/hexes/normal.png",
+                            "/com/titozeio/images/terrain/plain.png"));
+        }
+        return rotatedVariants(variantIndex,
+                java.util.List.of(
+                        "/com/titozeio/ui/hexes/normal_1.png",
+                        "/com/titozeio/ui/hexes/normal_2.png",
+                        "/com/titozeio/ui/hexes/normal.png"),
+                java.util.List.of(
+                        "/com/titozeio/images/terrain/plain.png"));
+    }
+
+    private java.util.List<String> rotatedVariants(int startIndex, java.util.List<String> variants,
+            java.util.List<String> fallbacks) {
+        if (variants == null || variants.isEmpty()) {
+            return fallbacks == null ? java.util.List.of() : fallbacks;
+        }
+        int offset = Math.floorMod(startIndex, variants.size());
+        java.util.ArrayList<String> ordered = new java.util.ArrayList<>(
+                variants.size() + (fallbacks == null ? 0 : fallbacks.size()));
+        for (int i = 0; i < variants.size(); i++) {
+            ordered.add(variants.get((offset + i) % variants.size()));
+        }
+        if (fallbacks != null) {
+            ordered.addAll(fallbacks);
+        }
+        return ordered;
+    }
+
+    private int stableVariantIndex(int q, int r) {
+        int h = 17;
+        h = 31 * h + q;
+        h = 31 * h + r;
+        return h;
     }
 
     private static String terrainName(Hexagon hex) {
