@@ -183,6 +183,21 @@ public class Robot {
         return usedMovement && usedAttack;
     }
 
+    /** @return true si el estado actual permite mover al robot. */
+    public boolean canMove() {
+        return currentState.canMove(this);
+    }
+
+    /** @return true si el estado actual permite atacar al robot. */
+    public boolean canAttack() {
+        return currentState.canAttack(this);
+    }
+
+    /** @return true si el estado actual permite usar skill al robot. */
+    public boolean canUseSkill() {
+        return currentState.canUseSkill(this);
+    }
+
     /**
      * Verifica si este robot puede atacar al objetivo.
      * Condiciones: alcance, visibilidad (no cobertura total).

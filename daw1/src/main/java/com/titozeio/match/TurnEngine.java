@@ -42,13 +42,13 @@ public class TurnEngine {
             return commands;
         }
 
-        if (!robot.isUsedMovement()) {
+        if (!robot.isUsedMovement() && robot.canMove()) {
             for (Hexagon hex : getMoveTargets(game, robot)) {
                 commands.add(new MoveCommand(robot, hex));
             }
         }
 
-        if (!robot.isUsedAttack()) {
+        if (!robot.isUsedAttack() && robot.canAttack()) {
             for (Hexagon hex : getAttackTargets(game, robot)) {
                 commands.add(new AttackCommand(robot, hex.getOccupant(), game.getMap()));
             }
@@ -204,6 +204,7 @@ public class TurnEngine {
 
     public boolean canUseSkill(Robot robot) {
         return robot != null && robot.getSkill() != null
+                && robot.canUseSkill()
                 && robot.getSkill().isReady()
                 && !(robot.isUsedMovement() && robot.getSkill().getType() == SkillType.MOVEMENT)
                 && !(robot.isUsedAttack() && robot.getSkill().getType() == SkillType.ATTACK);

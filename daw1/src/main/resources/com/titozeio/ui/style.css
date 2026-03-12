@@ -466,3 +466,114 @@
 .scifi-checkbox:selected .mark {
     -fx-background-color: #F3D48A !important;
 }
+
+.scifi-choicebox,
+.scifi-choicebox.combo-box-base {
+    -fx-background-color: #2A2111;
+    -fx-border-color: #8A6A24;
+    -fx-border-width: 1;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-text-fill: #F3D48A;
+    -fx-mark-color: #F3D48A;
+    -fx-font-family: "Exo 2 Regular";
+    -fx-font-size: 14px;
+}
+
+.scifi-choicebox:hover,
+.scifi-choicebox.combo-box-base:hover {
+    -fx-background-color: #352A14;
+    -fx-border-color: #F4D9A3;
+}
+
+.scifi-choicebox:focused,
+.scifi-choicebox.combo-box-base:focused {
+    -fx-background-color: #352A14;
+    -fx-border-color: #F4D9A3;
+}
+
+.scifi-choicebox .label {
+    -fx-text-fill: #F3D48A;
+}
+
+.scifi-choicebox .list-cell {
+    -fx-text-fill: #F3D48A;
+    -fx-background-color: transparent;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: #0A1821;
+    -fx-border-color: #8A6A24;
+}
+
+.combo-box-popup .list-cell {
+    -fx-background-color: #0A1821;
+    -fx-text-fill: #F3D48A;
+}
+
+.combo-box-popup .list-cell:filled:hover {
+    -fx-background-color: #204850;
+}
+
+.combo-box-popup .list-cell:disabled {
+    -fx-opacity: 0.45;
+}
+
+.scifi-textfield {
+    -fx-background-color: #2A2111;
+    -fx-border-color: #8A6A24;
+    -fx-border-width: 1;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-text-fill: #F3D48A;
+    -fx-font-family: "Exo 2 Regular";
+    -fx-font-size: 14px;
+    -fx-highlight-fill: #204850;
+    -fx-highlight-text-fill: #FFFFFF;
+}
+
+.simulation-progress-label {
+    -fx-font-family: "Exo 2 Regular";
+    -fx-font-size: 18px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #FFFFFF;
+}
+
+.simulation-status-label {
+    -fx-font-family: "Exo 2 Regular";
+    -fx-font-size: 14px;
+    -fx-text-fill: #57C0EF;
+}
+
+.simulation-legend-label {
+    -fx-font-family: "Exo 2 Regular";
+    -fx-font-size: 12px;
+    -fx-text-fill: #F3D48A;
+}
+
+.simulation-stat-row {
+    -fx-background-color: rgba(15, 28, 36, 0.72);
+    -fx-border-color: rgba(87, 192, 239, 0.3);
+    -fx-border-width: 1;
+    -fx-padding: 8 10 8 10;
+}
+
+.simulation-robot-name {
+    -fx-font-family: "Exo 2 Regular";
+    -fx-font-size: 15px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #F3D48A;
+}
+
+.simulation-metric-name {
+    -fx-font-family: "Exo 2 Regular";
+    -fx-font-size: 10px;
+    -fx-text-fill: #57C0EF;
+}
+
+.simulation-metric-value {
+    -fx-font-family: "Exo 2 Regular";
+    -fx-font-size: 15px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #FFFFFF;
+}

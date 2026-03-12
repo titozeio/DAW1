@@ -2,6 +2,7 @@ package com.titozeio.engine;
 
 import com.titozeio.ai.ActionEvaluator;
 import com.titozeio.ai.AiController;
+import com.titozeio.ai.AiDifficulty;
 import com.titozeio.ai.EasyAiStrategy;
 import com.titozeio.ai.HumanController;
 import com.titozeio.ai.PlayerController;
@@ -50,8 +51,10 @@ public class Game {
     private int currentTrackNumber = 1;
     private boolean musicEnabled = true;
     private boolean sfxEnabled = true;
+    private AiDifficulty aiDifficulty = AiDifficulty.EASY;
     private static final String PREF_MUSIC_ENABLED = "musicEnabled";
     private static final String PREF_SFX_ENABLED = "sfxEnabled";
+    private static final String PREF_AI_DIFFICULTY = "aiDifficulty";
     private static final Preferences PREFS = Preferences.userNodeForPackage(Game.class);
 
     // Referencia a la ventana de JavaFX
@@ -82,6 +85,7 @@ public class Game {
         this.turnCounter = 1;
         this.musicEnabled = PREFS.getBoolean(PREF_MUSIC_ENABLED, true);
         this.sfxEnabled = PREFS.getBoolean(PREF_SFX_ENABLED, true);
+        this.aiDifficulty = loadAiDifficultyPreference();
         SoundManager.setEnabled(this.sfxEnabled);
 
         // Crear los jugadores sin robots (los robots se asignan en
@@ -128,22 +132,42 @@ public class Game {
     }
 
     public void configureControllers(GameMode mode) {
+        configureControllers(mode, aiDifficulty, aiDifficulty);
+    }
+
+    public void configureControllers(GameMode mode, AiDifficulty p1Difficulty, AiDifficulty p2Difficulty) {
         this.gameMode = mode;
         controllers.clear();
         switch (mode) {
             case PVE:
                 controllers.put(p1, new HumanController());
-                controllers.put(p2, new AiController(new EasyAiStrategy(new ActionEvaluator()), turnEngine));
+                controllers.put(p2, createAiController(p2Difficulty));
                 break;
             case EVE:
-                controllers.put(p1, new AiController(new EasyAiStrategy(new ActionEvaluator()), turnEngine));
-                controllers.put(p2, new AiController(new EasyAiStrategy(new ActionEvaluator()), turnEngine));
+                controllers.put(p1, createAiController(p1Difficulty));
+                controllers.put(p2, createAiController(p2Difficulty));
                 break;
             case PVP:
             default:
                 controllers.put(p1, new HumanController());
                 controllers.put(p2, new HumanController());
                 break;
+        }
+    }
+
+    private PlayerController createAiController(AiDifficulty difficulty) {
+        return switch (difficulty) {
+            case EASY, MEDIUM, HARD, DARK_SOULS ->
+                new AiController(new EasyAiStrategy(new ActionEvaluator()), turnEngine);
+        };
+    }
+
+    private AiDifficulty loadAiDifficultyPreference() {
+        String stored = PREFS.get(PREF_AI_DIFFICULTY, AiDifficulty.EASY.name());
+        try {
+            return AiDifficulty.valueOf(stored);
+        } catch (IllegalArgumentException ex) {
+            return AiDifficulty.EASY;
         }
     }
 
@@ -521,5 +545,18 @@ public class Game {
 
     public TurnEngine getTurnEngine() {
         return turnEngine;
+    }
+
+    public AiDifficulty getAiDifficulty() {
+        return aiDifficulty;
+    }
+
+    public void setAiDifficulty(AiDifficulty aiDifficulty) {
+        if (aiDifficulty == null) {
+            return;
+        }
+        this.aiDifficulty = aiDifficulty;
+        PREFS.put(PREF_AI_DIFFICULTY, aiDifficulty.name());
+        configureControllers(gameMode != null ? gameMode : GameMode.PVP);
     }
 }
