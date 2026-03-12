@@ -180,6 +180,12 @@
     -fx-font-weight: 700;
 }
 
+#playVsAiButton {
+    -fx-font-family: "Exo 2 Regular";
+    -fx-font-size: 28px;
+    -fx-font-weight: 700;
+}
+
 #settingsButton {
     -fx-font-family: "Exo 2 Regular";
     -fx-font-size: 22px;
