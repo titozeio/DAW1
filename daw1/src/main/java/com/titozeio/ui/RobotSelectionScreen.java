@@ -149,6 +149,7 @@ public class RobotSelectionScreen extends Screen {
     private boolean conceptWaitingReplay = false;
     private java.util.Map<RobotTemplate, Media> mediaCache = new java.util.HashMap<>();
     private Timeline loadingPulse;
+    private PauseTransition aiSelectionPause;
 
     @FXML
     private TutorialOverlayController tutorialOverlayComponentController;
@@ -176,6 +177,7 @@ public class RobotSelectionScreen extends Screen {
             ctrl.isPlayer2Turn = true;
             ctrl.refreshView();
             ctrl.showTurnOverlay();
+            ctrl.maybeRunAiSelection();
             return ctrl;
         } catch (IOException e) {
             System.err.println("Error al cargar RobotSelectionScreen.fxml: " + e.getMessage());
@@ -251,21 +253,10 @@ public class RobotSelectionScreen extends Screen {
         if (availableTemplates.isEmpty()) {
             return;
         }
-        RobotTemplate selected = availableTemplates.get(currentIndex);
-        if (isSingleHumanSelectionMode()) {
-            player1Templates.add(selected);
-            availableTemplates.remove(selected);
-            if (player1Templates.size() == MAX_ROBOTS_PER_PLAYER) {
-                completeAiTeamSelection();
-                transitionToCombatScreen();
-                return;
-            }
-            if (currentIndex >= availableTemplates.size()) {
-                currentIndex = Math.max(0, availableTemplates.size() - 1);
-            }
-            refreshView();
+        if (isSingleHumanSelectionMode() && isPlayer2Turn) {
             return;
         }
+        RobotTemplate selected = availableTemplates.get(currentIndex);
         if (isPlayer2Turn) {
             player2Templates.add(selected);
         } else {
@@ -283,6 +274,7 @@ public class RobotSelectionScreen extends Screen {
         isPlayer2Turn = !isPlayer2Turn;
         refreshView();
         showTurnOverlay();
+        maybeRunAiSelection();
     }
 
     @FXML
@@ -290,20 +282,6 @@ public class RobotSelectionScreen extends Screen {
      * Ejecuta la logica de handle skip action.
      */
     public void handleSkipAction() {
-        if (isSingleHumanSelectionMode()) {
-            List<RobotTemplate> pool = new ArrayList<>(availableTemplates);
-            Collections.shuffle(pool);
-            int p1Missing = MAX_ROBOTS_PER_PLAYER - player1Templates.size();
-            int idx = 0;
-            for (int i = 0; i < p1Missing && idx < pool.size(); i++) {
-                RobotTemplate next = pool.get(idx++);
-                player1Templates.add(next);
-                availableTemplates.remove(next);
-            }
-            completeAiTeamSelection();
-            transitionToCombatScreen();
-            return;
-        }
         List<RobotTemplate> pool = new ArrayList<>(availableTemplates);
         Collections.shuffle(pool);
         int p1Missing = MAX_ROBOTS_PER_PLAYER - player1Templates.size();
@@ -340,14 +318,15 @@ public class RobotSelectionScreen extends Screen {
     private void updateArrowsAvailability() {
         boolean disabled = availableTemplates.size() <= 1;
         if (prevRobotButton != null) {
-            prevRobotButton.setDisable(disabled);
+            prevRobotButton.setDisable(disabled || (isSingleHumanSelectionMode() && isPlayer2Turn));
         }
         if (nextRobotButton != null) {
-            nextRobotButton.setDisable(disabled);
+            nextRobotButton.setDisable(disabled || (isSingleHumanSelectionMode() && isPlayer2Turn));
         }
         if (confirmButton != null) {
-            confirmButton.setDisable(availableTemplates.isEmpty());
-            confirmButton.setOpacity(availableTemplates.isEmpty() ? 0.4 : 1.0);
+            boolean confirmDisabled = availableTemplates.isEmpty() || (isSingleHumanSelectionMode() && isPlayer2Turn);
+            confirmButton.setDisable(confirmDisabled);
+            confirmButton.setOpacity(confirmDisabled ? 0.4 : 1.0);
         }
     }
 
@@ -799,7 +778,9 @@ public class RobotSelectionScreen extends Screen {
             return;
         }
         if (isSingleHumanSelectionMode()) {
-            turnOverlayLabel.setText("Selecciona tu escuadrón");
+            turnOverlayLabel.setText(isPlayer2Turn
+                    ? "Turno de elegir robot: IA"
+                    : "Turno de elegir robot: Jugador 1");
         } else {
             String jugador = isPlayer2Turn ? "P2" : "P1";
             turnOverlayLabel.setText("Turno de elegir robot: " + jugador);
@@ -843,16 +824,38 @@ public class RobotSelectionScreen extends Screen {
                 && game.isAiControlled(game.getP2());
     }
 
-    private void completeAiTeamSelection() {
+    private void maybeRunAiSelection() {
+        if (!isSingleHumanSelectionMode() || !isPlayer2Turn || availableTemplates.isEmpty()) {
+            return;
+        }
+        if (aiSelectionPause != null) {
+            aiSelectionPause.stop();
+        }
+        aiSelectionPause = new PauseTransition(Duration.millis(550));
+        aiSelectionPause.setOnFinished(event -> performAiSelection());
+        aiSelectionPause.play();
+    }
+
+    private void performAiSelection() {
+        if (!isSingleHumanSelectionMode() || !isPlayer2Turn || availableTemplates.isEmpty()) {
+            return;
+        }
         List<RobotTemplate> pool = new ArrayList<>(availableTemplates);
         Collections.shuffle(pool);
-        int missing = MAX_ROBOTS_PER_PLAYER - player2Templates.size();
-        int idx = 0;
-        for (int i = 0; i < missing && idx < pool.size(); i++) {
-            RobotTemplate next = pool.get(idx++);
-            player2Templates.add(next);
-            availableTemplates.remove(next);
+        RobotTemplate selected = pool.getFirst();
+        player2Templates.add(selected);
+        availableTemplates.remove(selected);
+
+        if (isSelectionComplete()) {
+            transitionToCombatScreen();
+            return;
         }
+        if (currentIndex >= availableTemplates.size()) {
+            currentIndex = Math.max(0, availableTemplates.size() - 1);
+        }
+        isPlayer2Turn = false;
+        refreshView();
+        showTurnOverlay();
     }
 
     private void transitionToCombatScreen() {
