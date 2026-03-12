@@ -13,6 +13,7 @@ import com.titozeio.telemetry.SimulationStats;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -71,6 +72,15 @@ public class SettingsOverlayController {
     private VBox simulationRobotStatsBox;
 
     @FXML
+    private HBox simulationSortHeader;
+
+    @FXML
+    private VBox simulationAllyPairsBox;
+
+    @FXML
+    private VBox simulationMatchupsBox;
+
+    @FXML
     private Button cancelSimulationButton;
 
     @FXML
@@ -82,6 +92,7 @@ public class SettingsOverlayController {
     private SimulationStats currentSimulationStats;
     private final Map<String, RobotStatRow> robotStatRows = new LinkedHashMap<>();
     private static final EnumSet<AiDifficulty> AVAILABLE_DIFFICULTIES = EnumSet.of(AiDifficulty.EASY);
+    private SortMetric currentSortMetric = SortMetric.SCORE;
 
     @FXML
     private void initialize() {
@@ -99,6 +110,8 @@ public class SettingsOverlayController {
             simulationMatchCountField.setText("100");
         }
         initializeRobotStatsRows();
+        initializeSummaryBoxes();
+        updateSortHeaderStyles();
         updateSimulationButtons(false);
     }
 
@@ -156,6 +169,7 @@ public class SettingsOverlayController {
 
         currentSimulationStats = new SimulationStats();
         resetRobotStatsRows();
+        initializeSummaryBoxes();
         simulationCancelRequested.set(false);
         updateSimulationProgress(0, matchCount);
         simulationStatusLabel.setText("Lanzando simulación...");
@@ -235,6 +249,20 @@ public class SettingsOverlayController {
         Screen.fadeOutNode(simulationOverlay, 150);
     }
 
+    @FXML
+    public void handleSimulationSortAction(ActionEvent event) {
+        if (!(event.getSource() instanceof Button button)) {
+            return;
+        }
+        Object sortKey = button.getUserData();
+        if (!(sortKey instanceof String metricKey)) {
+            return;
+        }
+        currentSortMetric = SortMetric.from(metricKey);
+        updateSortHeaderStyles();
+        resortRobotStatsRows();
+    }
+
     private void syncAudioTogglesWithState() {
         if (game == null) {
             return;
@@ -302,6 +330,7 @@ public class SettingsOverlayController {
                     currentSimulationStats.getRobotKills().getOrDefault(robot, 0),
                     currentSimulationStats.getRobotScores().getOrDefault(robot, 0));
         }
+        refreshSimulationSummaries();
         resortRobotStatsRows();
     }
 
@@ -329,11 +358,13 @@ public class SettingsOverlayController {
             return;
         }
         java.util.List<RobotStatRow> ordered = new java.util.ArrayList<>(robotStatRows.values());
-        ordered.sort(java.util.Comparator
-                .comparingInt(RobotStatRow::score).reversed()
-                .thenComparingInt(RobotStatRow::wins).reversed()
-                .thenComparingInt(RobotStatRow::survives).reversed()
-                .thenComparing(RobotStatRow::robotName));
+        ordered.sort(
+                java.util.Comparator.comparingInt((RobotStatRow row) -> row.metricValue(currentSortMetric))
+                        .thenComparingInt(RobotStatRow::score)
+                        .thenComparingInt(RobotStatRow::wins)
+                        .thenComparingInt(RobotStatRow::survives)
+                        .reversed()
+                        .thenComparing(RobotStatRow::robotName));
         simulationRobotStatsBox.getChildren().setAll(
                 ordered.stream().map(RobotStatRow::container).toList());
     }
@@ -346,6 +377,91 @@ public class SettingsOverlayController {
                 aiDifficultyChoice.setValue(oldValue != null ? oldValue : AiDifficulty.EASY);
             }
         });
+    }
+
+    private void initializeSummaryBoxes() {
+        renderSummaryBox(simulationAllyPairsBox, "Esperando simulación...");
+        renderSummaryBox(simulationMatchupsBox, "Esperando simulación...");
+    }
+
+    private void refreshSimulationSummaries() {
+        if (currentSimulationStats == null) {
+            return;
+        }
+        java.util.List<String> pairLines = currentSimulationStats.getTopAllyPairs(5).stream()
+                .map(stat -> String.format("%s | W:%d L:%d T:%d | %.0f%%",
+                        stat.pairName(),
+                        stat.wins(),
+                        stat.losses(),
+                        stat.timeouts(),
+                        stat.winRate() * 100.0))
+                .toList();
+        java.util.List<String> matchupLines = currentSimulationStats.getTopMatchupDominance(5).stream()
+                .map(entry -> entry.getKey() + " | " + entry.getValue())
+                .toList();
+        renderSummaryBox(simulationAllyPairsBox, pairLines.isEmpty() ? "Sin datos todavía." : null, pairLines);
+        renderSummaryBox(simulationMatchupsBox, matchupLines.isEmpty() ? "Sin datos todavía." : null, matchupLines);
+    }
+
+    private void renderSummaryBox(VBox container, String placeholder) {
+        renderSummaryBox(container, placeholder, java.util.List.of());
+    }
+
+    private void renderSummaryBox(VBox container, String placeholder, java.util.List<String> lines) {
+        if (container == null) {
+            return;
+        }
+        java.util.List<Label> labels = new java.util.ArrayList<>();
+        if (lines.isEmpty()) {
+            Label label = new Label(placeholder != null ? placeholder : "Sin datos.");
+            label.getStyleClass().add("simulation-summary-placeholder");
+            labels.add(label);
+        } else {
+            for (String line : lines) {
+                Label label = new Label(line);
+                label.getStyleClass().add("simulation-summary-item");
+                labels.add(label);
+            }
+        }
+        container.getChildren().setAll(labels);
+    }
+
+    private void updateSortHeaderStyles() {
+        if (simulationSortHeader == null) {
+            return;
+        }
+        for (javafx.scene.Node child : simulationSortHeader.getChildren()) {
+            if (!(child instanceof Button button)) {
+                continue;
+            }
+            button.getStyleClass().remove("simulation-sort-button-active");
+            Object sortKey = button.getUserData();
+            if (sortKey instanceof String metricKey && currentSortMetric == SortMetric.from(metricKey)) {
+                button.getStyleClass().add("simulation-sort-button-active");
+            }
+        }
+    }
+
+    private enum SortMetric {
+        WINS,
+        LOSSES,
+        TIMEOUTS,
+        SURVIVES,
+        DEATHS,
+        KILLS,
+        SCORE;
+
+        static SortMetric from(String key) {
+            return switch (key) {
+                case "W" -> WINS;
+                case "L" -> LOSSES;
+                case "T" -> TIMEOUTS;
+                case "S" -> SURVIVES;
+                case "D" -> DEATHS;
+                case "K" -> KILLS;
+                default -> SCORE;
+            };
+        }
     }
 
     private static class AiDifficultyCell extends ListCell<AiDifficulty> {
@@ -418,8 +534,20 @@ public class SettingsOverlayController {
             return parseMetric(scoreLabel);
         }
 
+        int metricValue(SortMetric metric) {
+            return switch (metric) {
+                case WINS -> wins();
+                case LOSSES -> parseMetric(lossesLabel);
+                case TIMEOUTS -> parseMetric(timeoutsLabel);
+                case SURVIVES -> survives();
+                case DEATHS -> parseMetric(deathsLabel);
+                case KILLS -> parseMetric(killsLabel);
+                case SCORE -> score();
+            };
+        }
+
         private static HBox createRowContainer(String robotName) {
-            HBox row = new HBox(12);
+            HBox row = new HBox(8);
             row.setAlignment(Pos.CENTER_LEFT);
             row.getStyleClass().add("simulation-stat-row");
             return row;
@@ -428,7 +556,7 @@ public class SettingsOverlayController {
         private static Label createHeaderLabel(String text) {
             Label label = new Label(text);
             label.getStyleClass().add("simulation-robot-name");
-            label.setMinWidth(150);
+            label.setMinWidth(132);
             return label;
         }
 
@@ -443,7 +571,7 @@ public class SettingsOverlayController {
             nameLabel.getStyleClass().add("simulation-metric-name");
             VBox box = new VBox(2, nameLabel, valueLabel);
             box.setAlignment(Pos.CENTER);
-            box.setMinWidth(38);
+            box.setMinWidth(34);
             return box;
         }
 

@@ -534,20 +534,20 @@
 
 .simulation-progress-label {
     -fx-font-family: "Exo 2 Regular";
-    -fx-font-size: 18px;
+    -fx-font-size: 15px;
     -fx-font-weight: 700;
     -fx-text-fill: #FFFFFF;
 }
 
 .simulation-status-label {
     -fx-font-family: "Exo 2 Regular";
-    -fx-font-size: 14px;
+    -fx-font-size: 12px;
     -fx-text-fill: #57C0EF;
 }
 
 .simulation-legend-label {
     -fx-font-family: "Exo 2 Regular";
-    -fx-font-size: 12px;
+    -fx-font-size: 10px;
     -fx-text-fill: #F3D48A;
 }
 
@@ -555,25 +555,82 @@
     -fx-background-color: rgba(15, 28, 36, 0.72);
     -fx-border-color: rgba(87, 192, 239, 0.3);
     -fx-border-width: 1;
-    -fx-padding: 8 10 8 10;
+    -fx-padding: 6 8 6 8;
 }
 
 .simulation-robot-name {
     -fx-font-family: "Exo 2 Regular";
-    -fx-font-size: 15px;
+    -fx-font-size: 13px;
     -fx-font-weight: 700;
     -fx-text-fill: #F3D48A;
 }
 
 .simulation-metric-name {
     -fx-font-family: "Exo 2 Regular";
-    -fx-font-size: 10px;
+    -fx-font-size: 9px;
     -fx-text-fill: #57C0EF;
 }
 
 .simulation-metric-value {
     -fx-font-family: "Exo 2 Regular";
-    -fx-font-size: 15px;
+    -fx-font-size: 13px;
     -fx-font-weight: 700;
+    -fx-text-fill: #FFFFFF;
+}
+
+.simulation-summary-panel {
+    -fx-background-color: rgba(15, 28, 36, 0.55);
+    -fx-border-color: rgba(87, 192, 239, 0.25);
+    -fx-border-width: 1;
+    -fx-padding: 8 10 8 10;
+}
+
+.simulation-summary-title {
+    -fx-font-family: "Exo 2 Regular";
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #57C0EF;
+}
+
+.simulation-summary-item {
+    -fx-font-family: "Exo 2 Regular";
+    -fx-font-size: 11px;
+    -fx-text-fill: #FFFFFF;
+}
+
+.simulation-summary-placeholder {
+    -fx-font-family: "Exo 2 Regular";
+    -fx-font-size: 11px;
+    -fx-text-fill: #9BB2C0;
+}
+
+.simulation-sort-label {
+    -fx-font-family: "Exo 2 Regular";
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #57C0EF;
+}
+
+.simulation-sort-button {
+    -fx-background-color: #2A2111;
+    -fx-border-color: #8A6A24;
+    -fx-border-width: 1;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-text-fill: #F3D48A;
+    -fx-font-family: "Exo 2 Regular";
+    -fx-font-size: 10px;
+    -fx-font-weight: 700;
+    -fx-padding: 4 8 4 8;
+}
+
+.simulation-sort-button:hover {
+    -fx-background-color: #352A14;
+    -fx-border-color: #F4D9A3;
+}
+
+.simulation-sort-button-active {
+    -fx-background-color: #204850;
+    -fx-border-color: #57C0EF;
     -fx-text-fill: #FFFFFF;
 }
