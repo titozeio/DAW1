@@ -11,12 +11,12 @@ import com.titozeio.skills.*;
  *
  * Stats según el GDD:
  * -------------------------------------------------------------------
- * VICTORY_SABER | HP 12 | Mov 4 | Cañón de plasma (3/3) | PlasmaSaberAttack
- * BULLSEYE | HP 6 | Mov 5 | Doble cañón auto. (5/6) | GuidedMissile
+ * VICTORY_SABER | HP 12 | Mov 4 | Cañón de plasma (3/4) | PlasmaSaberAttack
+ * BULLSEYE | HP 7 | Mov 5 | Doble cañón auto. (5/7) | GuidedMissile
  * BULWARK | HP 15 | Mov 4 | Cañón laser (3/3) | RepairNanobots
- * SCOUT | HP 7 | Mov 5 | Cañón automático (6/5) | JetpackBoost
+ * SCOUT | HP 8 | Mov 4 | Cañón automático (6/7) | JetpackBoost
  * DEATH_KNIGHT | HP 12 | Mov 3 | Martillo propulsado(1/8) | TurboPropulsion
- * ICE_AGE | HP 9 | Mov 4 | Misiles de racimo (5/4) | FreezeRay
+ * ICE_AGE | HP 9 | Mov 4 | Misiles de racimo (5/3) | FreezeRay
  */
 public enum RobotTemplate {
 

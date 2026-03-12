@@ -6,7 +6,7 @@ import com.titozeio.enums.SkillType;
 /**
  * Skill: Misiles Teledirigidos — Bullseye.
  *
- * Tipo: Ataque | Alcance: 5 | Daño: 5 | Cooldown: 2 turnos.
+ * Tipo: Ataque | Alcance: 6 | Daño: 5 | Cooldown: 2 turnos.
  * Efecto especial GDD: Permite atacar sin visibilidad e ignorando reglas de
  * cobertura.
  */

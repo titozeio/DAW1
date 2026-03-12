@@ -580,21 +580,21 @@ Lista de sprites, sonidos y música (importante para organizar la carpeta src/ma
 
 - **Retropropulsores**:
     - Tipo: Movimiento.
-    - Movimiento: 6.
-    - Cooldown: 1 turnos.
+    - Movimiento: 7.
+    - Cooldown: 1 turno.
     - Efecto especial: Ignora el tipo de terreno a efectos de movimiento (coste y posibilidad). Por ejemplo, un robot con esta skill podría moverse de una casilla de altura 0 a una casilla de altura 2.
     - Descripción: El robot cuenta con unos retropropulsores que le impulsan por el aire. No llega a poder volar, ya que el impulso dura muy poco dado el coste energético. 
 
 - **Turbo Propulsores**:
     - Tipo: Movimiento.
-    - Movimiento: 7.
-    - Cooldown: 1 turnos.
+    - Movimiento: 5.
+    - Cooldown: 2 turnos.
     - Efecto especial: Ninguno.
     - Descripción: Cada dos turnos, el robot puede activar unos turbo propulsores en sus patas, que le impulsan a una velocidad mucho mayor de su movimiento normal.
  
 - **Misiles teledirigidos**:
     - Tipo: Ataque.
-    - Alcance: 5.
+    - Alcance: 6.
     - Daño: 5.
     - Cooldown: 2 turnos.
     - Efecto especial: Permite atacar sin visibilidad e ignorando reglas de cobertura, siempre que el enemigo esté al alcance.
@@ -654,12 +654,12 @@ Lista de sprites, sonidos y música (importante para organizar la carpeta src/ma
 - **Bullseye**:
     - **Modelo**: Bullseye.
     - **Descripción**: También conocido en el terreno de combate como "Glass Cannon" (Cañón de cristal). Es un robot de artillería móvil con un sensor óptico central de color rojo intenso que proyecta un destello letal. Muy rápido y con gran alcance, pero con blindaje ligero y visiblemente desgastado por el combate.
-    - **HP**: 6.
+    - **HP**: 7.
     - **Movimiento**: 5.
     - **Armas**:
         - Nombre: Doble cañón automático.
         - Alcance: 5.  
-        - Daño: 6.
+        - Daño: 7.
         - Descripción: Brazos integrados convertidos en cañones automáticos rotatorios.
     - **Skills**: Misiles teledirigidos.
   
@@ -678,12 +678,12 @@ Lista de sprites, sonidos y música (importante para organizar la carpeta src/ma
 - **Scout**:
     - **Modelo**: Scout.
     - **Descripción**: Un robot ligero de reconocimiento con piernas digitígradas que le permiten una agilidad asombrosa. Su cabeza cuenta con un array multisensor cian. Equipado con potentes retropropulsores de plasma azul en la espalda, es capaz de flanquear posiciones enemigas en segundos. Su pintura usa camuflaje táctico marrón y verde.
-    - **HP**: 7.
-    - **Movimiento**: 5.
+    - **HP**: 8.
+    - **Movimiento**: 4.
     - **Armas**:
         - Nombre: Cañón automático.
         - Alcance: 6.  
-        - Daño: 5.
+        - Daño: 7.
         - Descripción: Cañón automático de alta precisión integrado en el brazo derecho.  
     - **Skills**: Retropropulsores.
 
@@ -707,7 +707,7 @@ Lista de sprites, sonidos y música (importante para organizar la carpeta src/ma
     - **Armas**:
         - Nombre: Misiles de racimo
         - Alcance: 5.  
-        - Daño: 4.
+        - Daño: 3.
         - Descripción: Lanzamisiles de hombro integrados de perfil bajo.
     - **Skills**: Rayo congelador.
 

@@ -7,7 +7,7 @@ import com.titozeio.enums.SkillType;
 /**
  * Skill: Turbo Propulsores — Death Knight.
  *
- * Tipo: Movimiento | Puntos de movimiento: 5 | Cooldown: 1 turno.
+ * Tipo: Movimiento | Puntos de movimiento: 5 | Cooldown: 2 turnos.
  * Efecto especial GDD: Ninguno (movimiento normal pero con 5 puntos).
  */
 public class TurboPropulsion extends Skill {

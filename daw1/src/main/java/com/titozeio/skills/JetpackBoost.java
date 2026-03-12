@@ -7,7 +7,7 @@ import com.titozeio.enums.SkillType;
 /**
  * Skill: Retropropulsores — Scout.
  *
- * Tipo: Movimiento | Puntos de movimiento: 3 | Cooldown: 1 turno.
+ * Tipo: Movimiento | Puntos de movimiento: 7 | Cooldown: 1 turno.
  * Efecto especial GDD: Ignora el tipo de terreno Y los límites de altura al
  * calcular
  * el coste de movimiento (puede pasar de altura 0 a altura 2, por ejemplo).
