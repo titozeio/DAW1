@@ -30,7 +30,7 @@ public enum RobotTemplate {
         public Robot createRobot(Player owner) {
             Weapon weapon = new Weapon(
                     "Cañón de plasma",
-                    3, 3,
+                    3, 4,
                     "Cañón de plasma. Poco efectivo y de corto alcance.",
                     AttackType.ENERGY);
             Skill skill = new PlasmaSaberAttack();
@@ -52,7 +52,7 @@ public enum RobotTemplate {
         public Robot createRobot(Player owner) {
             Weapon weapon = new Weapon(
                     "Doble cañón automático",
-                    5, 6,
+                    5, 7,
                     "En lugar de brazos, Bullseye cuenta con dos cañones automáticos "
                             + "que hacen bastante daño a un alcance importante.",
                     AttackType.KINETIC);
@@ -61,7 +61,7 @@ public enum RobotTemplate {
                     "Bullseye",
                     "También conocido como \"Glass Cannon\", es un robot muy rápido "
                             + "y con un gran alcance de ataque, pero con muy poco blindaje.",
-                    6, 5, weapon, skill, owner);
+                    7, 5, weapon, skill, owner);
         }
     },
 
@@ -97,7 +97,7 @@ public enum RobotTemplate {
         public Robot createRobot(Player owner) {
             Weapon weapon = new Weapon(
                     "Cañón automático",
-                    6, 5,
+                    6, 7,
                     "Su brazo derecho es un cañón automático de gran alcance y potencia.",
                     AttackType.KINETIC);
             Skill skill = new JetpackBoost();
@@ -105,7 +105,7 @@ public enum RobotTemplate {
                     "Scout",
                     "Un robot pequeño y ágil. Su movilidad gracias a los retropropulsores "
                             + "y su temible cañón automático lo convierten en pieza clave del equipo.",
-                    7, 5, weapon, skill, owner);
+                    8, 4, weapon, skill, owner);
         }
     },
 
@@ -142,7 +142,7 @@ public enum RobotTemplate {
         public Robot createRobot(Player owner) {
             Weapon weapon = new Weapon(
                     "Misiles de racimo",
-                    5, 4,
+                    5, 3,
                     "Tiene dos afustes de misiles en los hombros. Tienen muy buen alcance, "
                             + "pero fallan la mitad, por lo que su daño no es tan temible.",
                     AttackType.EXPLOSIVE);

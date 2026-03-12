@@ -14,7 +14,7 @@ import com.titozeio.enums.SkillType;
  */
 public class JetpackBoost extends Skill {
 
-    private final int movementPoints = 6;
+    private final int movementPoints = 7;
     private final boolean ignoresTerrainCost = true;
     private final boolean ignoresHeightLimits = true;
 

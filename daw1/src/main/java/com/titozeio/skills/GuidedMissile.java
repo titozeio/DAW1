@@ -12,7 +12,7 @@ import com.titozeio.enums.SkillType;
  */
 public class GuidedMissile extends Skill {
 
-    private static final int RANGE = 5;
+    private static final int RANGE = 6;
     private static final int DAMAGE = 5;
     private final boolean ignoresCover = true;
     private final boolean ignoresVisibility = true;

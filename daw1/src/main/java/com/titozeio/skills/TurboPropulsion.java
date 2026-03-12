@@ -21,7 +21,7 @@ public class TurboPropulsion extends Skill {
         super(
                 "Turbo Propulsores",
                 SkillType.MOVEMENT,
-                1,
+                2,
                 "Cada dos turnos, el robot puede activar unos turbo propulsores en sus patas, "
                         + "que le impulsan a una velocidad mucho mayor de su movimiento normal.");
     }
