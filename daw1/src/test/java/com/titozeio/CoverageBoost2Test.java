@@ -7,14 +7,25 @@ import com.titozeio.engine.Hexagon;
 import com.titozeio.engine.Player;
 import com.titozeio.engine.Robot;
 import com.titozeio.engine.SoundManager;
+import com.titozeio.engine.ActionManager;
+import com.titozeio.engine.Map;
+import com.titozeio.commands.MoveCommand;
+import com.titozeio.commands.SkillCommand;
+import com.titozeio.commands.AttackCommand;
 import com.titozeio.enums.AttackType;
 import com.titozeio.enums.RobotTemplate;
+import com.titozeio.enums.TerrainType;
 import com.titozeio.model.Weapon;
 import com.titozeio.skills.*;
 import com.titozeio.ui.GameScreen;
 import com.titozeio.ui.MainMenuScreen;
 import com.titozeio.ui.RobotSelectionScreen;
 import com.titozeio.ui.Screen;
+import com.titozeio.ui.SettingsOverlayController;
+import com.titozeio.ui.TutorialOverlayController;
+import com.titozeio.states.ExhaustedState;
+import com.titozeio.states.FrozenState;
+import com.titozeio.states.NormalState;
 
 import javafx.application.Platform;
 import javafx.scene.control.Button;
@@ -34,6 +45,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Tests de cobertura adicionales para SoundManager, Screen, MainMenuScreen,
@@ -169,7 +181,7 @@ class CoverageBoost2Test {
     }
 
     // =========================================================================
-    // MainMenuScreen — handlers (sin FXML: vía reflexión directa)
+    // MainMenuScreen / SettingsOverlayController — handlers (sin FXML)
     // =========================================================================
 
     @Test
@@ -177,51 +189,76 @@ class CoverageBoost2Test {
         MainMenuScreen m = new MainMenuScreen();
         Game g = new Game(null);
 
-        // Inyectamos campos necesarios
         set(m, "game", g);
-        CheckBox musicCb = new CheckBox();
-        musicCb.setSelected(true);
-        set(m, "musicToggle", musicCb);
-        CheckBox sfxCb = new CheckBox();
-        sfxCb.setSelected(true);
-        set(m, "sfxToggle", sfxCb);
+
+        SettingsOverlayController settings = new SettingsOverlayController();
+        StackPane settingsOverlay = new StackPane();
+        settingsOverlay.setVisible(false);
+        set(settings, "settingsOverlay", settingsOverlay);
+        set(settings, "musicToggle", new CheckBox());
+        set(settings, "sfxToggle", new CheckBox());
+        set(m, "settingsOverlayComponentController", settings);
+
+        TutorialOverlayController tutorial = new TutorialOverlayController();
+        StackPane tutorialOverlay = new StackPane();
+        tutorialOverlay.setVisible(false);
+        set(tutorial, "tutorialOverlay", tutorialOverlay);
+        set(m, "tutorialOverlayComponentController", tutorial);
+
+        assertDoesNotThrow(m::handleSettingsOpenAction);
+        assertTrue(settingsOverlay.isVisible());
+
+        assertDoesNotThrow(m::handleTutorialOpenAction);
+        assertTrue(tutorialOverlay.isVisible());
+
+        assertDoesNotThrow(m::handleTutorialCloseAction);
+        assertFalse(tutorialOverlay.isVisible());
+
+        assertDoesNotThrow(() -> m.handleInput("OTHER"));
+    }
+
+    @Test
+    void settingsOverlayControllerHandlersViaCoverage() throws Exception {
+        SettingsOverlayController c = new SettingsOverlayController();
+        Game g = new Game(null);
+
         StackPane overlay = new StackPane();
         overlay.setVisible(false);
-        set(m, "settingsOverlay", overlay);
+        set(c, "settingsOverlay", overlay);
+        CheckBox musicCb = new CheckBox();
+        musicCb.setSelected(true);
+        set(c, "musicToggle", musicCb);
+        CheckBox sfxCb = new CheckBox();
+        sfxCb.setSelected(true);
+        set(c, "sfxToggle", sfxCb);
 
-        // handleSettingsOpenAction
-        assertDoesNotThrow(m::handleSettingsOpenAction);
+        assertDoesNotThrow(() -> c.show(g));
         assertTrue(overlay.isVisible());
 
-        // handleSettingsCloseAction
-        assertDoesNotThrow(m::handleSettingsCloseAction);
+        assertDoesNotThrow(c::handleSettingsCloseAction);
         assertFalse(overlay.isVisible());
 
-        // handleMusicToggleAction ON→OFF
         musicCb.setSelected(false);
-        assertDoesNotThrow(m::handleMusicToggleAction);
+        assertDoesNotThrow(c::handleMusicToggleAction);
         assertEquals("OFF", musicCb.getText());
+        assertFalse(g.isMusicEnabled());
 
-        // handleMusicToggleAction OFF→ON
         musicCb.setSelected(true);
-        assertDoesNotThrow(m::handleMusicToggleAction);
+        assertDoesNotThrow(c::handleMusicToggleAction);
         assertEquals("ON", musicCb.getText());
+        assertTrue(g.isMusicEnabled());
 
-        // handleSfxToggleAction OFF
         sfxCb.setSelected(false);
-        assertDoesNotThrow(m::handleSfxToggleAction);
+        assertDoesNotThrow(c::handleSfxToggleAction);
         assertFalse(SoundManager.isEnabled());
         assertEquals("OFF", sfxCb.getText());
+        assertFalse(g.isSfxEnabled());
 
-        // handleSfxToggleAction ON
         sfxCb.setSelected(true);
-        assertDoesNotThrow(m::handleSfxToggleAction);
+        assertDoesNotThrow(c::handleSfxToggleAction);
         assertTrue(SoundManager.isEnabled());
         assertEquals("ON", sfxCb.getText());
-
-        // display() con window null — solo no debe lanzar NullPointer en el handler
-        // (no llamamos display() porque necesita Stage)
-        assertDoesNotThrow(() -> m.handleInput("OTHER"));
+        assertTrue(g.isSfxEnabled());
     }
 
     // =========================================================================
@@ -680,6 +717,172 @@ class CoverageBoost2Test {
         Game g = new Game(null);
         com.titozeio.ui.PauseScreen s = new com.titozeio.ui.PauseScreen();
         assertDoesNotThrow(() -> g.displayScreen(s));
+    }
+
+    // =========================================================================
+    // Commands / States — subir cobertura global
+    // =========================================================================
+
+    @Test
+    void actionManagerExecuteUndoAndUnsupportedUndoBranches() {
+        ActionManager am = ActionManager.getInstance();
+        am.clearHistory();
+
+        AtomicBoolean flag = new AtomicBoolean(false);
+        com.titozeio.commands.GameCommand ok = new com.titozeio.commands.GameCommand() {
+            @Override
+            public void execute() {
+                flag.set(true);
+            }
+
+            @Override
+            public void undo() {
+                flag.set(false);
+            }
+
+            @Override
+            public String getDescription() {
+                return "OK";
+            }
+        };
+
+        assertDoesNotThrow(() -> am.executeCommand(ok));
+        assertTrue(flag.get());
+        assertDoesNotThrow(am::undoLastCommand);
+        assertFalse(flag.get());
+
+        // Rama catch(UnsupportedOperationException)
+        Game g = new Game(null);
+        Player p = g.getP1();
+        Robot r = TestFixtures.robot("Cmd", p, 5, 3, 2, 2, new JetpackBoost());
+        Hexagon dest = TestFixtures.hex(0, 0, TerrainType.NORMAL, 0);
+        SkillCommand skillCmd = new SkillCommand(r, dest);
+        assertDoesNotThrow(() -> am.executeCommand(skillCmd));
+        assertDoesNotThrow(am::undoLastCommand);
+
+        // Historia vacía → no hace nada
+        am.clearHistory();
+        assertDoesNotThrow(am::undoLastCommand);
+    }
+
+    @Test
+    void moveCommandExecuteUndoAndDescription() {
+        Player p = new Player("P1");
+        Robot r = TestFixtures.robot("Mover", p, 10, 3, 2, 2, null);
+
+        Hexagon from = TestFixtures.hex(0, 0, TerrainType.NORMAL, 0);
+        Hexagon to = TestFixtures.hex(1, 0, TerrainType.NORMAL, 0);
+        from.setOccupant(r);
+        r.setPosition(from);
+
+        MoveCommand cmd = new MoveCommand(r, to);
+        assertDoesNotThrow(cmd::execute);
+        assertEquals(to, r.getPosition());
+        assertTrue(r.isUsedMovement());
+
+        assertDoesNotThrow(cmd::undo);
+        assertEquals(from, r.getPosition());
+        assertEquals(r, from.getOccupant());
+        assertFalse(r.isUsedMovement());
+
+        assertTrue(cmd.getDescription().contains("Mover"));
+    }
+
+    @Test
+    void attackCommandUndoThrowsAndDescriptionDoesNotThrow() {
+        Game g = new Game(null);
+        Map map = g.getMap();
+
+        Player p1 = g.getP1();
+        Player p2 = g.getP2();
+
+        Robot attacker = TestFixtures.robot("Att", p1, 10, 3, 10, 20, null);
+        Robot target = TestFixtures.robot("Tgt", p2, 1, 3, 1, 1, null);
+
+        // Buscar dos hexágonos adyacentes existentes para evitar suposiciones del mapa
+        Hexagon a = null;
+        Hexagon b = null;
+        int[][] deltas = new int[][] { { 1, 0 }, { 0, 1 }, { -1, 1 }, { -1, 0 }, { 0, -1 }, { 1, -1 } };
+        for (Hexagon[] row : map.getGrid()) {
+            for (Hexagon h : row) {
+                if (h == null) {
+                    continue;
+                }
+                for (int[] d : deltas) {
+                    Hexagon n = map.getHexagon(h.getQ() + d[0], h.getR() + d[1]);
+                    if (n != null) {
+                        a = h;
+                        b = n;
+                        break;
+                    }
+                }
+                if (a != null) {
+                    break;
+                }
+            }
+            if (a != null) {
+                break;
+            }
+        }
+        assertNotNull(a, "Debe existir al menos 1 hexágono en el mapa");
+        assertNotNull(b, "Debe existir al menos 1 vecino adyacente");
+        attacker.setPosition(a);
+        a.setOccupant(attacker);
+        target.setPosition(b);
+        b.setOccupant(target);
+
+        AttackCommand cmd = new AttackCommand(attacker, target, map);
+        assertDoesNotThrow(cmd::execute); // no-op en este diseño
+        assertNotNull(cmd.getDescription());
+        assertTrue(cmd.getDamageDealt() >= 0);
+        assertDoesNotThrow(cmd::isFatal);
+        assertThrows(UnsupportedOperationException.class, cmd::undo);
+    }
+
+    @Test
+    void robotStateBehaviorsCoverNullAndNonNullBranches() throws Exception {
+        Player p = new Player("P1");
+        Skill sk = new FreezeRay();
+
+        // Forzamos cooldown>0 para cubrir isReady=false en NormalState.canUseSkill
+        Field cdField = Skill.class.getDeclaredField("currentCooldown");
+        cdField.setAccessible(true);
+        cdField.setInt(sk, 1);
+
+        Robot r = TestFixtures.robot("StateBot", p, 10, 3, 2, 2, sk);
+
+        NormalState normal = new NormalState();
+        assertFalse(normal.canMove(null));
+        assertFalse(normal.canAttack(null));
+        assertFalse(normal.canUseSkill(null));
+
+        r.setUsedMovement(false);
+        assertTrue(normal.canMove(r));
+        r.setUsedMovement(true);
+        assertFalse(normal.canMove(r));
+
+        r.setUsedAttack(false);
+        assertTrue(normal.canAttack(r));
+        r.setUsedAttack(true);
+        assertFalse(normal.canAttack(r));
+
+        // skill no lista (cooldown>0) → false
+        assertFalse(normal.canUseSkill(r));
+        cdField.setInt(sk, 0);
+        assertTrue(normal.canUseSkill(r));
+
+        // Frozen / Exhausted devuelven siempre false en can*
+        FrozenState frozen = new FrozenState();
+        ExhaustedState exhausted = new ExhaustedState();
+        assertFalse(frozen.canMove(r));
+        assertFalse(frozen.canAttack(r));
+        assertFalse(frozen.canUseSkill(r));
+        assertDoesNotThrow(() -> frozen.onTurnBegin(r));
+
+        assertFalse(exhausted.canMove(r));
+        assertFalse(exhausted.canAttack(r));
+        assertFalse(exhausted.canUseSkill(r));
+        assertDoesNotThrow(() -> exhausted.onTurnBegin(r));
     }
 
     // =========================================================================
