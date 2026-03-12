@@ -438,6 +438,8 @@ public class GameScreen extends Screen {
             } else {
                 startCombatPhase();
             }
+        } else if (game.isAiControlled(deployingPlayer)) {
+            maybeRunAiDeployment();
         }
     }
 
