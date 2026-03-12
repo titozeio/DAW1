@@ -294,7 +294,42 @@ La IA fácil evaluará acciones legales mediante una puntuación heurística y e
 - Avanzar hacia la base rival cuando no haya ataque mejor disponible.
 - Evitar terrenos y posiciones claramente desfavorables.
 
-Ejemplo orientativo de pesos:
+#### Heurística actualmente implementada (marzo 2026)
+
+La implementación actual de `EasyAiStrategy` recorre los robots vivos no agotados del jugador IA, genera todas sus acciones legales mediante `TurnEngine` y escoge la acción con mejor puntuación heurística global. Es decir, no solo decide "qué hacer con el robot activo", sino también "qué robot debería actuar ahora".
+
+La puntuación usada en `ActionEvaluator` es la siguiente:
+
+- **Ataque normal**:
+  - Base: `200 + daño_estimado * 25`
+  - Bonus adicional de `+1000` si el ataque mata al objetivo.
+  - Bonus adicional de `+150` si el objetivo está amenazando una captura de base.
+- **Movimiento normal**:
+  - Base: `10`
+  - `+30` por cada hexágono en que reduzca la distancia al enemigo más cercano.
+  - `+80` si la casilla final deja al robot en posición de poder atacar a algún enemigo.
+  - `+20` si termina en vegetación.
+  - `-40` si termina en agua poco profunda.
+  - `+15` si además acerca al robot a la base enemiga.
+- **Skills ofensivas**:
+  - `FreezeRay`: base `250 + daño * 20`, `+900` si mata, `+200` si el objetivo amenaza la base.
+  - `GuidedMissile`: base `260 + daño * 22`, `+1000` si mata.
+  - `PlasmaSaberAttack`: base `280 + daño * 20`, `+1000` si mata.
+- **Skill de curación**:
+  - `RepairNanobots`: `180 + curación_efectiva * 30`, donde la curación efectiva es el mínimo entre HP faltante y curación de la skill.
+- **Skills de movimiento**:
+  - `JetpackBoost` y `TurboPropulsion`: `120 + puntuación_del_movimiento_resultante`.
+
+Para calcular `daño_estimado` en los ataques normales, la IA tiene en cuenta:
+
+- daño base del arma,
+- modificador por terreno del atacante,
+- cobertura entre atacante y defensor,
+- modificador defensivo del terreno del objetivo.
+
+No usa todavía simulación de varios turnos, búsqueda en profundidad ni valoración sofisticada de exposición múltiple. Su comportamiento es deliberadamente simple, determinista y fácil de explicar en clase.
+
+Ejemplo orientativo de pesos de diseño:
 
 - `+1000` matar a un enemigo.
 - `+400` impedir captura de base.
