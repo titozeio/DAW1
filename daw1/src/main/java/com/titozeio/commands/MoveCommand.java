@@ -41,4 +41,12 @@ public class MoveCommand implements GameCommand {
     public String getDescription() {
         return robot.getModelName() + " se mueve a (" + targetHex.getQ() + "," + targetHex.getR() + ")";
     }
+
+    public Robot getRobot() {
+        return robot;
+    }
+
+    public Hexagon getTargetHex() {
+        return targetHex;
+    }
 }

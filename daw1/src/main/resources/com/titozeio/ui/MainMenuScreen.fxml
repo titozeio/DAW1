@@ -33,6 +33,11 @@
                         <Font name="Exo 2 Regular" size="24.0" />
                      </font>
                   </Button>
+                  <Button fx:id="playVsAiButton" maxHeight="56.0" maxWidth="320.0" minHeight="56.0" minWidth="320.0" mnemonicParsing="false" onAction="#handlePlayVsAiAction" prefHeight="56.0" prefWidth="320.0" styleClass="scifi-button" text="Play vs AI">
+                     <font>
+                        <Font name="Exo 2 Regular" size="24.0" />
+                     </font>
+                  </Button>
                   <Button fx:id="settingsButton" maxHeight="56.0" maxWidth="320.0" minHeight="56.0" minWidth="320.0" mnemonicParsing="false" onAction="#handleSettingsOpenAction" prefHeight="56.0" prefWidth="320.0" styleClass="scifi-button-outline" text="Settings">
                      <font>
                         <Font name="Exo 2 Regular" size="22.0" />

@@ -30,4 +30,12 @@ public class SkillCommand implements GameCommand {
     public String getDescription() {
         return "⚡ " + robot.getModelName() + " usa " + skillName;
     }
+
+    public Robot getRobot() {
+        return robot;
+    }
+
+    public Object getTarget() {
+        return target;
+    }
 }

@@ -1,6 +1,7 @@
 package com.titozeio.ui;
 
 import com.titozeio.engine.Game;
+import com.titozeio.engine.GameMode;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -67,6 +68,11 @@ public class MainMenuScreen extends Screen {
     }
 
     @FXML
+    public void handlePlayVsAiAction() {
+        handleInput("PLAY_VS_AI");
+    }
+
+    @FXML
     private void initialize() {
         // Sin inicialización local: se delega al componente SettingsOverlay.
     }
@@ -110,10 +116,21 @@ public class MainMenuScreen extends Screen {
      * @param input parametro de entrada.
      */
     public void handleInput(String input) {
-        if (input.equals("PLAY")) {
-            System.out.println("Iniciando transicion a RobotSelectionScreen...");
-            game.resetForNewMatch();
-            this.game.displayScreen(RobotSelectionScreen.create(window, game));
+        switch (input) {
+            case "PLAY":
+                System.out.println("Iniciando transicion a RobotSelectionScreen...");
+                game.configureControllers(GameMode.PVP);
+                game.resetForNewMatch();
+                this.game.displayScreen(RobotSelectionScreen.create(window, game));
+                break;
+            case "PLAY_VS_AI":
+                System.out.println("Iniciando partida contra IA...");
+                game.configureControllers(GameMode.PVE);
+                game.resetForNewMatch();
+                this.game.displayScreen(RobotSelectionScreen.create(window, game));
+                break;
+            default:
+                break;
         }
     }
 }

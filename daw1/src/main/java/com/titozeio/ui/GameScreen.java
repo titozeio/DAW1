@@ -1,10 +1,13 @@
 package com.titozeio.ui;
 
+import com.titozeio.ai.EndTurnDecision;
+import com.titozeio.ai.ExecuteCommandDecision;
+import com.titozeio.ai.MatchContext;
+import com.titozeio.ai.TurnDecision;
 import com.titozeio.commands.AttackCommand;
 import com.titozeio.commands.GameCommand;
 import com.titozeio.commands.MoveCommand;
 import com.titozeio.commands.SkillCommand;
-import com.titozeio.engine.ActionManager;
 import com.titozeio.engine.Game;
 import com.titozeio.engine.GamePhase;
 import com.titozeio.engine.Hexagon;
@@ -15,9 +18,11 @@ import com.titozeio.engine.SoundManager;
 import com.titozeio.enums.AttackType;
 import com.titozeio.enums.SkillType;
 import com.titozeio.enums.TerrainType;
+import com.titozeio.match.TurnEngine;
 import com.titozeio.skills.JetpackBoost;
 import com.titozeio.skills.Skill;
 import com.titozeio.skills.TurboPropulsion;
+import javafx.animation.PauseTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -173,6 +178,9 @@ public class GameScreen extends Screen {
     private Stage window;
     private Scene scene;
     private HexRenderer hexRenderer;
+    private TurnEngine turnEngine;
+    private PauseTransition aiActionPause;
+    private boolean aiBusy;
 
     // Despliegue
     private Player deployingPlayer;
@@ -221,6 +229,7 @@ public class GameScreen extends Screen {
             ctrl.game = game;
             ctrl.window = game.getStage();
             ctrl.scene = new Scene(root, 1280, 720);
+            ctrl.turnEngine = game.getTurnEngine();
             ctrl.applyGlobalStyle(ctrl.scene);
             ctrl.enforceUppercaseText(root);
             ctrl.initButtonSounds(root);
@@ -351,6 +360,7 @@ public class GameScreen extends Screen {
         skillButton.setDisable(true);
         updateDeployHud();
         highlightDeployZones();
+        maybeRunAiDeployment();
     }
 
     private void highlightDeployZones() {
@@ -385,6 +395,9 @@ public class GameScreen extends Screen {
     }
 
     private void handleDeployClick(Hexagon hex) {
+        if (game.isAiControlled(deployingPlayer) || aiBusy) {
+            return;
+        }
         boolean isP1 = (deployingPlayer == game.getP1());
         boolean valid = isP1 ? hex.isDeployZoneP1() : hex.isDeployZoneP2();
         if (!valid) {
@@ -395,7 +408,10 @@ public class GameScreen extends Screen {
             addLogMessage("Casilla ya ocupada.");
             return;
         }
+        deployRobotAt(hex);
+    }
 
+    private void deployRobotAt(Hexagon hex) {
         Robot robot = robotsToPlace.poll();
         if (robot == null)
             return;
@@ -414,8 +430,11 @@ public class GameScreen extends Screen {
                 robotsToPlace = new LinkedList<>(game.getP2().getUnits());
                 updateDeployHud();
                 highlightDeployZones();
-                showOverlayMessage("TURNO DE DESPLIEGUE – J2",
-                        "Jugador 2: posiciona tus robots en las zonas rojas.");
+                if (!game.isAiControlled(deployingPlayer)) {
+                    showOverlayMessage("TURNO DE DESPLIEGUE – J2",
+                            "Jugador 2: posiciona tus robots en las zonas rojas.");
+                }
+                maybeRunAiDeployment();
             } else {
                 startCombatPhase();
             }
@@ -453,6 +472,7 @@ public class GameScreen extends Screen {
                 "Turno 1 – " + game.getCurrentPlayer().getName()
                         + "\nElimina todos los robots enemigos o conquista su base.");
         addLogMessage("¡Comienza el combate!");
+        maybeRunAiTurn();
     }
 
     private void updateCombatHud() {
@@ -477,6 +497,9 @@ public class GameScreen extends Screen {
 
     private void handleCombatClick(Hexagon hex) {
         Player cur = game.getCurrentPlayer();
+        if (game.isAiControlled(cur) || aiBusy) {
+            return;
+        }
 
         // Ejecutar skill si estamos en modo SKILL y la casilla está resaltada
         if (selectionMode == SelectionMode.SKILL && hexRenderer.isSkillHighlighted(hex)) {
@@ -663,7 +686,7 @@ public class GameScreen extends Screen {
         SoundManager.play(SoundManager.MECH_MOVE);
 
         GameCommand moveCmd = new MoveCommand(selectedRobot, hex);
-        ActionManager.getInstance().executeCommand(moveCmd);
+        turnEngine.execute(moveCmd);
         lockedRobotInfoHex = selectedRobot.getPosition();
         updateSkillButton(selectedRobot);
 
@@ -673,6 +696,7 @@ public class GameScreen extends Screen {
             enterAttackMode();
         else
             clearSelection();
+        maybeRunAiTurn();
     }
 
     private void executeAttack(Hexagon targetHex) {
@@ -689,7 +713,7 @@ public class GameScreen extends Screen {
         playWeaponSfx(selectedRobot);
 
         AttackCommand attackCmd = new AttackCommand(selectedRobot, target, game.getMap());
-        ActionManager.getInstance().executeCommand(attackCmd);
+        turnEngine.execute(attackCmd);
 
         int damage = attackCmd.getDamageDealt();
 
@@ -706,6 +730,7 @@ public class GameScreen extends Screen {
         }
         clearSelection();
         checkAndShowVictory("eliminación");
+        maybeRunAiTurn();
     }
 
     /** Reproduce el SFX de arma adecuado según el tipo de ataque del robot. */
@@ -759,7 +784,7 @@ public class GameScreen extends Screen {
 
             int hpBefore = target.getCurrentHp();
             GameCommand skillAttackCmd = new SkillCommand(selectedRobot, target);
-            ActionManager.getInstance().executeCommand(skillAttackCmd);
+            turnEngine.execute(skillAttackCmd);
 
             int damage = hpBefore - target.getCurrentHp();
 
@@ -780,7 +805,7 @@ public class GameScreen extends Screen {
         } else {
             // Skill de movimiento: mueve al robot
             GameCommand skillMoveCmd = new SkillCommand(selectedRobot, hex);
-            ActionManager.getInstance().executeCommand(skillMoveCmd);
+            turnEngine.execute(skillMoveCmd);
             lockedRobotInfoHex = selectedRobot.getPosition();
             addLogMessage(skillMoveCmd.getDescription());
         }
@@ -796,6 +821,7 @@ public class GameScreen extends Screen {
                 clearSelection();
         }
         checkAndShowVictory("eliminación");
+        maybeRunAiTurn();
     }
 
     /** Reproduce el SFX correcto para cada skill. */
@@ -1716,6 +1742,11 @@ public class GameScreen extends Screen {
     }
 
     private void showVictory(Player winner, String reason) {
+        aiBusy = false;
+        if (aiActionPause != null) {
+            aiActionPause.stop();
+            aiActionPause = null;
+        }
         boolean isP1 = (winner == game.getP1());
         boolean byElimination = reason.equals("eliminación");
         boolean bySurrender = reason.equals("rendición");
@@ -1825,22 +1856,98 @@ public class GameScreen extends Screen {
     public void handleInput(String input) {
         switch (input.trim().toUpperCase()) {
             case "F":
-                if (game.getPhase() == GamePhase.COMBAT) {
-                    SoundManager.play(SoundManager.UI_TURN_CHANGE);
-                    addLogMessage("Fin de turno (" + game.getCurrentPlayer().getName() + ").");
-                    clearSelection();
-                    game.nextTurn();
-                    for (Robot r : game.getCurrentPlayer().getUnits()) {
-                        if (!r.isDestroyed())
-                            r.resetActions();
-                    }
-                    updateCombatHud();
-                    checkAndShowVictory("conquista de base");
+                if (game.getPhase() == GamePhase.COMBAT
+                        && !game.isAiControlled(game.getCurrentPlayer())
+                        && !aiBusy) {
+                    endCurrentTurn();
                 }
                 break;
             default:
                 SoundManager.play(SoundManager.UI_INVALID);
                 System.out.println("Acción no reconocida: " + input);
+        }
+    }
+
+    private void endCurrentTurn() {
+        SoundManager.play(SoundManager.UI_TURN_CHANGE);
+        addLogMessage("Fin de turno (" + game.getCurrentPlayer().getName() + ").");
+        clearSelection();
+        turnEngine.endTurn(game);
+        updateCombatHud();
+        checkAndShowVictory("conquista de base");
+        maybeRunAiTurn();
+    }
+
+    private void maybeRunAiDeployment() {
+        if (game.getPhase() != GamePhase.DEPLOYING || deployingPlayer == null || !game.isAiControlled(deployingPlayer)) {
+            return;
+        }
+        if (robotsToPlace == null || robotsToPlace.isEmpty()) {
+            return;
+        }
+        aiBusy = true;
+        aiActionPause = new PauseTransition(javafx.util.Duration.millis(350));
+        aiActionPause.setOnFinished(event -> {
+            Hexagon target = turnEngine.getDeployHexes(game, deployingPlayer).stream().findFirst().orElse(null);
+            aiBusy = false;
+            if (target != null) {
+                deployRobotAt(target);
+            }
+        });
+        aiActionPause.play();
+    }
+
+    private void maybeRunAiTurn() {
+        if (game.getPhase() != GamePhase.COMBAT || aiBusy || !game.isAiControlled(game.getCurrentPlayer())) {
+            return;
+        }
+        if (game.checkVictory() != null) {
+            return;
+        }
+        aiBusy = true;
+        aiActionPause = new PauseTransition(javafx.util.Duration.millis(450));
+        aiActionPause.setOnFinished(event -> runAiStep());
+        aiActionPause.play();
+    }
+
+    private void runAiStep() {
+        Player aiPlayer = game.getCurrentPlayer();
+        TurnDecision decision = game.getController(aiPlayer).decideNextStep(new MatchContext(game), aiPlayer);
+        aiBusy = false;
+
+        if (decision == null || decision instanceof EndTurnDecision) {
+            endCurrentTurn();
+            return;
+        }
+
+        if (decision instanceof ExecuteCommandDecision commandDecision) {
+            executeAiCommand(commandDecision.getCommand());
+        }
+    }
+
+    private void executeAiCommand(GameCommand command) {
+        clearSelection();
+        if (command instanceof MoveCommand moveCommand) {
+            selectedRobot = moveCommand.getRobot();
+            updateRobotInfoPanel(selectedRobot);
+            executeMove(moveCommand.getTargetHex());
+            return;
+        }
+        if (command instanceof AttackCommand attackCommand) {
+            selectedRobot = attackCommand.getAttacker();
+            updateRobotInfoPanel(selectedRobot);
+            executeAttack(attackCommand.getTarget().getPosition());
+            return;
+        }
+        if (command instanceof SkillCommand skillCommand) {
+            selectedRobot = skillCommand.getRobot();
+            updateRobotInfoPanel(selectedRobot);
+            Object target = skillCommand.getTarget();
+            if (target instanceof Hexagon hex) {
+                executeSkill(hex);
+            } else if (target instanceof Robot robot && robot.getPosition() != null) {
+                executeSkill(robot.getPosition());
+            }
         }
     }
 }

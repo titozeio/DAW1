@@ -252,6 +252,20 @@ public class RobotSelectionScreen extends Screen {
             return;
         }
         RobotTemplate selected = availableTemplates.get(currentIndex);
+        if (isSingleHumanSelectionMode()) {
+            player1Templates.add(selected);
+            availableTemplates.remove(selected);
+            if (player1Templates.size() == MAX_ROBOTS_PER_PLAYER) {
+                completeAiTeamSelection();
+                transitionToCombatScreen();
+                return;
+            }
+            if (currentIndex >= availableTemplates.size()) {
+                currentIndex = Math.max(0, availableTemplates.size() - 1);
+            }
+            refreshView();
+            return;
+        }
         if (isPlayer2Turn) {
             player2Templates.add(selected);
         } else {
@@ -276,6 +290,20 @@ public class RobotSelectionScreen extends Screen {
      * Ejecuta la logica de handle skip action.
      */
     public void handleSkipAction() {
+        if (isSingleHumanSelectionMode()) {
+            List<RobotTemplate> pool = new ArrayList<>(availableTemplates);
+            Collections.shuffle(pool);
+            int p1Missing = MAX_ROBOTS_PER_PLAYER - player1Templates.size();
+            int idx = 0;
+            for (int i = 0; i < p1Missing && idx < pool.size(); i++) {
+                RobotTemplate next = pool.get(idx++);
+                player1Templates.add(next);
+                availableTemplates.remove(next);
+            }
+            completeAiTeamSelection();
+            transitionToCombatScreen();
+            return;
+        }
         List<RobotTemplate> pool = new ArrayList<>(availableTemplates);
         Collections.shuffle(pool);
         int p1Missing = MAX_ROBOTS_PER_PLAYER - player1Templates.size();
@@ -770,8 +798,12 @@ public class RobotSelectionScreen extends Screen {
         if (turnOverlay == null || turnOverlayLabel == null) {
             return;
         }
-        String jugador = isPlayer2Turn ? "P2" : "P1";
-        turnOverlayLabel.setText("Turno de elegir robot: " + jugador);
+        if (isSingleHumanSelectionMode()) {
+            turnOverlayLabel.setText("Selecciona tu escuadrón");
+        } else {
+            String jugador = isPlayer2Turn ? "P2" : "P1";
+            turnOverlayLabel.setText("Turno de elegir robot: " + jugador);
+        }
 
         if (!Screen.areAnimationsEnabled()) {
             turnOverlay.setVisible(true);
@@ -803,6 +835,24 @@ public class RobotSelectionScreen extends Screen {
 
     private boolean isSelectionComplete() {
         return player1Templates.size() == MAX_ROBOTS_PER_PLAYER && player2Templates.size() == MAX_ROBOTS_PER_PLAYER;
+    }
+
+    private boolean isSingleHumanSelectionMode() {
+        return game != null
+                && !game.isAiControlled(game.getP1())
+                && game.isAiControlled(game.getP2());
+    }
+
+    private void completeAiTeamSelection() {
+        List<RobotTemplate> pool = new ArrayList<>(availableTemplates);
+        Collections.shuffle(pool);
+        int missing = MAX_ROBOTS_PER_PLAYER - player2Templates.size();
+        int idx = 0;
+        for (int i = 0; i < missing && idx < pool.size(); i++) {
+            RobotTemplate next = pool.get(idx++);
+            player2Templates.add(next);
+            availableTemplates.remove(next);
+        }
     }
 
     private void transitionToCombatScreen() {

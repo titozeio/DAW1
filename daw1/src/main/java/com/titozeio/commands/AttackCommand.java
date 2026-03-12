@@ -9,26 +9,27 @@ import com.titozeio.engine.Robot;
 public class AttackCommand implements GameCommand {
     private final Robot attacker;
     private final Robot target;
-    private final int damageDealt;
-    private final boolean fatal;
+    private final Map map;
+    private int damageDealt;
+    private boolean fatal;
+    private boolean executed;
 
     public AttackCommand(Robot attacker, Robot target, Map map) {
         this.attacker = attacker;
         this.target = target;
-
-        // Guardamos info para el log o posible undo (aunque el undo de daño es complejo
-        // en juegos)
-        int hpBefore = target.getCurrentHp();
-        this.attacker.attack(target, map);
-        this.damageDealt = hpBefore - target.getCurrentHp();
-        this.fatal = target.isDestroyed();
+        this.map = map;
     }
 
     @Override
     public void execute() {
-        // En este diseño simple, la lógica se ejecuta en el constructor para capturar
-        // el estado,
-        // pero lo ideal es dispararla aquí. El constructor ya disparó el ataque.
+        if (executed) {
+            return;
+        }
+        int hpBefore = target.getCurrentHp();
+        attacker.attack(target, map);
+        damageDealt = hpBefore - target.getCurrentHp();
+        fatal = target.isDestroyed();
+        executed = true;
     }
 
     @Override
@@ -53,5 +54,13 @@ public class AttackCommand implements GameCommand {
 
     public boolean isFatal() {
         return fatal;
+    }
+
+    public Robot getAttacker() {
+        return attacker;
+    }
+
+    public Robot getTarget() {
+        return target;
     }
 }

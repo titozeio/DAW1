@@ -1,5 +1,11 @@
 package com.titozeio.engine;
 
+import com.titozeio.ai.ActionEvaluator;
+import com.titozeio.ai.AiController;
+import com.titozeio.ai.EasyAiStrategy;
+import com.titozeio.ai.HumanController;
+import com.titozeio.ai.PlayerController;
+import com.titozeio.match.TurnEngine;
 import com.titozeio.ui.MainMenuScreen;
 import com.titozeio.ui.GameScreen;
 import com.titozeio.ui.Screen;
@@ -19,6 +25,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import javafx.stage.Stage;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.prefs.Preferences;
@@ -33,6 +40,9 @@ public class Game {
     private GamePhase phase;
     private Screen currentScreen;
     private List<VictoryCondition> victoryConditions;
+    private final java.util.Map<Player, PlayerController> controllers;
+    private final TurnEngine turnEngine;
+    private GameMode gameMode;
     private MediaPlayer mediaPlayer;
     private Timeline volumeFadeTimeline;
     private PauseTransition fadeOutTrigger;
@@ -67,6 +77,8 @@ public class Game {
     public Game(Stage stage) {
         this.stage = stage;
         this.victoryConditions = new ArrayList<>();
+        this.controllers = new HashMap<>();
+        this.turnEngine = new TurnEngine();
         this.turnCounter = 1;
         this.musicEnabled = PREFS.getBoolean(PREF_MUSIC_ENABLED, true);
         this.sfxEnabled = PREFS.getBoolean(PREF_SFX_ENABLED, true);
@@ -85,6 +97,7 @@ public class Game {
 
         // Crear el mapa inicial
         this.map = MapFactory.createMap1();
+        configureControllers(GameMode.PVP);
     }
 
     /**
@@ -111,6 +124,26 @@ public class Game {
             p2.getUnits().clear();
             p2.setBaseLocation(null);
             p2.resetBaseControlTurns();
+        }
+    }
+
+    public void configureControllers(GameMode mode) {
+        this.gameMode = mode;
+        controllers.clear();
+        switch (mode) {
+            case PVE:
+                controllers.put(p1, new HumanController());
+                controllers.put(p2, new AiController(new EasyAiStrategy(new ActionEvaluator()), turnEngine));
+                break;
+            case EVE:
+                controllers.put(p1, new AiController(new EasyAiStrategy(new ActionEvaluator()), turnEngine));
+                controllers.put(p2, new AiController(new EasyAiStrategy(new ActionEvaluator()), turnEngine));
+                break;
+            case PVP:
+            default:
+                controllers.put(p1, new HumanController());
+                controllers.put(p2, new HumanController());
+                break;
         }
     }
 
@@ -471,5 +504,22 @@ public class Game {
         this.sfxEnabled = sfxEnabled;
         PREFS.putBoolean(PREF_SFX_ENABLED, sfxEnabled);
         SoundManager.setEnabled(sfxEnabled);
+    }
+
+    public PlayerController getController(Player player) {
+        return controllers.get(player);
+    }
+
+    public boolean isAiControlled(Player player) {
+        PlayerController controller = controllers.get(player);
+        return controller != null && controller.isAiControlled();
+    }
+
+    public GameMode getGameMode() {
+        return gameMode;
+    }
+
+    public TurnEngine getTurnEngine() {
+        return turnEngine;
     }
 }
