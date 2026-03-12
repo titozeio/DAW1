@@ -856,7 +856,7 @@ public class GameScreen extends Screen {
 
     /**
      * Para skills de MOVIMIENTO: casillas vacías a las que el robot puede saltar
-     * usando el radio especial de la skill (JetpackBoost=3, TurboPropulsion=5).
+     * usando el radio especial de la skill (JetpackBoost=6, TurboPropulsion=5).
      * Las skills de movimiento ignoran restricciones normales de terreno/altura.
      */
     private Set<Hexagon> getSkillMovementTargets(Robot robot) {

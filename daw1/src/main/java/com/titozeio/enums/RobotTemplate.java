@@ -12,11 +12,11 @@ import com.titozeio.skills.*;
  * Stats según el GDD:
  * -------------------------------------------------------------------
  * VICTORY_SABER | HP 12 | Mov 4 | Cañón de plasma (3/3) | PlasmaSaberAttack
- * BULLSEYE | HP 6 | Mov 5 | Doble cañón auto. (4/5) | GuidedMissile
+ * BULLSEYE | HP 6 | Mov 5 | Doble cañón auto. (5/6) | GuidedMissile
  * BULWARK | HP 15 | Mov 4 | Cañón laser (3/3) | RepairNanobots
- * SCOUT | HP 7 | Mov 5 | Cañón automático (5/5) | JetpackBoost
- * DEATH_KNIGHT | HP 13 | Mov 3 | Martillo propulsado(1/8) | TurboPropulsion
- * ICE_AGE | HP 10 | Mov 4 | Misiles de racimo (6/4) | FreezeRay
+ * SCOUT | HP 7 | Mov 5 | Cañón automático (6/5) | JetpackBoost
+ * DEATH_KNIGHT | HP 12 | Mov 3 | Martillo propulsado(1/8) | TurboPropulsion
+ * ICE_AGE | HP 9 | Mov 4 | Misiles de racimo (5/4) | FreezeRay
  */
 public enum RobotTemplate {
 
@@ -52,7 +52,7 @@ public enum RobotTemplate {
         public Robot createRobot(Player owner) {
             Weapon weapon = new Weapon(
                     "Doble cañón automático",
-                    4, 5,
+                    5, 6,
                     "En lugar de brazos, Bullseye cuenta con dos cañones automáticos "
                             + "que hacen bastante daño a un alcance importante.",
                     AttackType.KINETIC);
@@ -97,7 +97,7 @@ public enum RobotTemplate {
         public Robot createRobot(Player owner) {
             Weapon weapon = new Weapon(
                     "Cañón automático",
-                    5, 5,
+                    6, 5,
                     "Su brazo derecho es un cañón automático de gran alcance y potencia.",
                     AttackType.KINETIC);
             Skill skill = new JetpackBoost();
@@ -128,7 +128,7 @@ public enum RobotTemplate {
                     "Death Knight",
                     "Un robot lento, muy resistente y con un gran ataque cuerpo a cuerpo. "
                             + "Cuando activa sus retropropulsores, puede desplazarse rápidamente.",
-                    13, 3, weapon, skill, owner);
+                    12, 3, weapon, skill, owner);
         }
     },
 
@@ -142,7 +142,7 @@ public enum RobotTemplate {
         public Robot createRobot(Player owner) {
             Weapon weapon = new Weapon(
                     "Misiles de racimo",
-                    6, 4,
+                    5, 4,
                     "Tiene dos afustes de misiles en los hombros. Tienen muy buen alcance, "
                             + "pero fallan la mitad, por lo que su daño no es tan temible.",
                     AttackType.EXPLOSIVE);
@@ -151,7 +151,7 @@ public enum RobotTemplate {
                     "Ice Age",
                     "Con un diseño muy angular y agresivo, azul y blanco. Su arma favorita "
                             + "es un rifle de rayo congelador que porta con ambos brazos.",
-                    10, 4, weapon, skill, owner);
+                    9, 4, weapon, skill, owner);
         }
     };
 

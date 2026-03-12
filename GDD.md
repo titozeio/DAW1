@@ -580,7 +580,7 @@ Lista de sprites, sonidos y música (importante para organizar la carpeta src/ma
 
 - **Retropropulsores**:
     - Tipo: Movimiento.
-    - Movimiento: 3.
+    - Movimiento: 6.
     - Cooldown: 1 turnos.
     - Efecto especial: Ignora el tipo de terreno a efectos de movimiento (coste y posibilidad). Por ejemplo, un robot con esta skill podría moverse de una casilla de altura 0 a una casilla de altura 2.
     - Descripción: El robot cuenta con unos retropropulsores que le impulsan por el aire. No llega a poder volar, ya que el impulso dura muy poco dado el coste energético. 
@@ -658,8 +658,8 @@ Lista de sprites, sonidos y música (importante para organizar la carpeta src/ma
     - **Movimiento**: 5.
     - **Armas**:
         - Nombre: Doble cañón automático.
-        - Alcance: 4.  
-        - Daño: 5.
+        - Alcance: 5.  
+        - Daño: 6.
         - Descripción: Brazos integrados convertidos en cañones automáticos rotatorios.
     - **Skills**: Misiles teledirigidos.
   
@@ -682,7 +682,7 @@ Lista de sprites, sonidos y música (importante para organizar la carpeta src/ma
     - **Movimiento**: 5.
     - **Armas**:
         - Nombre: Cañón automático.
-        - Alcance: 5.  
+        - Alcance: 6.  
         - Daño: 5.
         - Descripción: Cañón automático de alta precisión integrado en el brazo derecho.  
     - **Skills**: Retropropulsores.
@@ -690,7 +690,7 @@ Lista de sprites, sonidos y música (importante para organizar la carpeta src/ma
 - **Death Knight**:
     - **Modelo**: Death Knight.
     - **Descripción**: Una mole de asalto con una armadura medieval-gótica pesada inspirada en los caballeros oscuros. Su esquema de color es monocromático: negro obsidiana y gris carbón, resaltado únicamente por sus ojos de un rojo intenso con efecto lens flare. Carece de propulsores en la espalda; toda su potencia de empuje reside en los talones de sus pies sobredimensionados y en su martillo gigante propulsado. 
-    - **HP**: 13.
+    - **HP**: 12.
     - **Movimiento**: 3.
     - **Armas**:
         - Nombre: Martillo propulsado.
@@ -702,11 +702,11 @@ Lista de sprites, sonidos y música (importante para organizar la carpeta src/ma
 - **Ice Age**:
     - **Modelo**: Ice Age.
     - **Descripción**: Especialista en control técnico con una silueta estilizada y angular. Su cabeza cuenta con un visor cibernético de una sola línea horizontal (estilo Robocop) que emite una luz azul intensa con efecto lens flare. Su arma principal es un rifle criogénico de alta tecnología que dispara ráfagas de nitrógeno líquido. Es un robot preciso, letal y con una estética que mezcla lo gótico-técnico con lo ártico.
-    - **HP**: 10.
+    - **HP**: 9.
     - **Movimiento**: 4.
     - **Armas**:
         - Nombre: Misiles de racimo
-        - Alcance: 6.  
+        - Alcance: 5.  
         - Daño: 4.
         - Descripción: Lanzamisiles de hombro integrados de perfil bajo.
     - **Skills**: Rayo congelador.
