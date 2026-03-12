@@ -19,6 +19,7 @@
 - [3. Aspectos Técnicos (Stack Tecnológico)](#3-aspectos-técnicos-stack-tecnológico)
   - [Sistema de Coordenadas del Mapa:](#sistema-de-coordenadas-del-mapa)
   - [Arquitectura y Patrones:](#arquitectura-y-patrones)
+  - [IA, Modos de Control y Simulación Masiva:](#ia-modos-de-control-y-simulación-masiva)
   - [Estructura de Paquetes:](#estructura-de-paquetes)
   - [Sistema de Audio:](#sistema-de-audio)
   - [CI/CD (Integración Continua):](#cicd-integración-continua)
@@ -252,6 +253,121 @@ Para la lógica del tablero hexagonal, se utiliza un sistema de **Coordenadas Ax
 - **Modelo-Vista-Controlador (MVC)**: Clara separación entre los modelos de datos (`Robot`, `Map`), las vistas (FXML) y los controladores de UI.
 - **Arquitectura de Componentes Reutilizables**: El motor permite la inyección de componentes FXML dentro de otros contenedores (ej: `RobotCard.fxml` dentro de `RobotSelectionScreen.fxml`), facilitando el mantenimiento y la escalabilidad de la interfaz.
 - **Sistema de Enums**: Los parámetros de configuración (Robots, Terrenos, Skills) se gestionan mediante Enums que actúan como fábricas (`Template Pattern`), asegurando la integridad de los datos en tiempo de ejecución.
+- **Command Pattern**: Las acciones del combate se representan como comandos (`MoveCommand`, `AttackCommand`, `SkillCommand`), facilitando encapsulación, ejecución uniforme, undo y reutilización por UI o IA.
+- **Strategy Pattern**: El control de cada bando se modelará mediante estrategias intercambiables (`HumanController`, `AiController`, distintos niveles de dificultad), permitiendo `PvP`, `PvIA` e `IAvsIA` sin cambiar el motor.
+- **Observer / Event Listener**: Los eventos del combate (ataques, destrucciones, fin de turno, victoria) se expondrán a listeners desacoplados para alimentar HUD, log, telemetría y simulaciones masivas sin mezclar responsabilidades.
+- **Facade / Application Service**: Un servicio de alto nivel (`MatchRunner`) coordinará partidas completas apoyándose en el motor de turnos, de modo que la UI no sea quien gobierne la partida.
+- **Factory Pattern**: La creación de partidas de simulación, configuraciones de equipos y semillas reproducibles se centralizará en fábricas o builders específicos para no dispersar la inicialización.
+
+## IA, Modos de Control y Simulación Masiva:
+
+### Objetivo de arquitectura
+
+El juego debe soportar tres modos de ejecución sobre el mismo núcleo de combate:
+
+- **Player vs Player**: modo actual.
+- **Player vs IA**: un jugador humano contra una IA con nivel de dificultad seleccionable.
+- **IA vs IA**: modo de simulación automática para pruebas, balanceo y recopilación de estadísticas.
+
+La premisa clave es que la **UI no debe contener la lógica de decisión de los jugadores ni el bucle de resolución del combate**. `GameScreen` debe limitarse a representar el estado, pedir input humano cuando proceda y reaccionar a eventos del motor.
+
+### Enfoque recomendado para IA
+
+Para el MVP de IA no se recomienda empezar por `minimax`/`alpha-beta`, aunque siguen siendo válidos para niveles altos. Para este proyecto el orden recomendado es:
+
+1. **Fácil**: IA heurística / `Utility AI` simple basada en puntuación de acciones candidatas.
+2. **Medio**: misma base, con mejor evaluación de riesgo/beneficio y priorización táctica.
+3. **Difícil**: búsqueda limitada en profundidad sobre un conjunto reducido de acciones prometedoras.
+4. **DARK SOULS**: `alpha-beta` o búsqueda más agresiva apoyada en una heurística madura y buena poda.
+
+La razón principal es el coste de ramificación del juego: orden de activación de robots, movimiento en mapa hexagonal, ataques, skills y múltiples objetivos tácticos. Una IA heurística simple ofrece una primera versión útil, explicable y compatible con simulación masiva.
+
+### Diseño de la IA fácil
+
+La IA fácil evaluará acciones legales mediante una puntuación heurística y escogerá la mejor opción local para el robot activo. Ejemplos de criterios:
+
+- Eliminar un enemigo este turno.
+- Evitar que el rival capture la base.
+- Atacar si ya tiene objetivo válido.
+- Usar la skill si aporta una ventaja táctica clara.
+- Moverse a una casilla que deje al robot en rango de ataque para el siguiente turno.
+- Avanzar hacia la base rival cuando no haya ataque mejor disponible.
+- Evitar terrenos y posiciones claramente desfavorables.
+
+Ejemplo orientativo de pesos:
+
+- `+1000` matar a un enemigo.
+- `+400` impedir captura de base.
+- `+250` skill con alto impacto táctico.
+- `+200` atacar.
+- `+80` quedar a rango para atacar en el siguiente turno.
+- `+60` avanzar hacia objetivo de victoria.
+- `-150` terminar muy expuesto.
+- `-200` entrar en una casilla especialmente mala.
+
+Estos pesos son deliberadamente simples para facilitar docencia, trazabilidad y ajuste posterior.
+
+### Servicios propuestos
+
+- `TurnEngine`: calcula acciones legales, ejecuta comandos, avanza turnos y comprueba victoria.
+- `PlayerController`: interfaz común para cualquier controlador de jugador.
+- `HumanController`: adapta input humano al motor.
+- `AiController`: delega la decisión en una estrategia de IA.
+- `AiStrategy`: contrato base para niveles de dificultad.
+- `EasyAiStrategy`: implementación heurística inicial.
+- `MatchRunner`: ejecuta una partida completa sin depender de JavaFX.
+- `BatchSimulationService`: lanza múltiples partidas consecutivas para balanceo.
+- `StatsCollector`: agrega métricas y exporta resultados.
+
+### Simulación masiva para balanceo
+
+El proyecto debe incluir un modo de depuración o ejecución interna capaz de lanzar partidas `IA vs IA` en lote (`N` partidas con semilla controlada) y guardar estadísticas para análisis posterior.
+
+Requisitos del sistema de simulación:
+
+- Permitir fijar número de partidas.
+- Permitir fijar semilla base o semilla aleatoria registrada.
+- Permitir elegir equipos o generar composiciones según reglas definidas.
+- Establecer `maxTurns` para evitar bucles infinitos o partidas degeneradas.
+- Ejecutarse sin UI o con UI deshabilitada para maximizar rendimiento.
+- Exportar resultados en formato fácil de procesar (`CSV` y/o `JSON`).
+
+### Datos a registrar por partida
+
+- `matchId`
+- `seed`
+- `difficultyP1`
+- `difficultyP2`
+- `teamP1`
+- `teamP2`
+- `winner`
+- `victoryType`
+- `turnCount`
+- `survivorsP1`
+- `survivorsP2`
+- `destroyedP1`
+- `destroyedP2`
+
+### Métricas agregadas de balanceo
+
+- Winrate por robot.
+- Winrate por composición de equipo.
+- Ratio de supervivencia por robot.
+- Número de kills por robot.
+- Daño medio infligido y recibido por robot.
+- Duración media de partida.
+- Distribución por tipo de victoria.
+- Número de partidas terminadas por `timeout` o límite de turnos.
+
+### Orden recomendado de implementación
+
+1. Extraer el flujo de resolución de turnos desde la UI a un servicio reutilizable.
+2. Implementar `PlayerController` y `AiStrategy`.
+3. Implementar `EasyAiStrategy`.
+4. Habilitar `Player vs IA`.
+5. Implementar `MatchRunner` headless.
+6. Implementar `BatchSimulationService` y exportación de estadísticas.
+7. Añadir consola/overlay de depuración dentro del juego para lanzar simulaciones.
 
 ## Estructura de Paquetes:
 
@@ -261,6 +377,9 @@ Para la lógica del tablero hexagonal, se utiliza un sistema de **Coordenadas Ax
 - `com.titozeio.enums`: Enumerados constantes (RobotTemplate, TerrainType, AttackType).
 - `com.titozeio.skills`: Implementación de habilidades especiales.
 - `com.titozeio.victory`: Gestores de condiciones de victoria.
+- `com.titozeio.ai`: Estrategias de IA, evaluadores heurísticos y controladores no humanos.
+- `com.titozeio.match`: Orquestación de partidas, motor de turnos y simulación masiva.
+- `com.titozeio.telemetry`: Eventos de partida, listeners y agregadores de estadísticas.
 
 ## Sistema de Audio:
 
@@ -340,6 +459,12 @@ El proyecto usa **GitHub Actions** (`.github/workflows/ci.yml`) con el siguiente
 2. Después se pasa a la pantalla de **Elección de Robots**, donde los jugadores eligen sus robots. 
 3. Una vez que ambos jugadores han elegido sus 3 robots, de forma alterna, se pasa a la pantalla de **Combate**, donde se desarrolla el core loop.
 4. Una vez se cumplen las condiciones de victoria del mapa en cuestión, se muestra el mensaje de victoria y se vuelve a la pantalla de **Nueva Partida** y vuelta al paso 1.
+
+### Variantes del bucle
+
+- **PvP**: ambos bandos usan `HumanController`.
+- **PvIA**: un bando usa `HumanController` y el otro `AiController`.
+- **IAvsIA / Simulación**: ambos bandos usan `AiController` y la partida se ejecuta mediante `MatchRunner`, con UI opcional o totalmente deshabilitada.
 
 # 5. Contenido, Niveles
 
