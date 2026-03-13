@@ -1809,7 +1809,8 @@ public class GameScreen extends Screen {
     @FXML
     public void handleSettingsOpenAction() {
         if (settingsOverlayComponentController != null) {
-            settingsOverlayComponentController.show(game);
+            settingsOverlayComponentController.setOnAiDifficultyChanged(() -> addLogMessage("CHICKEN!"));
+            settingsOverlayComponentController.show(game, false);
         }
     }
 

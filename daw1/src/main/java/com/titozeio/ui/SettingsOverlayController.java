@@ -94,6 +94,10 @@ public class SettingsOverlayController {
     private static final EnumSet<AiDifficulty> AVAILABLE_DIFFICULTIES = EnumSet.of(AiDifficulty.EASY,
             AiDifficulty.MEDIUM);
     private SortMetric currentSortMetric = SortMetric.ALLROUND;
+    private static final EnumSet<AiDifficulty> AVAILABLE_DIFFICULTIES = EnumSet.of(AiDifficulty.EASY);
+    private SortMetric currentSortMetric = SortMetric.SCORE;
+    private boolean simulationLaunchAllowed = true;
+    private Runnable onAiDifficultyChanged;
 
     @FXML
     private void initialize() {
@@ -124,9 +128,19 @@ public class SettingsOverlayController {
     }
 
     public void show(Game game) {
+        show(game, true);
+    }
+
+    public void show(Game game, boolean simulationLaunchAllowed) {
         this.game = game;
+        this.simulationLaunchAllowed = simulationLaunchAllowed;
         syncAudioTogglesWithState();
+        updateSimulationButtons(isSimulationRunning());
         Screen.fadeInNode(settingsOverlay, 150);
+    }
+
+    public void setOnAiDifficultyChanged(Runnable onAiDifficultyChanged) {
+        this.onAiDifficultyChanged = onAiDifficultyChanged;
     }
 
     @FXML
@@ -160,12 +174,17 @@ public class SettingsOverlayController {
         if (aiDifficultyChoice == null || game == null || aiDifficultyChoice.getValue() == null) {
             return;
         }
-        game.setAiDifficulty(aiDifficultyChoice.getValue());
+        AiDifficulty previousDifficulty = game.getAiDifficulty();
+        AiDifficulty newDifficulty = aiDifficultyChoice.getValue();
+        game.setAiDifficulty(newDifficulty);
+        if (previousDifficulty != newDifficulty && onAiDifficultyChanged != null) {
+            onAiDifficultyChanged.run();
+        }
     }
 
     @FXML
     public void handleLaunchSimulationAction() {
-        if (game == null || simulationTask != null && simulationTask.isRunning()) {
+        if (!simulationLaunchAllowed || game == null || simulationTask != null && simulationTask.isRunning()) {
             return;
         }
 
@@ -356,7 +375,7 @@ public class SettingsOverlayController {
 
     private void updateSimulationButtons(boolean running) {
         if (launchSimulationButton != null) {
-            launchSimulationButton.setDisable(running);
+            launchSimulationButton.setDisable(running || !simulationLaunchAllowed);
         }
         if (cancelSimulationButton != null) {
             cancelSimulationButton.setDisable(!running);
@@ -365,6 +384,10 @@ public class SettingsOverlayController {
             boolean hasResults = currentSimulationStats != null && !currentSimulationStats.getResults().isEmpty();
             exportSimulationButton.setDisable(running || !hasResults);
         }
+    }
+
+    private boolean isSimulationRunning() {
+        return simulationTask != null && simulationTask.isRunning();
     }
 
     private void resortRobotStatsRows() {
