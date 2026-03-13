@@ -83,6 +83,7 @@ public class MainMenuScreen extends Screen {
      */
     public void handleSettingsOpenAction() {
         if (settingsOverlayComponentController != null) {
+            settingsOverlayComponentController.setOnAiDifficultyChanged(null);
             settingsOverlayComponentController.show(game, true);
         }
     }

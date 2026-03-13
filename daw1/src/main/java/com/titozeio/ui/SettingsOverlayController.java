@@ -94,6 +94,7 @@ public class SettingsOverlayController {
     private static final EnumSet<AiDifficulty> AVAILABLE_DIFFICULTIES = EnumSet.of(AiDifficulty.EASY);
     private SortMetric currentSortMetric = SortMetric.SCORE;
     private boolean simulationLaunchAllowed = true;
+    private Runnable onAiDifficultyChanged;
 
     @FXML
     private void initialize() {
@@ -128,6 +129,10 @@ public class SettingsOverlayController {
         Screen.fadeInNode(settingsOverlay, 150);
     }
 
+    public void setOnAiDifficultyChanged(Runnable onAiDifficultyChanged) {
+        this.onAiDifficultyChanged = onAiDifficultyChanged;
+    }
+
     @FXML
     public void handleSettingsCloseAction() {
         Screen.fadeOutNode(settingsOverlay, 150);
@@ -159,7 +164,12 @@ public class SettingsOverlayController {
         if (aiDifficultyChoice == null || game == null || aiDifficultyChoice.getValue() == null) {
             return;
         }
-        game.setAiDifficulty(aiDifficultyChoice.getValue());
+        AiDifficulty previousDifficulty = game.getAiDifficulty();
+        AiDifficulty newDifficulty = aiDifficultyChoice.getValue();
+        game.setAiDifficulty(newDifficulty);
+        if (previousDifficulty != newDifficulty && onAiDifficultyChanged != null) {
+            onAiDifficultyChanged.run();
+        }
     }
 
     @FXML
