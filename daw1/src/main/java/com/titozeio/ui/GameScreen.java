@@ -505,7 +505,9 @@ public class GameScreen extends Screen {
 
         // Ejecutar skill si estamos en modo SKILL y la casilla está resaltada
         if (selectionMode == SelectionMode.SKILL && hexRenderer.isSkillHighlighted(hex)) {
-            executeSkill(hex);
+            if (isValidSkillTargetHex(selectedRobot, hex)) {
+                executeSkill(hex);
+            }
             return;
         }
         // Ejecutar movimiento normal
@@ -515,7 +517,9 @@ public class GameScreen extends Screen {
         }
         // Ejecutar ataque normal
         if (selectionMode == SelectionMode.ATTACK && hexRenderer.isAttackHighlighted(hex)) {
-            executeAttack(hex);
+            if (isValidAttackTargetHex(selectedRobot, hex)) {
+                executeAttack(hex);
+            }
             return;
         }
 
@@ -624,15 +628,16 @@ public class GameScreen extends Screen {
     private void enterAttackMode() {
         selectionMode = SelectionMode.ATTACK;
         updateSkillButton(selectedRobot);
-        Set<Hexagon> targets = getAttackableHexes(selectedRobot);
+        Set<Hexagon> targets = getAttackReachableHexes(selectedRobot);
+        int validTargets = countValidAttackTargets(selectedRobot);
         hexRenderer.setMoveHighlightedHexes(new HashSet<>());
         hexRenderer.setAttackHighlightedHexes(targets);
         hexRenderer.setSkillHighlightedHexes(new HashSet<>(), false);
         hexRenderer.render(game.getMap());
         addLogMessage(targets.isEmpty()
-                ? selectedRobot.getModelName() + " – ATACAR. Sin objetivos en rango."
+                ? selectedRobot.getModelName() + " – ATACAR. Sin casillas en alcance."
                 : selectedRobot.getModelName() + " – ATACAR. " + targets.size()
-                        + " objetivo(s) (naranja). Clic de nuevo → modo skill.");
+                        + " casilla(s) en alcance (" + validTargets + " objetivo(s) válidos). Clic de nuevo → modo skill.");
     }
 
     /**
@@ -659,8 +664,9 @@ public class GameScreen extends Screen {
         boolean isAttackSkill = (skill.getType() == SkillType.ATTACK);
 
         Set<Hexagon> targets = isAttackSkill
-                ? getSkillAttackTargets(selectedRobot)
+                ? getSkillAttackReachableHexes(selectedRobot)
                 : getSkillMovementTargets(selectedRobot);
+        int validTargets = isAttackSkill ? countValidSkillTargets(selectedRobot) : targets.size();
 
         if (targets.isEmpty()) {
             SoundManager.play(SoundManager.UI_INVALID);
@@ -678,7 +684,9 @@ public class GameScreen extends Screen {
 
         String colorHint = isAttackSkill ? "violeta" : "lima";
         addLogMessage("⚡ " + skill.getName() + " activada. "
-                + targets.size() + " objetivo(s) " + colorHint + ".");
+                + targets.size() + (isAttackSkill ? " casilla(s) en alcance" : " objetivo(s)")
+                + " " + colorHint
+                + (isAttackSkill ? " (" + validTargets + " objetivo(s) válidos)." : "."));
     }
 
     // ── Ejecución de acciones ─────────────────────────────────────────────────
@@ -956,7 +964,7 @@ public class GameScreen extends Screen {
      * (GuidedMissile ignora visibilidad)
      * - PlasmaSaberAttack → robots adyacentes enemigos
      */
-    private Set<Hexagon> getSkillAttackTargets(Robot robot) {
+    private Set<Hexagon> getSkillAttackReachableHexes(Robot robot) {
         Skill skill = robot.getSkill();
         Set<Hexagon> targets = new HashSet<>();
         Hexagon origin = robot.getPosition();
@@ -998,14 +1006,7 @@ public class GameScreen extends Screen {
 
         for (Hexagon[] row : game.getMap().getGrid()) {
             for (Hexagon hex : row) {
-                if (hex == null || !hex.isOccupied())
-                    continue;
-                Robot occ = hex.getOccupant();
-
-                boolean correctTeam = targetsAllies
-                        ? occ.getOwner() == robot.getOwner() && occ != robot
-                        : occ.getOwner() != robot.getOwner();
-                if (!correctTeam)
+                if (hex == null || hex == origin)
                     continue;
 
                 int dist = game.getMap().getDistance(origin, hex);
@@ -1014,10 +1015,13 @@ public class GameScreen extends Screen {
 
                 if (!ignoresVisibility && !game.getMap().hasVisibility(origin, hex))
                     continue;
-                if (occ.isDestroyed())
+                if (!ignoresVisibility && game.getMap().getCoverModifier(origin, hex) < 0) {
                     continue;
+                }
 
-                targets.add(hex);
+                if (!targetsAllies || hex.isOccupied()) {
+                    targets.add(hex);
+                }
             }
         }
         return targets;
@@ -1025,20 +1029,74 @@ public class GameScreen extends Screen {
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
-    private Set<Hexagon> getAttackableHexes(Robot robot) {
+    private Set<Hexagon> getAttackReachableHexes(Robot robot) {
         Set<Hexagon> targets = new HashSet<>();
+        if (robot == null || robot.getPosition() == null || robot.getWeapon() == null) {
+            return targets;
+        }
         for (Hexagon[] row : game.getMap().getGrid()) {
             for (Hexagon hex : row) {
-                if (hex == null || !hex.isOccupied())
+                if (hex == null || hex == robot.getPosition())
                     continue;
-                Robot occ = hex.getOccupant();
-                if (occ.getOwner() == robot.getOwner())
+                int dist = game.getMap().getDistance(robot.getPosition(), hex);
+                if (dist > robot.getWeapon().getRange())
                     continue;
-                if (robot.canAttack(occ, game.getMap()))
-                    targets.add(hex);
+                if (!game.getMap().hasVisibility(robot.getPosition(), hex))
+                    continue;
+                if (game.getMap().getCoverModifier(robot.getPosition(), hex) < 0)
+                    continue;
+                targets.add(hex);
             }
         }
         return targets;
+    }
+
+    private boolean isValidAttackTargetHex(Robot robot, Hexagon hex) {
+        if (robot == null || hex == null || !hex.isOccupied()) {
+            return false;
+        }
+        Robot occupant = hex.getOccupant();
+        return occupant.getOwner() != robot.getOwner() && !occupant.isDestroyed() && robot.canAttack(occupant, game.getMap());
+    }
+
+    private int countValidAttackTargets(Robot robot) {
+        int count = 0;
+        for (Hexagon hex : getAttackReachableHexes(robot)) {
+            if (isValidAttackTargetHex(robot, hex)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private boolean isValidSkillTargetHex(Robot robot, Hexagon hex) {
+        if (robot == null || hex == null || !hex.isOccupied()) {
+            return false;
+        }
+        Skill skill = robot.getSkill();
+        if (skill == null || skill.getType() != SkillType.ATTACK) {
+            return false;
+        }
+        Robot occupant = hex.getOccupant();
+        if (occupant.isDestroyed()) {
+            return false;
+        }
+
+        String skillClass = skill.getClass().getSimpleName();
+        return switch (skillClass) {
+            case "RepairNanobots" -> occupant.getOwner() == robot.getOwner() && occupant != robot;
+            default -> occupant.getOwner() != robot.getOwner();
+        };
+    }
+
+    private int countValidSkillTargets(Robot robot) {
+        int count = 0;
+        for (Hexagon hex : getSkillAttackReachableHexes(robot)) {
+            if (isValidSkillTargetHex(robot, hex)) {
+                count++;
+            }
+        }
+        return count;
     }
 
     private boolean canUseSkill(Robot robot) {
