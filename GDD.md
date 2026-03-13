@@ -382,6 +382,8 @@ Requisitos del sistema de simulación:
 - `survivorsP2`
 - `destroyedP1`
 - `destroyedP2`
+- `damageDealtByRobot` (diccionario)
+- `damageReceivedByRobot` (diccionario)
 
 ### Métricas agregadas de balanceo
 
@@ -393,6 +395,20 @@ Requisitos del sistema de simulación:
 - Duración media de partida.
 - Distribución por tipo de victoria.
 - Número de partidas terminadas por `timeout` o límite de turnos.
+
+### Puntuaciones de Rol
+
+Para evaluar visual y de forma rápida el rendimiento adecuado de un robot según su papel estratégico en la mesa, se definen cuatro puntuaciones compuestas. Estas se calculan transformando primero las métricas acumuladas en **medias por partida** para cada robot (`WinRate`, `KillsAvg`, `DmgDealtAvg`, `DmgReceivedAvg`, `SurvivalRate`):
+
+- **DPS (Dañador / Ejecutor):** Robots que hacen mucho daño y causan bajas. No penaliza morir si hace mucho daño.
+  - `(DmgDealtAvg * 10) + (KillsAvg * 50)`
+- **Tank (Vanguardia / Absorción):** Robots que reciben mucho daño absorbiéndolo por sus aliados y aguantando.
+  - `(DmgReceivedAvg * 8) + (SurvivalRate * 150) + (WinRate * 100)`
+- **Support (Apoyo / Control):** Robots cuya eficacia a menudo no se refleja numéricamente salvo en hacer ganar a su equipo.
+  - `(WinRate * 600) + (SurvivalRate * 100) + (DmgDealtAvg * 2)`
+- **All-round (Todoterreno):** Equilibrado, prima no fallar en ninguna categoría general. Es la media aritmética de los otros tres roles.
+  - `(Score_DPS + Score_Tank + Score_Support) / 3`
+
 
 ### Orden recomendado de implementación
 

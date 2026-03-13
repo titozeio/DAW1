@@ -22,6 +22,8 @@ public class SimulationStats {
     private final Map<String, Integer> robotSurvivals = new LinkedHashMap<>();
     private final Map<String, Integer> robotDeaths = new LinkedHashMap<>();
     private final Map<String, Integer> robotKills = new LinkedHashMap<>();
+    private final Map<String, Integer> robotDamageDealt = new LinkedHashMap<>();
+    private final Map<String, Integer> robotDamageReceived = new LinkedHashMap<>();
     private final Map<String, Integer> victoryTypes = new LinkedHashMap<>();
     private final Map<String, Integer> allyPairAppearances = new LinkedHashMap<>();
     private final Map<String, Integer> allyPairWins = new LinkedHashMap<>();
@@ -34,8 +36,10 @@ public class SimulationStats {
         victoryTypes.merge(result.victoryType(), 1, Integer::sum);
 
         boolean isTimeoutOrDraw = "Empate".equals(result.winner()) || "timeout".equalsIgnoreCase(result.victoryType());
-        recordAllyPairs(result.teamP1(), "Jugador 1".equals(result.winner()), "Jugador 2".equals(result.winner()), isTimeoutOrDraw);
-        recordAllyPairs(result.teamP2(), "Jugador 2".equals(result.winner()), "Jugador 1".equals(result.winner()), isTimeoutOrDraw);
+        recordAllyPairs(result.teamP1(), "Jugador 1".equals(result.winner()), "Jugador 2".equals(result.winner()),
+                isTimeoutOrDraw);
+        recordAllyPairs(result.teamP2(), "Jugador 2".equals(result.winner()), "Jugador 1".equals(result.winner()),
+                isTimeoutOrDraw);
         if (!isTimeoutOrDraw) {
             if ("Jugador 1".equals(result.winner())) {
                 recordMatchupDominance(result.teamP1(), result.teamP2());
@@ -77,6 +81,12 @@ public class SimulationStats {
         for (Map.Entry<String, Integer> entry : result.killsByRobot().entrySet()) {
             robotKills.merge(entry.getKey(), entry.getValue(), Integer::sum);
         }
+        for (Map.Entry<String, Integer> entry : result.damageDealtByRobot().entrySet()) {
+            robotDamageDealt.merge(entry.getKey(), entry.getValue(), Integer::sum);
+        }
+        for (Map.Entry<String, Integer> entry : result.damageReceivedByRobot().entrySet()) {
+            robotDamageReceived.merge(entry.getKey(), entry.getValue(), Integer::sum);
+        }
     }
 
     public List<MatchResult> getResults() {
@@ -107,25 +117,53 @@ public class SimulationStats {
         return Map.copyOf(robotKills);
     }
 
-    public Map<String, Integer> getRobotScores() {
+    public Map<String, Integer> getRobotDamageDealt() {
+        return Map.copyOf(robotDamageDealt);
+    }
+
+    public Map<String, Integer> getRobotDamageReceived() {
+        return Map.copyOf(robotDamageReceived);
+    }
+
+    public Map<String, Integer> getRoleScores(String role) {
         Map<String, Integer> scores = new LinkedHashMap<>();
-        for (String robot : robotWins.keySet()) {
-            scores.put(robot, computeRobotScore(robot));
-        }
-        for (String robot : robotLosses.keySet()) {
-            scores.putIfAbsent(robot, computeRobotScore(robot));
-        }
-        for (String robot : robotTimeouts.keySet()) {
-            scores.putIfAbsent(robot, computeRobotScore(robot));
-        }
-        for (String robot : robotSurvivals.keySet()) {
-            scores.putIfAbsent(robot, computeRobotScore(robot));
-        }
-        for (String robot : robotDeaths.keySet()) {
-            scores.putIfAbsent(robot, computeRobotScore(robot));
-        }
-        for (String robot : robotKills.keySet()) {
-            scores.putIfAbsent(robot, computeRobotScore(robot));
+        java.util.Set<String> allRobots = new java.util.HashSet<>();
+        allRobots.addAll(robotWins.keySet());
+        allRobots.addAll(robotLosses.keySet());
+        allRobots.addAll(robotTimeouts.keySet());
+
+        for (String robot : allRobots) {
+            int wins = robotWins.getOrDefault(robot, 0);
+            int losses = robotLosses.getOrDefault(robot, 0);
+            int timeouts = robotTimeouts.getOrDefault(robot, 0);
+            int matches = wins + losses + timeouts;
+
+            if (matches == 0)
+                continue;
+
+            double winRate = (double) wins / matches;
+            double survivals = robotSurvivals.getOrDefault(robot, 0);
+            double survivalRate = survivals / matches;
+
+            double killsAvg = (double) robotKills.getOrDefault(robot, 0) / matches;
+            double dmgDealtAvg = (double) robotDamageDealt.getOrDefault(robot, 0) / matches;
+            double dmgReceivedAvg = (double) robotDamageReceived.getOrDefault(robot, 0) / matches;
+
+            double scoreDps = (dmgDealtAvg * 10) + (killsAvg * 50);
+            double scoreTank = (dmgReceivedAvg * 8) + (survivalRate * 150) + (winRate * 100);
+            double scoreSup = (winRate * 600) + (survivalRate * 100) + (dmgDealtAvg * 2);
+
+            double score = 0;
+            if ("DPS".equals(role)) {
+                score = scoreDps;
+            } else if ("TANK".equals(role)) {
+                score = scoreTank;
+            } else if ("SUPPORT".equals(role)) {
+                score = scoreSup;
+            } else if ("ALLROUND".equals(role)) {
+                score = (scoreDps + scoreTank + scoreSup) / 3.0;
+            }
+            scores.put(robot, (int) Math.round(score));
         }
         return Map.copyOf(scores);
     }
@@ -156,7 +194,8 @@ public class SimulationStats {
 
     public void exportCsv(Path path) throws IOException {
         List<String> lines = new ArrayList<>();
-        lines.add("matchId,seed,difficultyP1,difficultyP2,winner,victoryType,turnCount,teamP1,teamP2,survivorsP1,survivorsP2,destroyedP1,destroyedP2");
+        lines.add(
+                "matchId,seed,difficultyP1,difficultyP2,winner,victoryType,turnCount,teamP1,teamP2,survivorsP1,survivorsP2,destroyedP1,destroyedP2");
         for (MatchResult result : results) {
             lines.add(String.join(",",
                     String.valueOf(result.matchId()),
@@ -186,21 +225,17 @@ public class SimulationStats {
         json.append("  \"robotSurvivals\": ").append(toJsonMap(robotSurvivals)).append(",\n");
         json.append("  \"robotDeaths\": ").append(toJsonMap(robotDeaths)).append(",\n");
         json.append("  \"robotKills\": ").append(toJsonMap(robotKills)).append(",\n");
-        json.append("  \"robotScores\": ").append(toJsonMap(getRobotScores())).append(",\n");
+        json.append("  \"robotDamageDealt\": ").append(toJsonMap(robotDamageDealt)).append(",\n");
+        json.append("  \"robotDamageReceived\": ").append(toJsonMap(robotDamageReceived)).append(",\n");
+        json.append("  \"robotScoresDPS\": ").append(toJsonMap(getRoleScores("DPS"))).append(",\n");
+        json.append("  \"robotScoresTANK\": ").append(toJsonMap(getRoleScores("TANK"))).append(",\n");
+        json.append("  \"robotScoresSUP\": ").append(toJsonMap(getRoleScores("SUPPORT"))).append(",\n");
+        json.append("  \"robotScoresALL\": ").append(toJsonMap(getRoleScores("ALLROUND"))).append(",\n");
         json.append("  \"victoryTypes\": ").append(toJsonMap(victoryTypes)).append(",\n");
         json.append("  \"allyPairs\": ").append(toJsonPairStats()).append(",\n");
         json.append("  \"matchupDominance\": ").append(toJsonMap(matchupDominance)).append("\n");
         json.append("}\n");
         Files.writeString(path, json.toString());
-    }
-
-    private int computeRobotScore(String robot) {
-        int wins = robotWins.getOrDefault(robot, 0);
-        int losses = robotLosses.getOrDefault(robot, 0);
-        int survivals = robotSurvivals.getOrDefault(robot, 0);
-        int deaths = robotDeaths.getOrDefault(robot, 0);
-        int kills = robotKills.getOrDefault(robot, 0);
-        return wins * 4 + survivals * 2 + kills - losses * 3 - deaths * 2;
     }
 
     private String sanitize(String value) {

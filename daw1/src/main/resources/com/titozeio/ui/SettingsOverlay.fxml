@@ -117,7 +117,7 @@
                   </HBox>
 
                   <Label fx:id="simulationStatusLabel" styleClass="simulation-status-label" text="Listo para simular." textFill="#57C0EF" />
-                  <Label styleClass="simulation-legend-label" text="W = WINS | L = LOSSES | T = TIMEOUTS/DRAWS | S = SURVIVES | D = DEATHS | K = KILLS | SCORE = 4W + 2S + K - 3L - 2D" textFill="#F3D48A" />
+                  <Label styleClass="simulation-legend-label" text="W = WINS | L = LOSSES | T = TIMEOUTS | S = SURVIVES | D = DEATHS | K = KILLS | ROLES (DPS, TNK, SUP, ALL)" textFill="#F3D48A" />
 
                   <HBox alignment="CENTER_LEFT" spacing="10.0">
                      <children>
@@ -153,7 +153,10 @@
                         <Button mnemonicParsing="false" onAction="#handleSimulationSortAction" styleClass="simulation-sort-button" text="S" userData="S" />
                         <Button mnemonicParsing="false" onAction="#handleSimulationSortAction" styleClass="simulation-sort-button" text="D" userData="D" />
                         <Button mnemonicParsing="false" onAction="#handleSimulationSortAction" styleClass="simulation-sort-button" text="K" userData="K" />
-                        <Button mnemonicParsing="false" onAction="#handleSimulationSortAction" styleClass="simulation-sort-button" text="Score" userData="SCORE" />
+                        <Button mnemonicParsing="false" onAction="#handleSimulationSortAction" styleClass="simulation-sort-button" text="DPS" userData="DPS" />
+                        <Button mnemonicParsing="false" onAction="#handleSimulationSortAction" styleClass="simulation-sort-button" text="TNK" userData="TANK" />
+                        <Button mnemonicParsing="false" onAction="#handleSimulationSortAction" styleClass="simulation-sort-button" text="SUP" userData="SUPPORT" />
+                        <Button mnemonicParsing="false" onAction="#handleSimulationSortAction" styleClass="simulation-sort-button" text="ALL" userData="ALLROUND" />
                      </children>
                   </HBox>
 

@@ -93,7 +93,7 @@ public class SettingsOverlayController {
     private final Map<String, RobotStatRow> robotStatRows = new LinkedHashMap<>();
     private static final EnumSet<AiDifficulty> AVAILABLE_DIFFICULTIES = EnumSet.of(AiDifficulty.EASY,
             AiDifficulty.MEDIUM);
-    private SortMetric currentSortMetric = SortMetric.SCORE;
+    private SortMetric currentSortMetric = SortMetric.ALLROUND;
 
     @FXML
     private void initialize() {
@@ -339,7 +339,10 @@ public class SettingsOverlayController {
                     currentSimulationStats.getRobotSurvivals().getOrDefault(robot, 0),
                     currentSimulationStats.getRobotDeaths().getOrDefault(robot, 0),
                     currentSimulationStats.getRobotKills().getOrDefault(robot, 0),
-                    currentSimulationStats.getRobotScores().getOrDefault(robot, 0));
+                    currentSimulationStats.getRoleScores("DPS").getOrDefault(robot, 0),
+                    currentSimulationStats.getRoleScores("TANK").getOrDefault(robot, 0),
+                    currentSimulationStats.getRoleScores("SUPPORT").getOrDefault(robot, 0),
+                    currentSimulationStats.getRoleScores("ALLROUND").getOrDefault(robot, 0));
         }
         refreshSimulationSummaries();
         resortRobotStatsRows();
@@ -371,7 +374,7 @@ public class SettingsOverlayController {
         java.util.List<RobotStatRow> ordered = new java.util.ArrayList<>(robotStatRows.values());
         ordered.sort(
                 java.util.Comparator.comparingInt((RobotStatRow row) -> row.metricValue(currentSortMetric))
-                        .thenComparingInt(RobotStatRow::score)
+                        .thenComparingInt(RobotStatRow::allround)
                         .thenComparingInt(RobotStatRow::wins)
                         .thenComparingInt(RobotStatRow::survives)
                         .reversed()
@@ -460,7 +463,10 @@ public class SettingsOverlayController {
         SURVIVES,
         DEATHS,
         KILLS,
-        SCORE;
+        DPS,
+        TANK,
+        SUPPORT,
+        ALLROUND;
 
         static SortMetric from(String key) {
             return switch (key) {
@@ -470,7 +476,10 @@ public class SettingsOverlayController {
                 case "S" -> SURVIVES;
                 case "D" -> DEATHS;
                 case "K" -> KILLS;
-                default -> SCORE;
+                case "DPS" -> DPS;
+                case "TNK", "TANK" -> TANK;
+                case "SUP", "SUPPORT" -> SUPPORT;
+                default -> ALLROUND;
             };
         }
     }
@@ -500,12 +509,16 @@ public class SettingsOverlayController {
             Label survivesLabel,
             Label deathsLabel,
             Label killsLabel,
-            Label scoreLabel) {
+            Label dpsLabel,
+            Label tankLabel,
+            Label supLabel,
+            Label allLabel) {
 
         RobotStatRow(String robotName) {
-            this(robotName, createRowContainer(robotName), createValueLabel(), createValueLabel(), createValueLabel(),
-                    createValueLabel(),
-                    createValueLabel(), createValueLabel(), createValueLabel());
+            this(robotName, createRowContainer(robotName),
+                    createValueLabel(), createValueLabel(), createValueLabel(),
+                    createValueLabel(), createValueLabel(), createValueLabel(),
+                    createValueLabel(), createValueLabel(), createValueLabel(), createValueLabel());
             HBox row = container;
             row.getChildren().addAll(
                     createHeaderLabel(robotName),
@@ -516,21 +529,28 @@ public class SettingsOverlayController {
                     createMetricGroup("S", survivesLabel),
                     createMetricGroup("D", deathsLabel),
                     createMetricGroup("K", killsLabel),
-                    createMetricGroup("Score", scoreLabel));
+                    createMetricGroup("DPS", dpsLabel),
+                    createMetricGroup("TNK", tankLabel),
+                    createMetricGroup("SUP", supLabel),
+                    createMetricGroup("ALL", allLabel));
         }
 
         void reset() {
-            update(0, 0, 0, 0, 0, 0, 0);
+            update(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         }
 
-        void update(int wins, int losses, int timeouts, int survives, int deaths, int kills, int score) {
+        void update(int wins, int losses, int timeouts, int survives, int deaths, int kills, int dps, int tank, int sup,
+                int all) {
             winsLabel.setText(String.valueOf(wins));
             lossesLabel.setText(String.valueOf(losses));
             timeoutsLabel.setText(String.valueOf(timeouts));
             survivesLabel.setText(String.valueOf(survives));
             deathsLabel.setText(String.valueOf(deaths));
             killsLabel.setText(String.valueOf(kills));
-            scoreLabel.setText(String.valueOf(score));
+            dpsLabel.setText(String.valueOf(dps));
+            tankLabel.setText(String.valueOf(tank));
+            supLabel.setText(String.valueOf(sup));
+            allLabel.setText(String.valueOf(all));
         }
 
         int wins() {
@@ -541,8 +561,8 @@ public class SettingsOverlayController {
             return parseMetric(survivesLabel);
         }
 
-        int score() {
-            return parseMetric(scoreLabel);
+        int allround() {
+            return parseMetric(allLabel);
         }
 
         int metricValue(SortMetric metric) {
@@ -553,7 +573,10 @@ public class SettingsOverlayController {
                 case SURVIVES -> survives();
                 case DEATHS -> parseMetric(deathsLabel);
                 case KILLS -> parseMetric(killsLabel);
-                case SCORE -> score();
+                case DPS -> parseMetric(dpsLabel);
+                case TANK -> parseMetric(tankLabel);
+                case SUPPORT -> parseMetric(supLabel);
+                case ALLROUND -> allround();
             };
         }
 
