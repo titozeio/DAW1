@@ -20,19 +20,43 @@
   - [Sistema de Coordenadas del Mapa:](#sistema-de-coordenadas-del-mapa)
   - [Arquitectura y Patrones:](#arquitectura-y-patrones)
   - [IA, Modos de Control y Simulación Masiva:](#ia-modos-de-control-y-simulación-masiva)
+    - [Objetivo de arquitectura](#objetivo-de-arquitectura)
+    - [Enfoque recomendado para IA](#enfoque-recomendado-para-ia)
+    - [Diseño de la IA fácil](#diseño-de-la-ia-fácil)
+      - [Heurística actualmente implementada (marzo 2026)](#heurística-actualmente-implementada-marzo-2026)
+    - [Diseño de la IA difícil](#diseño-de-la-ia-difícil)
+    - [Diseño de la IA DARK SOULS](#diseño-de-la-ia-dark-souls)
+    - [Servicios propuestos](#servicios-propuestos)
+    - [Simulación masiva para balanceo](#simulación-masiva-para-balanceo)
+    - [Datos a registrar por partida](#datos-a-registrar-por-partida)
+    - [Métricas agregadas de balanceo](#métricas-agregadas-de-balanceo)
+    - [Puntuaciones de Rol](#puntuaciones-de-rol)
+    - [Orden recomendado de implementación](#orden-recomendado-de-implementación)
   - [Estructura de Paquetes:](#estructura-de-paquetes)
   - [Sistema de Audio:](#sistema-de-audio)
+    - [Música de fondo](#música-de-fondo)
+    - [Efectos de sonido (SFX)](#efectos-de-sonido-sfx)
+      - [Tabla de SFX implementados:](#tabla-de-sfx-implementados)
+      - [Sistema de SFX global en botones](#sistema-de-sfx-global-en-botones)
   - [CI/CD (Integración Continua):](#cicd-integración-continua)
 - [4. Bucle de Juego (Game Loop)](#4-bucle-de-juego-game-loop)
+    - [Variantes del bucle](#variantes-del-bucle)
 - [5. Contenido, Niveles](#5-contenido-niveles)
   - [Asset List:](#asset-list)
+    - [Música](#música)
+    - [Efectos de Sonido (SFX)](#efectos-de-sonido-sfx-1)
   - [Diseño de Nivel (mapa):](#diseño-de-nivel-mapa)
+    - [Mapa 1 — «Yermo Industrial»](#mapa-1--yermo-industrial)
   - [Lista de skills:](#lista-de-skills)
   - [Lista de Robots:](#lista-de-robots)
+    - [Dirección visual canónica para concept art (vinculante)](#dirección-visual-canónica-para-concept-art-vinculante)
 - [6. Interfaz (UI/HUD)](#6-interfaz-uihud)
   - [Pantalla de inicio:](#pantalla-de-inicio)
+    - [Estado actual implementado (marzo 2026)](#estado-actual-implementado-marzo-2026)
   - [Pantalla de Nueva partida (Selección de Robots):](#pantalla-de-nueva-partida-selección-de-robots)
+    - [Estado actual implementado (marzo 2026)](#estado-actual-implementado-marzo-2026-1)
   - [Pantalla de Combate:](#pantalla-de-combate)
+    - [Estado actual implementado (marzo 2026)](#estado-actual-implementado-marzo-2026-2)
 
 
 # 1. Concepto de Alto Nivel (The Pitch)
@@ -355,6 +379,21 @@ En lugar de evaluar exhaustivamente todas las combinaciones, procede de la sigui
 5. Se elige la acción cuyo `Score_Inicial - Score_Respuesta_Enemiga` sea mayor.
 
 Esto produce un comportamiento "hard" donde la IA preparará mini emboscadas, evitará conscientemente quedarse en el rango letal de varios enemigos y priorizará los intercambios seguros de daño, a coste de más procesamiento por turno.
+
+### Diseño de la IA DARK SOULS
+
+La IA nivel DARK SOULS representa el techo algorítmico y estratégico del juego. A diferencia de las heurísticas aisladas (EASY/MEDIUM) o del "Lookahead" puntual (HARD), la IA Dark Souls utiliza **evaluación profunda del tablero (Minimax con Poda Alfa-Beta)** apoyada en clonadores de estado rápidos y una heurística madura integral.
+
+**Planteamiento técnico inicial:**
+1. **Profundidad de Búsqueda:** Analizará de 2 a 3 medios turnos en el futuro (Yo -> Oponente -> Yo de nuevo).
+2. **Generación Dinámica de Estados:** Requiere la implementación de un método `Game.cloneState()` o simulador sin UI para no modificar la partida real al navegar el árbol de decisiones.
+3. **Poda Heurística Extremadamente Agresiva:** Debido a que el factor de ramificación de moverse, elegir skill o atacar en una grilla hexadecimal es astronómico, se usarán técnicas como *Iterative Deepening* y *Move Ordering*. Solo las 3 o 4 mejores jugadas iniciales de un turno se expanden hacia el análisis Minimax completo.
+4. **Evaluacion Heurística Madura Avanzada (El Tablero como un Todo):** El `ActionEvaluator` para esta dificultad no juzgará interacciones aisladas, sino el "peso" total de la mesa:
+   - Control del centro: Castigará dejar libres las casillas centrales.
+   - Presión sobre la Base: Forzará retiradas enemigas amenazando captura.
+   - Sinapsis Definitiva: Retendrá habilidades especiales con "CD largo" si la situación actual no promete un cambio absoluto del flujo de la partida (no gastar Rayo Congelador en un bot que morirá de un ataque normal de todas formas).
+
+El coste principal de desarrollo de DAkK SOULS recaerá en la optimización de la memoria (para no demorar el turno) en lugar de la inteligencia per se, ya que la búsqueda Alfa-Beta asume un oponente humano que jugará perfecto.
 
 ### Servicios propuestos
 

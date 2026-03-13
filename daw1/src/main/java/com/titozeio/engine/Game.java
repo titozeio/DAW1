@@ -5,6 +5,7 @@ import com.titozeio.ai.AiController;
 import com.titozeio.ai.AiDifficulty;
 import com.titozeio.ai.EasyAiStrategy;
 import com.titozeio.ai.HardAiStrategy;
+import com.titozeio.ai.DarkSoulsAiStrategy;
 import com.titozeio.ai.MediumAiStrategy;
 import com.titozeio.ai.HumanController;
 import com.titozeio.ai.PlayerController;
@@ -166,7 +167,7 @@ public class Game {
             case MEDIUM -> new AiController(new MediumAiStrategy(new ActionEvaluator(AiDifficulty.MEDIUM)), turnEngine);
             case HARD -> new AiController(new HardAiStrategy(new ActionEvaluator(AiDifficulty.HARD)), turnEngine);
             case DARK_SOULS ->
-                new AiController(new EasyAiStrategy(new ActionEvaluator(AiDifficulty.EASY)), turnEngine);
+                new AiController(new DarkSoulsAiStrategy(new ActionEvaluator(AiDifficulty.DARK_SOULS)), turnEngine);
         };
     }
 

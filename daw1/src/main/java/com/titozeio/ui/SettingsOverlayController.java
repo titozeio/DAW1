@@ -92,7 +92,7 @@ public class SettingsOverlayController {
     private SimulationStats currentSimulationStats;
     private final Map<String, RobotStatRow> robotStatRows = new LinkedHashMap<>();
     private static final EnumSet<AiDifficulty> AVAILABLE_DIFFICULTIES = EnumSet.of(AiDifficulty.EASY,
-            AiDifficulty.MEDIUM, AiDifficulty.HARD);
+            AiDifficulty.MEDIUM, AiDifficulty.HARD, AiDifficulty.DARK_SOULS);
     private SortMetric currentSortMetric = SortMetric.ALLROUND;
     private boolean simulationLaunchAllowed = true;
     private Runnable onAiDifficultyChanged;
