@@ -1,3 +1,5 @@
+.vscode/
+
 stats/
 
 .userhome/
@@ -58,3 +60,4 @@ replay_pid*
 
 tiledproject/*
 .m2/repository/org/jacoco/jacoco-maven-plugin/0.8.11/jacoco-maven-plugin-0.8.11.pom.lastUpdated
+

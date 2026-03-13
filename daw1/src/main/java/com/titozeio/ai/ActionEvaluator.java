@@ -14,30 +14,46 @@ import com.titozeio.skills.Skill;
 import com.titozeio.skills.TurboPropulsion;
 
 /**
- * Puntuación heurística simple para la IA fácil.
+ * Evaluador de acciones para la IA.
+ * Proporciona una puntuación heurística para cada posible comando, basándose en
+ * los pesos definidos en el GDD (marzo 2026).
+ * Esta clase es el "cerebro" que determina qué tan útil es una acción
+ * inmediata.
  */
 public class ActionEvaluator {
 
+    /**
+     * Evalúa una acción de movimiento hacia una casilla destino.
+     * 
+     * @param game   Estado actual del juego.
+     * @param actor  Robot que realiza el movimiento.
+     * @param target Casilla hexagonal de destino.
+     * @return Puntuación que refleja la ventaja táctica de terminar en esa casilla.
+     */
     public int scoreMove(Game game, Robot actor, Hexagon target) {
-        int score = 10;
+        int score = 10; // Puntuación base por movimiento
         Player enemy = game.getOpponent(actor.getOwner());
         int currentBestDistance = minDistanceToEnemies(game, actor.getPosition(), enemy);
         int newBestDistance = minDistanceToEnemies(game, target, enemy);
 
+        // Bonus por acercarse al enemigo más cercano (+30 por hexágono reducido)
         if (newBestDistance < currentBestDistance) {
             score += (currentBestDistance - newBestDistance) * 30;
         }
 
+        // Bonus por terminar en una casilla desde la que se puede atacar (+80)
         if (canAttackAnyEnemyFrom(game, actor, target)) {
             score += 80;
         }
 
+        // Bonus/Malus por tipo de terreno estratégico
         if (target.getTerrain() == TerrainType.VEGETATION) {
-            score += 20;
+            score += 20; // Ventaja defensiva
         } else if (target.getTerrain() == TerrainType.WATER_SHALLOW) {
-            score -= 40;
+            score -= 40; // Exposición innecesaria
         }
 
+        // Bonus por acercarse a la base enemiga para captura (+15)
         Hexagon enemyBase = enemy.getBaseLocation();
         if (enemyBase != null && actor.getPosition() != null) {
             int currentBaseDistance = game.getMap().getDistance(actor.getPosition(), enemyBase);
@@ -50,24 +66,47 @@ public class ActionEvaluator {
         return score;
     }
 
+    /**
+     * Evalúa una acción de ataque estándar contra un robot enemigo.
+     * 
+     * @param game   Estado actual del juego.
+     * @param actor  Robot atacante.
+     * @param target Robot defensor.
+     * @return Puntuación basada en el daño estimado y el valor estratégico del
+     *         objetivo.
+     */
     public int scoreAttack(Game game, Robot actor, Robot target) {
         int estimatedDamage = estimateBasicAttackDamage(game, actor, target);
+        // Base de ataque + peso por daño infligido
         int score = 200 + estimatedDamage * 25;
+
+        // Bonus crítico por destrucción del objetivo (+1000)
         if (target.getCurrentHp() <= estimatedDamage) {
             score += 1000;
         }
+
+        // Bonus por defender la base propia (+150 si el objetivo está en la base)
         if (isThreateningBase(game, target)) {
             score += 150;
         }
         return score;
     }
 
+    /**
+     * Evalúa el uso de una habilidad especial (Skill).
+     * 
+     * @param game   Estado actual del juego.
+     * @param actor  Robot que usa la skill.
+     * @param target Objetivo de la skill (puede ser Robot o Hexagon según el tipo).
+     * @return Puntuación basada en el efecto específico de la habilidad.
+     */
     public int scoreSkill(Game game, Robot actor, Object target) {
         Skill skill = actor.getSkill();
         if (skill == null) {
             return Integer.MIN_VALUE;
         }
 
+        // Skill ofensiva: Rayo Congelador
         if (skill instanceof FreezeRay freezeRay && target instanceof Robot enemy) {
             int score = 250 + freezeRay.getDamage() * 20;
             if (enemy.getCurrentHp() <= freezeRay.getDamage()) {
@@ -79,6 +118,7 @@ public class ActionEvaluator {
             return score;
         }
 
+        // Skill ofensiva: Misil Teledirigido
         if (skill instanceof GuidedMissile guidedMissile && target instanceof Robot enemy) {
             int score = 260 + guidedMissile.getDamage() * 22;
             if (enemy.getCurrentHp() <= guidedMissile.getDamage()) {
@@ -87,6 +127,7 @@ public class ActionEvaluator {
             return score;
         }
 
+        // Skill ofensiva: Sable de Plasma (cuerpo a cuerpo pesado)
         if (skill instanceof PlasmaSaberAttack plasmaSaber && target instanceof Robot enemy) {
             int score = 280 + plasmaSaber.getDamage() * 20;
             if (enemy.getCurrentHp() <= plasmaSaber.getDamage()) {
@@ -95,19 +136,21 @@ public class ActionEvaluator {
             return score;
         }
 
+        // Skill de soporte: Nanobots Reparadores
         if (skill instanceof RepairNanobots repairNanobots && target instanceof Robot ally) {
             int missingHp = ally.getMaxHp() - ally.getCurrentHp();
             if (missingHp <= 0) {
-                return 0;
+                return 0; // No curar si ya está al máximo
             }
             return 180 + Math.min(missingHp, repairNanobots.getHealAmount()) * 30;
         }
 
+        // Skills de movilidad: Jetpack o Turbo
         if ((skill instanceof JetpackBoost || skill instanceof TurboPropulsion) && target instanceof Hexagon hex) {
             return 120 + scoreMove(game, actor, hex);
         }
 
-        return 50;
+        return 50; // Puntuación por defecto para casos no contemplados
     }
 
     private int estimateBasicAttackDamage(Game game, Robot actor, Robot target) {
