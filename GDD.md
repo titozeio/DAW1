@@ -346,7 +346,7 @@ La puntuación usada en `ActionEvaluator` es la siguiente:
   - `GuidedMissile`: base `260 + daño * 22`, `+1000` si mata.
   - `PlasmaSaberAttack`: base `280 + daño * 20`, `+1000` si mata.
 - **Skill de curación**:
-  - `RepairNanobots`: `180 + curación_efectiva * 30`, donde la curación efectiva es el mínimo entre HP faltante y curación de la skill.
+  - `RepairNanobots`: `180 + curación_efectiva * 30`, donde la curación efectiva es el mínimo entre HP faltante y curación de la skill. Si el HP faltante es 0 (objetivo intacto), las IA Fácil/Media otorgan 0 puntos, pero Difícil (HARD) y DARK SOULS aplican una penalización agresiva de `-10000` para descartar por completo este despilfarro.
 - **Skills de movimiento**:
   - `JetpackBoost` y `TurboPropulsion`: `120 + puntuación_del_movimiento_resultante`.
 
@@ -374,32 +374,28 @@ Estos pesos son deliberadamente simples para facilitar docencia, trazabilidad y 
 
 ### Diseño de la IA difícil
 
-La IA difícil introduce un concepto básico de **Minimax con profundidad limitada** sobre un conjunto reducido de acciones (poda heurística previa).
-En lugar de evaluar exhaustivamente todas las combinaciones, procede de la siguiente manera:
-1. Genera todas las acciones legales para todos los robots disponibles del jugador en el turno actual.
-2. Evalúa estas acciones usando la misma heurística base (con penalizaciones de exposición como la IA Media).
-3. Ordena las acciones y selecciona un subconjunto de acciones "prometedoras" (por ejemplo, las 5 mejores).
-4. Para cada acción prometedora, la IA calcula un valor de penalización (el "riesgo futuro") que simula qué pasaría si se cede el turno al rival:
-   - Se desplaza temporalmente al robot a su hipotética nueva casilla o se evalúa el daño infligido al objetivo atacado.
-   - Se suman las estimaciones de los ataques más perjudiciales que los enemigos vivos restantes podrían realizar contra el robot expuesto en ese escenario.
-5. Se elige la acción cuyo `Score_Inicial - Score_Respuesta_Enemiga` sea mayor.
+La IA difícil usa un **Lookahead de un turno** con poda heurística para optimizar el ratio riesgo-recompensa.
+En lugar de depender exclusivamente de penalizaciones abstractas basadas en el número de enemigos (como hace la IA de nivel Medio), procede de la siguiente manera:
+1. Genera todas las acciones legales para todos los robots disponibles.
+2. Evalúa sus ganancias agresivas usando la heurística base sin penalizar preventivamente la exposición.
+3. Filtra un subconjunto de acciones "prometedoras" y muy ofensivas.
+4. Para cada acción prometedora, simula el movimiento o ataque y calcula un valor de penalización específico: la cantidad matemática de daño real que los enemigos restantes podrían infligir al robot expuesto en su nueva situación. Al darle más peso a infligir daño que a recibirlo, no duda en efectuar asaltos rentables ni en intercambiar daño si tiene ventaja de supervivencia.
+5. Elige la acción con mejor balance exacto de Daño Infligido / Ventaja Táctica frente a Daño Esperado Recibido.
 
-Esto produce un comportamiento "hard" donde la IA preparará mini emboscadas, evitará conscientemente quedarse en el rango letal de varios enemigos y priorizará los intercambios seguros de daño, a coste de más procesamiento por turno.
+Esto produce un comportamiento "hard" donde la IA preparará mini emboscadas, evaluará con precisión si vale la pena saltar a plena vista para asesinar un objetivo prioritario y priorizará los intercambios numéricos agresivos.
 
 ### Diseño de la IA DARK SOULS
 
-La IA nivel DARK SOULS representa el techo algorítmico y estratégico del juego. A diferencia de las heurísticas aisladas (EASY/MEDIUM) o del "Lookahead" puntual (HARD), la IA Dark Souls utiliza **evaluación profunda del tablero (Minimax con Poda Alfa-Beta)** apoyada en clonadores de estado rápidos y una heurística madura integral.
+La IA nivel DARK SOULS representa el techo algorítmico y estratégico del juego. A diferencia del análisis que realiza la IA Difícil sobre *una única acción individual*, la IA Dark Souls despliega una **Búsqueda en Profundidad (DFS / DFS Combo Search) de N acciones a lo largo de su propio turno al completo**.
 
-**Planteamiento técnico inicial:**
-1. **Profundidad de Búsqueda:** Analizará de 2 a 3 medios turnos en el futuro (Yo -> Oponente -> Yo de nuevo).
-2. **Generación Dinámica de Estados:** Requiere la implementación de un método `Game.cloneState()` o simulador sin UI para no modificar la partida real al navegar el árbol de decisiones.
-3. **Poda Heurística Extremadamente Agresiva:** Debido a que el factor de ramificación de moverse, elegir skill o atacar en una grilla hexadecimal es astronómico, se usarán técnicas como *Iterative Deepening* y *Move Ordering*. Solo las 3 o 4 mejores jugadas iniciales de un turno se expanden hacia el análisis Minimax completo.
-4. **Evaluacion Heurística Madura Avanzada (El Tablero como un Todo):** El `ActionEvaluator` para esta dificultad no juzgará interacciones aisladas, sino el "peso" total de la mesa:
-   - Control del centro: Castigará dejar libres las casillas centrales.
-   - Presión sobre la Base: Forzará retiradas enemigas amenazando captura.
-   - Sinapsis Definitiva: Retendrá habilidades especiales con "CD largo" si la situación actual no promete un cambio absoluto del flujo de la partida (no gastar Rayo Congelador en un bot que morirá de un ataque normal de todas formas).
-
-El coste principal de desarrollo de DAkK SOULS recaerá en la optimización de la memoria (para no demorar el turno) en lugar de la inteligencia per se, ya que la búsqueda Alfa-Beta asume un oponente humano que jugará perfecto.
+**Planteamiento técnico:**
+1. **Profundidad de Búsqueda sobre el propio Turno:** La IA no piensa de acción en acción; en lugar de eso, traza ramificaciones evaluando "Si mi Robot A se mueve, luego mi Robot B ataca, y luego el Robot C usa su Rayo Congelador, ¿cómo queda todo?". Explora secuencias completas de hasta 4 acciones cruzadas simuladas antes de que termine su turno.
+2. **Generación Dinámica de Estados (Snapshot):** Emplea un simulador sin UI ultrarrápido (`GameStateSnapshot`) que clona en microsegundos HP, posiciones y estado de todos los robots para no ensuciar la partida visual probando millones de futuros en los que dispara y se desplaza antes de revertirlos quirúrgicamente.
+3. **Poda Heurística Extremadamente Agresiva:** Debido a que el factor factorial de combinar tres robots moviéndose y atacando es astronómico, se usa *Move Ordering*. En cada paso del turno simulado, filtra las decenas de opciones a solo las 3 mejores antes de explorar la siguiente acción del combo.
+4. **Evaluacion del Tablero Final (Heurística Madura Avanzada):** Al final del combo simulado (cuando no quedan más acciones que realizar en ese turno), extrae una "fotografía global" y le asigna una puntuación al tablero completo:
+   - Supervivencia y Vitalidad: Pesa enormemente los HP totales vivos en ambos bandos.
+   - Presión y Exposición Realista: Resta puntos al score global de la simulación por cada unidad propia que acabe el turno expuesta a rangos de ataque enemigos letales (simulando que tras finalizar el combo Dark Souls, es el turno del jugador y este hará masacres).
+   - Control Terreno y Centro: Castiga el alejamiento de las casillas centrales y premia el control de puntos elevados o posiciones con vegetación.
 
 ### Servicios propuestos
 

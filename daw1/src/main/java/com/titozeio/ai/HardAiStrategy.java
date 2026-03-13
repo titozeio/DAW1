@@ -41,7 +41,9 @@ public class HardAiStrategy implements AiStrategy {
                 List<GameCommand> commands = turnEngine.getLegalCommands(game, robot);
                 for (GameCommand cmd : commands) {
                     int score = scoreCommand(game, robot, cmd);
-                    allDecisions.add(new ScoredDecision(cmd, score));
+                    if (score > -5000) { // Descartar bloqueos claros como curar vidas al máximo
+                        allDecisions.add(new ScoredDecision(cmd, score));
+                    }
                 }
             }
         }
@@ -118,11 +120,9 @@ public class HardAiStrategy implements AiStrategy {
                 // Si este enemigo puede atacar al actor en su posición (hipotética) nueva
                 if (evaluator.canAttackTarget(game, enemy, actor)) {
                     int expectedDmg = evaluator.estimateBasicAttackDamage(game, enemy, actor);
-                    // Escala de dolor. Restar HP a mi robot es malo. Y matar es peor (GDD => *25 de
-                    // peso e instakill => 1000).
-                    int penalty = expectedDmg * 25;
+                    int penalty = expectedDmg * 15; // Agresivo a favor de iniciar combates
                     if (actor.getCurrentHp() <= expectedDmg) {
-                        penalty += 1000;
+                        penalty += 800; // Moderado para permitir pequeños suicidios tácticos rentables
                     }
                     maxPenalty += penalty;
                 }

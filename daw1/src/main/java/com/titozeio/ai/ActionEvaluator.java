@@ -80,16 +80,20 @@ public class ActionEvaluator {
             }
         }
 
-        // MEDICIÓN DE RIESGO (Medio+): Penalización por exposición
-        if (difficulty != AiDifficulty.EASY) {
+        // MEDICIÓN DE RIESGO (Medio): Penalización por exposición heurística
+        // Hard y Dark Souls lo evalúan de forma dinámica en su lookahead, no queremos
+        // doble penalización
+        if (difficulty == AiDifficulty.MEDIUM) {
             int threats = countEnemiesCanAttack(game, target, enemy);
             if (threats > 1) {
                 score -= 150; // "Terminar muy expuesto" (GDD)
             } else if (threats == 1) {
                 score -= 40; // Ligero riesgo
             }
+        }
 
-            // Priorización de supervivencia si tiene poca vida
+        // Priorización de supervivencia si tiene poca vida
+        if (difficulty != AiDifficulty.EASY) {
             if (actor.getCurrentHp() <= actor.getMaxHp() * 0.3) {
                 if (target.getTerrain() == TerrainType.VEGETATION) {
                     score += 100; // Buscar cobertura desesperadamente
@@ -192,6 +196,9 @@ public class ActionEvaluator {
         if (skill instanceof RepairNanobots repairNanobots && target instanceof Robot ally) {
             int missingHp = ally.getMaxHp() - ally.getCurrentHp();
             if (missingHp <= 0) {
+                if (difficulty == AiDifficulty.HARD || difficulty == AiDifficulty.DARK_SOULS) {
+                    return -10000; // Penalización agresiva para que no considere la acción vacía
+                }
                 return 0; // No curar si ya está al máximo
             }
             return 180 + Math.min(missingHp, repairNanobots.getHealAmount()) * 30;
