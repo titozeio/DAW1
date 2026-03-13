@@ -67,9 +67,7 @@ public class Game {
         private final String prefix;
 
         MusicTheme(String prefix) {
-            //let's do this
             this.prefix = prefix;
-            this.stage=null;
         }
     }
 
