@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -91,7 +90,6 @@ public class SettingsOverlayController {
     private final AtomicBoolean simulationCancelRequested = new AtomicBoolean(false);
     private SimulationStats currentSimulationStats;
     private final Map<String, RobotStatRow> robotStatRows = new LinkedHashMap<>();
-    private static final EnumSet<AiDifficulty> AVAILABLE_DIFFICULTIES = EnumSet.of(AiDifficulty.EASY);
     private SortMetric currentSortMetric = SortMetric.SCORE;
     private boolean simulationLaunchAllowed = true;
     private Runnable onAiDifficultyChanged;
@@ -393,11 +391,6 @@ public class SettingsOverlayController {
     private void configureAiDifficultyCombo() {
         aiDifficultyChoice.setCellFactory(listView -> new AiDifficultyCell());
         aiDifficultyChoice.setButtonCell(new AiDifficultyCell());
-        aiDifficultyChoice.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null && !AVAILABLE_DIFFICULTIES.contains(newValue)) {
-                aiDifficultyChoice.setValue(oldValue != null ? oldValue : AiDifficulty.EASY);
-            }
-        });
     }
 
     private void initializeSummaryBoxes() {
@@ -492,12 +485,12 @@ public class SettingsOverlayController {
             if (empty || item == null) {
                 setText(null);
                 setDisable(false);
+                setOpacity(1.0);
                 return;
             }
-            boolean available = AVAILABLE_DIFFICULTIES.contains(item);
-            setText(available ? item.getDisplayName() : item.getDisplayName() + " (Próximamente)");
-            setDisable(!available);
-            setOpacity(available ? 1.0 : 0.45);
+            setText(item.getDisplayName());
+            setDisable(false);
+            setOpacity(1.0);
         }
     }
 
