@@ -503,29 +503,40 @@ public class GameScreen extends Screen {
             return;
         }
 
-        // Ejecutar skill si estamos en modo SKILL y la casilla está resaltada
-        if (selectionMode == SelectionMode.SKILL && hexRenderer.isSkillHighlighted(hex)) {
-            if (canExecuteSkillOnHex(selectedRobot, hex)) {
-                executeSkill(hex);
-            }
-            return;
-        }
-        // Ejecutar movimiento normal
-        if (selectionMode == SelectionMode.MOVE && hexRenderer.isMoveHighlighted(hex)) {
-            executeMove(hex);
-            return;
-        }
-        // Ejecutar ataque normal
-        if (selectionMode == SelectionMode.ATTACK && hexRenderer.isAttackHighlighted(hex)) {
+        if (selectionMode == SelectionMode.ATTACK) {
             if (isValidAttackTargetHex(selectedRobot, hex)) {
                 executeAttack(hex);
+                return;
             }
+            if (hex.isOccupied()) {
+                Robot robot = hex.getOccupant();
+                clearSelection();
+                if (robot.getOwner() == cur && hasPendingActions(robot)) {
+                    selectRobot(robot);
+                } else {
+                    updateRobotInfoPanel(robot);
+                    lockedRobotInfoHex = hex;
+                    if (infoPanel != null) {
+                        infoPanel.setOpacity(0.7);
+                    }
+                }
+                return;
+            }
+            clearSelection();
+            showTerrainInfo(hex);
             return;
         }
 
         // Cick en casilla ocupada
         if (hex.isOccupied()) {
             Robot robot = hex.getOccupant();
+            if (robot.getOwner() != cur) {
+                if (selectionMode == SelectionMode.SKILL && hexRenderer.isSkillHighlighted(hex)
+                        && canExecuteSkillOnHex(selectedRobot, hex)) {
+                    executeSkill(hex);
+                    return;
+                }
+            }
             if (robot.getOwner() == cur) {
                 // BLOQUEO: Si el robot está congelado, no se puede seleccionar para actuar
                 if (robot.hasState(com.titozeio.enums.RobotState.FROZEN)) {
@@ -549,6 +560,19 @@ public class GameScreen extends Screen {
                     infoPanel.setOpacity(0.7);
                 }
             }
+            return;
+        }
+
+        // Ejecutar skill si estamos en modo SKILL y la casilla está resaltada
+        if (selectionMode == SelectionMode.SKILL && hexRenderer.isSkillHighlighted(hex)) {
+            if (canExecuteSkillOnHex(selectedRobot, hex)) {
+                executeSkill(hex);
+            }
+            return;
+        }
+        // Ejecutar movimiento normal
+        if (selectionMode == SelectionMode.MOVE && hexRenderer.isMoveHighlighted(hex)) {
+            executeMove(hex);
             return;
         }
         clearSelection();
@@ -1118,6 +1142,10 @@ public class GameScreen extends Screen {
                 && robot.getSkill().isReady()
                 && !(robot.isUsedMovement() && robot.getSkill().getType() == SkillType.MOVEMENT)
                 && !(robot.isUsedAttack() && robot.getSkill().getType() == SkillType.ATTACK);
+    }
+
+    private boolean hasPendingActions(Robot robot) {
+        return robot != null && (!robot.isUsedMovement() || !robot.isUsedAttack() || canUseSkill(robot));
     }
 
     /** Actualiza el texto y estado del botón SKILL según el robot seleccionado. */
@@ -1948,6 +1976,7 @@ public class GameScreen extends Screen {
         addLogMessage("Fin de turno (" + game.getCurrentPlayer().getName() + ").");
         clearSelection();
         turnEngine.endTurn(game);
+        hexRenderer.render(game.getMap());
         updateCombatHud();
         checkAndShowVictory("conquista de base");
         maybeRunAiTurn();
