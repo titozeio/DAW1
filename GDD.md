@@ -130,6 +130,7 @@ En un turno, los robots pueden realizar cualquiera de estas acciones, en cualqui
 > 3. **Tercer clic** → modo SKILL (objetivos en lima para movimiento, violeta para ataque).
 > 4. **Cuarto clic** → deselecciona.
 > Los modos se saltan automáticamente si la acción ya está consumida. Una vez el robot agota ambas acciones entra en estado EXHAUSTED.
+> Durante el turno de un jugador humano aparecen junto a cada robot propio indicadores visuales de acciones pendientes: `M` azul para movimiento y `A` roja para ataque, dentro de pequeños marcos semitransparentes. Al consumirse una acción desaparece su indicador correspondiente. Si el jugador humano ya no tiene acciones legales disponibles con ninguno de sus robots vivos, el turno termina automáticamente.
 
 ## Skills:
 
@@ -828,8 +829,8 @@ Lista de sprites, sonidos y música (importante para organizar la carpeta src/ma
         - `Daño esperado` solo en dificultad **Fácil** o **Media**.
         - `HP restantes` solo en dificultad **Fácil**.
         - Efectos adicionales de la skill (por ejemplo, congelación).
-    - **Botón de Fin de turno**: El jugador puede pulsar este botón para indicar que ha terminado de realizar las acciones de sus robots. Al pulsarlo, se pasa al siguiente jugador. Si queda algún robot por realizar acciones, se mostrará un mensaje indicándolo: "Jugador [X], te quedan robots por realizar acciones. ¿Seguro que quieres finalizar el turno?" con dos opciones: "Cancelar" y "Finalizar turno". Cuando al jugador no le quedan más acciones de ningún robot, se realiza el cambio de turno automáticamente, mostrándose un mensaje antes.
-    > **Estado actual**: El botón «Fin de turno» siempre está disponible durante el combate; no se muestra confirmación si quedan acciones pendientes. El cambio de turno no es automático. ❗ *Pendiente de implementar la confirmación y cambio automático.*
+    - **Botón de Fin de turno**: El jugador puede pulsar este botón para indicar que ha terminado de realizar las acciones de sus robots. Al pulsarlo, se pasa al siguiente jugador. Si queda algún robot por realizar acciones, se mostrará un mensaje indicándolo: "Jugador [X], te quedan robots por realizar acciones. ¿Seguro que quieres finalizar el turno?" con dos opciones: "Cancelar" y "Finalizar turno". Cuando al jugador no le quedan más acciones legales de ningún robot, el sistema realiza el cambio de turno automáticamente.
+    > **Estado actual**: El botón «Fin de turno» sigue disponible y no muestra confirmación si quedan acciones pendientes, pero el cambio de turno sí es automático cuando el jugador humano ya no tiene acciones legales posibles.
     - **Botón de Rendirse**: El jugador puede pulsar «Rendirse» en cualquier momento del combate. Al hacerlo, se declara la victoria del oponente y se muestra el overlay de victoria. No existe pantalla de pausa separada en la implementación actual; la opción de rendirse está integrada directamente en la barra de acciones del combate.
     > **Estado actual**: La clase `PauseScreen` existe en el código como stub pero no se navega a ella. La lógica de rendición está en `GameScreen.handleSurrenderAction()`.
     - **Robots**: 
@@ -858,6 +859,12 @@ Lista de sprites, sonidos y música (importante para organizar la carpeta src/ma
   - Al cambiar de robot, se restablece por defecto la vista general.
 - Robots enemigos en panel de info mostrados con opacidad reducida (feedback visual de “no propio”).
 - Barras de vida actualizadas a formato segmentado (1 segmento = 1 HP), tanto en mapa como en panel de info.
+- Indicadores de acciones pendientes en combate para el jugador humano activo:
+  - `M` azul para movimiento y `A` roja para ataque.
+  - Se muestran al lado izquierdo de los robots de `P1` y al derecho de los de `P2`.
+  - Cada indicador usa fondo gris al 50% de alpha y borde de 1 px del color de la acción.
+  - Si el robot queda congelado, el efecto visual de estado prevalece y no se muestran estos indicadores.
+- Cuando el jugador humano activo ya no tiene acciones legales en ninguno de sus robots vivos, el turno se cierra automáticamente.
 - Reubicación de acciones inferiores (`Skill` y `Finalizar turno`) junto al log inferior para no invadir zona central del mapa.
 - Nuevo panel contextual de preview de ataque al hacer `hover` sobre enemigos durante `ATTACK` o `SKILL` ofensiva:
   - Prioridad visual sobre el panel de robot y el de hexágono mientras dura el hover.

@@ -2,6 +2,7 @@ package com.titozeio.ui;
 
 import com.titozeio.engine.Hexagon;
 import com.titozeio.engine.Map;
+import com.titozeio.engine.Player;
 import com.titozeio.engine.Robot;
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
@@ -124,6 +125,10 @@ public class HexRenderer {
     private Hexagon attackerHexScope = null;
     private Hexagon targetHexScope = null;
     private boolean isHealScope = false;
+    /** Indicadores M/A del jugador humano activo durante su turno. */
+    private boolean showPendingActionIndicators = false;
+    private Player pendingActionIndicatorOwner = null;
+    private boolean pendingActionIndicatorsOnLeft = true;
 
     // ── Constructor ───────────────────────────────────────────────────────────
     /**
@@ -212,6 +217,16 @@ public class HexRenderer {
         this.attackerHexScope = attacker;
         this.targetHexScope = target;
         this.isHealScope = isHeal;
+    }
+
+    /**
+     * Configura si deben mostrarse los indicadores de acciones pendientes del
+     * jugador humano activo.
+     */
+    public void setPendingActionIndicators(boolean visible, Player owner, boolean onLeftSide) {
+        this.showPendingActionIndicators = visible;
+        this.pendingActionIndicatorOwner = visible ? owner : null;
+        this.pendingActionIndicatorsOnLeft = onLeftSide;
     }
 
     /** Versión por defecto (ataque normal) */
@@ -468,6 +483,7 @@ public class HexRenderer {
         }
 
         Node hpBarNode = renderHpBar(cx, cy + HEX_SIZE * 0.55, robot);
+        renderPendingActionBadges(cx, cy, spriteSize, yOffset, robot);
 
         // 0. Aplicar efectos de estado visuales persistentes
         if (borderColor != null) {
@@ -518,9 +534,74 @@ public class HexRenderer {
             ice.setHue(-0.05); // Toque azulado frío
             ice.setInput(baseEffect);
             robotNode.setEffect(ice);
+        } else if (shouldShowExhaustedVisual(robot)) {
+            ColorAdjust dark = new ColorAdjust();
+            dark.setBrightness(-0.45);
+            dark.setSaturation(-0.25);
+            dark.setInput(baseEffect);
+            robotNode.setEffect(dark);
         } else {
             robotNode.setEffect(baseEffect);
         }
+    }
+
+    private boolean shouldShowExhaustedVisual(Robot robot) {
+        return robot != null
+                && robot.isExhausted()
+                && showPendingActionIndicators
+                && pendingActionIndicatorOwner != null
+                && robot.getOwner() == pendingActionIndicatorOwner;
+    }
+
+    private void renderPendingActionBadges(double cx, double cy, double spriteSize, double yOffset, Robot robot) {
+        if (!showPendingActionIndicators || pendingActionIndicatorOwner == null || robot == null || robot.isDestroyed()) {
+            return;
+        }
+        if (robot.getOwner() != pendingActionIndicatorOwner
+                || robot.hasState(com.titozeio.enums.RobotState.FROZEN)) {
+            return;
+        }
+
+        boolean showMovement = !robot.isUsedMovement();
+        boolean showAttack = !robot.isUsedAttack();
+        if (!showMovement && !showAttack) {
+            return;
+        }
+
+        double badgeWidth = 16.0;
+        double badgeHeight = 14.0;
+        double badgeGap = 3.0;
+        double badgeX = pendingActionIndicatorsOnLeft
+                ? cx - spriteSize / 2.0 - badgeWidth - 4.0
+                : cx + spriteSize / 2.0 + 4.0;
+        double badgeTopY = cy - spriteSize / 2.0 - yOffset + 10.0;
+
+        if (showMovement) {
+            drawPendingActionBadge(badgeX, badgeTopY, badgeWidth, badgeHeight, "M", Color.web("#4da3ff"));
+        }
+        if (showAttack) {
+            drawPendingActionBadge(badgeX, badgeTopY + badgeHeight + badgeGap, badgeWidth, badgeHeight, "A",
+                    Color.web("#ff5555"));
+        }
+    }
+
+    private void drawPendingActionBadge(double x, double y, double width, double height, String text, Color accent) {
+        Rectangle frame = new Rectangle(x, y, width, height);
+        frame.setArcWidth(3.0);
+        frame.setArcHeight(3.0);
+        frame.setFill(Color.web("#606060", 0.5));
+        frame.setStroke(accent);
+        frame.setStrokeWidth(1.0);
+        frame.setMouseTransparent(true);
+
+        Text badgeText = new Text(text);
+        badgeText.setFill(accent);
+        badgeText.setFont(Font.font(9));
+        badgeText.setMouseTransparent(true);
+        badgeText.setX(x + (width - badgeText.getLayoutBounds().getWidth()) / 2.0);
+        badgeText.setY(y + height - 3.0);
+
+        pane.getChildren().addAll(frame, badgeText);
     }
 
     private void drawLaserTracer(Hexagon from, Hexagon to, boolean isHeal) {
