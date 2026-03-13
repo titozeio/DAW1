@@ -172,12 +172,13 @@ public class Game {
     }
 
     /**
-     * Avanza al siguiente estado de turn.
+     * Avanza al siguiente turno de la partida.
+     * Cambia el jugador activo e incrementa el contador de turnos globales.
      */
     public void nextTurn() {
-        this.turnCounter++;
-        // Alternar jugador activo
-        this.currentPlayer = (this.currentPlayer == p1) ? p2 : p1;
+        currentPlayer = (currentPlayer == p1) ? p2 : p1;
+        turnCounter++;
+        System.out.println("--- Turno #" + turnCounter + " | Jugador activo: " + currentPlayer.getName() + " ---");
     }
 
     /**
@@ -395,18 +396,18 @@ public class Game {
 
     // Getters y Setters
     /**
-     * Obtiene p1.
+     * Obtiene el Jugador 1 (P1).
      * 
-     * @return valor resultante de la operacion.
+     * @return Referencia al objeto Player del primer bando.
      */
     public Player getP1() {
         return p1;
     }
 
     /**
-     * Obtiene p2.
+     * Obtiene el Jugador 2 (P2).
      * 
-     * @return valor resultante de la operacion.
+     * @return Referencia al objeto Player del segundo bando.
      */
     public Player getP2() {
         return p2;
@@ -431,27 +432,27 @@ public class Game {
     }
 
     /**
-     * Obtiene current player.
+     * Obtiene el jugador que tiene el turno activo en este momento.
      * 
-     * @return valor resultante de la operacion.
+     * @return El Player activo.
      */
     public Player getCurrentPlayer() {
         return currentPlayer;
     }
 
     /**
-     * Obtiene turn counter.
+     * Obtiene el número total de turnos transcurridos.
      * 
-     * @return valor resultante de la operacion.
+     * @return Contador de turnos.
      */
     public int getTurnCounter() {
         return turnCounter;
     }
 
     /**
-     * Obtiene map.
+     * Obtiene el mapa actual donde se desarrolla la partida.
      * 
-     * @return valor resultante de la operacion.
+     * @return Instancia de Map.
      */
     public Map getMap() {
         return map;

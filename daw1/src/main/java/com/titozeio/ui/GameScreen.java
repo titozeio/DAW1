@@ -497,6 +497,13 @@ public class GameScreen extends Screen {
         handleCombatClick(hex);
     }
 
+    /**
+     * Gestiona el clic del ratón sobre un hexágono durante la fase de combate.
+     * Determina si se debe seleccionar un robot, realizar un movimiento,
+     * ejecutar un ataque o activar una habilidad especial.
+     * 
+     * @param hex Casilla sobre la que se hizo clic.
+     */
     private void handleCombatClick(Hexagon hex) {
         Player cur = game.getCurrentPlayer();
         if (game.isAiControlled(cur) || aiBusy) {
@@ -683,6 +690,12 @@ public class GameScreen extends Screen {
 
     // ── Ejecución de acciones ─────────────────────────────────────────────────
 
+    /**
+     * Ejecuta la acción de movimiento hacia la casilla indicada.
+     * Actualiza el estado del robot, el motor de turnos y el log de combate.
+     * 
+     * @param hex Casilla de destino válida.
+     */
     private void executeMove(Hexagon hex) {
         endHoverHexPreview();
         SoundManager.play(SoundManager.MECH_MOVE);
@@ -701,6 +714,13 @@ public class GameScreen extends Screen {
         maybeRunAiTurn();
     }
 
+    /**
+     * Ejecuta un ataque estándar contra el robot ocupante de la casilla objetivo.
+     * Calcula daños, reproduce efectos visuales/sonoros y comprueba condiciones de
+     * victoria.
+     * 
+     * @param targetHex Casilla donde se encuentra el objetivo.
+     */
     private void executeAttack(Hexagon targetHex) {
         Robot target = targetHex.getOccupant();
         if (target == null) {
@@ -757,6 +777,12 @@ public class GameScreen extends Screen {
      * Ejecuta la skill del robot seleccionado sobre la casilla/robot indicado.
      * - Skills MOVEMENT: target = Hexagon destino
      * - Skills ATTACK: target = Robot objetivo (obtenido del ocupante del hex)
+     */
+    /**
+     * Ejecuta la habilidad especial (Skill) del robot seleccionado.
+     * Puede ser una skill de ataque (daño/efecto) o de movimiento (salto/turbo).
+     * 
+     * @param hex Casilla/Robot objetivo del efecto.
      */
     private void executeSkill(Hexagon hex) {
         endHoverHexPreview();
@@ -1881,7 +1907,8 @@ public class GameScreen extends Screen {
     }
 
     private void maybeRunAiDeployment() {
-        if (game.getPhase() != GamePhase.DEPLOYING || deployingPlayer == null || !game.isAiControlled(deployingPlayer)) {
+        if (game.getPhase() != GamePhase.DEPLOYING || deployingPlayer == null
+                || !game.isAiControlled(deployingPlayer)) {
             return;
         }
         if (robotsToPlace == null || robotsToPlace.isEmpty()) {

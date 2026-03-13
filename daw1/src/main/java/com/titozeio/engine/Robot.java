@@ -269,7 +269,11 @@ public class Robot {
         }
     }
 
-    /** Resetea las acciones del robot al inicio de cada turno. */
+    /**
+     * Resetea las acciones del robot al inicio de cada turno.
+     * Restablece los flags de movimiento y ataque, actualiza los efectos de estado
+     * y reduce el tiempo de reutilización de la habilidad especial.
+     */
     public void resetActions() {
         usedMovement = false;
         usedAttack = false;
@@ -280,82 +284,83 @@ public class Robot {
     }
 
     // Getters y Setters
+
     /**
-     * Obtiene el nombre del modelo.
+     * Obtiene el nombre del modelo del robot.
      * 
-     * @return El nombre del robot (ej: "Ice Age").
+     * @return El nombre identificativo (ej: "Saber Prime").
      */
     public String getModelName() {
         return modelName;
     }
 
     /**
-     * Obtiene description.
+     * Obtiene la descripción narrativa del robot.
      * 
-     * @return valor resultante de la operacion.
+     * @return Texto con el lore o detalles del modelo.
      */
     public String getDescription() {
         return description;
     }
 
     /**
-     * Obtiene max hp.
+     * Obtiene los puntos de vida máximos originales del robot.
      * 
-     * @return valor resultante de la operacion.
+     * @return El valor de HP máximo.
      */
     public int getMaxHp() {
         return maxHp;
     }
 
     /**
-     * Obtiene los puntos de vida actuales.
+     * Obtiene los puntos de vida actuales del robot.
      * 
-     * @return HP actual.
+     * @return HP actual restante.
      */
     public int getCurrentHp() {
         return currentHp;
     }
 
     /**
-     * Obtiene movement points.
+     * Obtiene los puntos de movimiento base del robot.
      * 
-     * @return valor resultante de la operacion.
+     * @return Capacidad de desplazamiento por turno.
      */
     public int getMovementPoints() {
         return movementPoints;
     }
 
     /**
-     * Obtiene weapon.
+     * Obtiene el arma equipada por el robot.
      * 
-     * @return valor resultante de la operacion.
+     * @return Instancia de Weapon vinculada.
      */
     public Weapon getWeapon() {
         return weapon;
     }
 
     /**
-     * Obtiene skill.
+     * Obtiene la habilidad especial del robot.
      * 
-     * @return valor resultante de la operacion.
+     * @return Instancia de Skill vinculada.
      */
     public Skill getSkill() {
         return skill;
     }
 
     /**
-     * Obtiene owner.
+     * Obtiene el jugador propietario del robot.
      * 
-     * @return valor resultante de la operacion.
+     * @return Referencia al Player dueño.
      */
     public Player getOwner() {
         return owner;
     }
 
     /**
-     * Obtiene position.
+     * Obtiene la casilla actual del robot en el mapa.
      * 
-     * @return valor resultante de la operacion.
+     * @return Instancia de Hexagon donde reside el robot.
      */
     public Hexagon getPosition() {
         return position;
@@ -374,34 +379,35 @@ public class Robot {
     }
 
     /**
-     * Obtiene previous position.
+     * Obtiene la posición inmediatamente anterior del robot.
+     * Útil para interpolación de animaciones.
      * 
-     * @return valor resultante de la operacion.
+     * @return El Hexagon donde estaba antes del último movimiento.
      */
     public Hexagon getPreviousPosition() {
         return previousPosition;
     }
 
     /**
-     * Ejecuta la logica de clear previous position.
+     * Limpia la referencia a la posición anterior.
      */
     public void clearPreviousPosition() {
         this.previousPosition = null;
     }
 
     /**
-     * Indica si used movement.
+     * Comprueba si el robot ya ha realizado su acción de movimiento este turno.
      * 
-     * @return true si la condicion evaluada se cumple; false en caso contrario.
+     * @return true si ya movió.
      */
     public boolean isUsedMovement() {
         return usedMovement;
     }
 
     /**
-     * Actualiza used movement.
+     * Establece si el robot ha usado su movimiento y actualiza su comportamiento.
      * 
-     * @param usedMovement parametro de entrada.
+     * @param usedMovement Nuevo estado de la acción de movimiento.
      */
     public void setUsedMovement(boolean usedMovement) {
         this.usedMovement = usedMovement;
@@ -409,18 +415,18 @@ public class Robot {
     }
 
     /**
-     * Indica si used attack.
+     * Comprueba si el robot ya ha realizado su acción de ataque este turno.
      * 
-     * @return true si la condicion evaluada se cumple; false en caso contrario.
+     * @return true si ya atacó.
      */
     public boolean isUsedAttack() {
         return usedAttack;
     }
 
     /**
-     * Actualiza used attack.
+     * Establece si el robot ha usado su ataque y actualiza su comportamiento.
      * 
-     * @param usedAttack parametro de entrada.
+     * @param usedAttack Nuevo estado de la acción de ataque.
      */
     public void setUsedAttack(boolean usedAttack) {
         this.usedAttack = usedAttack;
@@ -429,9 +435,9 @@ public class Robot {
 
     @Override
     /**
-     * Devuelve una representacion textual del objeto.
+     * Devuelve una representación textual simplificada del robot.
      * 
-     * @return valor resultante de la operacion.
+     * @return Nombre del modelo y estado de salud actual.
      */
     public String toString() {
         return modelName + " [HP:" + currentHp + "/" + maxHp + "]";

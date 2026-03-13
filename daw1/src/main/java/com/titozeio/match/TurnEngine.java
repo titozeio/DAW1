@@ -27,7 +27,9 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Servicio de dominio para cálculo y resolución de turnos.
+ * Servicio de dominio que implementa las reglas de negocio del combate.
+ * Gestiona el cálculo de acciones legales (moverse, atacar, usar skills),
+ * valida despliegues y coordina la transición entre fases y turnos.
  */
 public class TurnEngine {
     private static final int[][] AXIAL_DIRS = {
@@ -36,24 +38,36 @@ public class TurnEngine {
             { 1, -1 }, { -1, 1 }
     };
 
+    /**
+     * Calcula todos los comandos (acciones) legales que un robot puede ejecutar
+     * en el estado actual del juego.
+     * 
+     * @param game  Estado actual de la partida.
+     * @param robot Robot sobre el que calcular las acciones.
+     * @return Lista de objetos GameCommand válidos.
+     */
     public List<GameCommand> getLegalCommands(Game game, Robot robot) {
         List<GameCommand> commands = new ArrayList<>();
         if (robot == null || robot.isDestroyed() || robot.getPosition() == null) {
             return commands;
         }
 
+        // Acciones de movimiento (si no ha movido y tiene capacidad)
         if (!robot.isUsedMovement() && robot.canMove()) {
             for (Hexagon hex : getMoveTargets(game, robot)) {
                 commands.add(new MoveCommand(robot, hex));
             }
         }
 
+        // Acciones de ataque (si no ha atacado y tiene objetivos en rango)
         if (!robot.isUsedAttack() && robot.canAttack()) {
             for (Hexagon hex : getAttackTargets(game, robot)) {
                 commands.add(new AttackCommand(robot, hex.getOccupant(), game.getMap()));
             }
         }
 
+        // Acciones de habilidad (si la skill está lista y el robot tiene la acción
+        // disponible)
         if (canUseSkill(robot)) {
             Skill skill = robot.getSkill();
             if (skill.getType() == SkillType.ATTACK) {
@@ -214,6 +228,12 @@ public class TurnEngine {
         ActionManager.getInstance().executeCommand(command);
     }
 
+    /**
+     * Termina el turno actual del jugador y pasa al siguiente.
+     * Al terminar, resetea las acciones de los robots del nuevo jugador activo.
+     * 
+     * @param game Instancia del juego.
+     */
     public void endTurn(Game game) {
         game.nextTurn();
         for (Robot robot : game.getCurrentPlayer().getUnits()) {

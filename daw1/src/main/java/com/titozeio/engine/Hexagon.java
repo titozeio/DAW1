@@ -25,11 +25,12 @@ public class Hexagon {
     private boolean isBaseP2;
 
     /**
-     * Crea una nueva instancia de la clase.
-     * @param q parametro de entrada.
-     * @param r parametro de entrada.
-     * @param terrain parametro de entrada.
-     * @param height parametro de entrada.
+     * Crea un nuevo hexágono indicando su posición y características físicas.
+     * 
+     * @param q       Coordenada axial Q (columna).
+     * @param r       Coordenada axial R (fila).
+     * @param terrain Tipo de superficie (NORMAL, VEGETATION, etc.).
+     * @param height  Nivel de altura (afecta a movimiento y cobertura).
      */
     public Hexagon(int q, int r, TerrainType terrain, int height) {
         this.q = q;
@@ -148,26 +149,29 @@ public class Hexagon {
     }
 
     // Coordenada cúbica derivada
+
     /**
-     * Obtiene s.
-     * @return valor resultante de la operacion.
+     * Obtiene la coordenada S del sistema cúbico (calculada como -q -r).
+     * 
+     * @return El valor de la coordenada S.
      */
     public int getS() {
         return -q - r;
     }
 
-    // Getters y Setters
     /**
-     * Obtiene q.
-     * @return valor resultante de la operacion.
+     * Obtiene la coordenada axial Q.
+     * 
+     * @return Índice de columna.
      */
     public int getQ() {
         return q;
     }
 
     /**
-     * Obtiene r.
-     * @return valor resultante de la operacion.
+     * Obtiene la coordenada axial R.
+     * 
+     * @return Índice de fila.
      */
     public int getR() {
         return r;
@@ -175,6 +179,7 @@ public class Hexagon {
 
     /**
      * Obtiene terrain.
+     * 
      * @return valor resultante de la operacion.
      */
     public TerrainType getTerrain() {
@@ -183,6 +188,7 @@ public class Hexagon {
 
     /**
      * Actualiza terrain.
+     * 
      * @param terrain parametro de entrada.
      */
     public void setTerrain(TerrainType terrain) {
@@ -191,6 +197,7 @@ public class Hexagon {
 
     /**
      * Obtiene height.
+     * 
      * @return valor resultante de la operacion.
      */
     public int getHeight() {
@@ -199,6 +206,7 @@ public class Hexagon {
 
     /**
      * Actualiza height.
+     * 
      * @param height parametro de entrada.
      */
     public void setHeight(int height) {
@@ -206,16 +214,18 @@ public class Hexagon {
     }
 
     /**
-     * Obtiene occupant.
-     * @return valor resultante de la operacion.
+     * Obtiene el robot que ocupa actualmente esta casilla.
+     * 
+     * @return La instancia de Robot ocupante, o null si está libre.
      */
     public Robot getOccupant() {
         return occupant;
     }
 
     /**
-     * Actualiza occupant.
-     * @param occupant parametro de entrada.
+     * Asigna un robot a esta casilla.
+     * 
+     * @param occupant El robot que pasa a ocupar el hexágono.
      */
     public void setOccupant(Robot occupant) {
         this.occupant = occupant;
@@ -223,6 +233,7 @@ public class Hexagon {
 
     /**
      * Indica si deploy zone p1.
+     * 
      * @return true si la condicion evaluada se cumple; false en caso contrario.
      */
     public boolean isDeployZoneP1() {
@@ -231,6 +242,7 @@ public class Hexagon {
 
     /**
      * Actualiza deploy zone p1.
+     * 
      * @param deployZoneP1 parametro de entrada.
      */
     public void setDeployZoneP1(boolean deployZoneP1) {
@@ -239,6 +251,7 @@ public class Hexagon {
 
     /**
      * Indica si deploy zone p2.
+     * 
      * @return true si la condicion evaluada se cumple; false en caso contrario.
      */
     public boolean isDeployZoneP2() {
@@ -247,6 +260,7 @@ public class Hexagon {
 
     /**
      * Actualiza deploy zone p2.
+     * 
      * @param deployZoneP2 parametro de entrada.
      */
     public void setDeployZoneP2(boolean deployZoneP2) {
@@ -255,6 +269,7 @@ public class Hexagon {
 
     /**
      * Indica si base p1.
+     * 
      * @return true si la condicion evaluada se cumple; false en caso contrario.
      */
     public boolean isBaseP1() {
@@ -263,6 +278,7 @@ public class Hexagon {
 
     /**
      * Actualiza base p1.
+     * 
      * @param baseP1 parametro de entrada.
      */
     public void setBaseP1(boolean baseP1) {
@@ -271,6 +287,7 @@ public class Hexagon {
 
     /**
      * Indica si base p2.
+     * 
      * @return true si la condicion evaluada se cumple; false en caso contrario.
      */
     public boolean isBaseP2() {
@@ -279,6 +296,7 @@ public class Hexagon {
 
     /**
      * Actualiza base p2.
+     * 
      * @param baseP2 parametro de entrada.
      */
     public void setBaseP2(boolean baseP2) {
@@ -288,6 +306,7 @@ public class Hexagon {
     @Override
     /**
      * Devuelve una representacion textual del objeto.
+     * 
      * @return valor resultante de la operacion.
      */
     public String toString() {

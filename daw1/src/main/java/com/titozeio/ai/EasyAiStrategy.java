@@ -13,7 +13,12 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * IA fácil basada en utilidad simple y determinista.
+ * Estrategia de IA de nivel fácil.
+ * Utiliza un sistema de puntuación heurística simple y determinista para
+ * decidir
+ * qué acción (mover, atacar o usar skill) de qué robot vivo proporciona el
+ * mayor
+ * beneficio inmediato ("utility model").
  */
 public class EasyAiStrategy implements AiStrategy {
     private final ActionEvaluator evaluator;
@@ -25,10 +30,13 @@ public class EasyAiStrategy implements AiStrategy {
     @Override
     public TurnDecision chooseDecision(MatchContext context, Player player, TurnEngine turnEngine) {
         Game game = context.getGame();
+        // Si el jugador ya no tiene acciones globales (o robots hábiles), terminamos el
+        // turno.
         if (!player.hasActionsLeft()) {
             return new EndTurnDecision();
         }
 
+        // Buscamos la mejor acción entre todos los robots que aún no se han agotado.
         ScoredDecision best = player.getAliveUnits().stream()
                 .filter(robot -> !robot.isExhausted())
                 .map(robot -> scoreBestCommandForRobot(game, robot, turnEngine))
@@ -36,6 +44,8 @@ public class EasyAiStrategy implements AiStrategy {
                 .max(Comparator.comparingInt(ScoredDecision::score))
                 .orElse(null);
 
+        // Si no encontramos ninguna acción válida con puntuación aceptable, terminamos
+        // el turno.
         if (best == null) {
             return new EndTurnDecision();
         }
