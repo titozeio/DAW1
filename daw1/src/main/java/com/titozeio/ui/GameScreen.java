@@ -4,6 +4,7 @@ import com.titozeio.ai.EndTurnDecision;
 import com.titozeio.ai.ExecuteCommandDecision;
 import com.titozeio.ai.MatchContext;
 import com.titozeio.ai.TurnDecision;
+import com.titozeio.ai.AiDifficulty;
 import com.titozeio.commands.AttackCommand;
 import com.titozeio.commands.GameCommand;
 import com.titozeio.commands.MoveCommand;
@@ -20,6 +21,10 @@ import com.titozeio.enums.SkillType;
 import com.titozeio.enums.TerrainType;
 import com.titozeio.match.TurnEngine;
 import com.titozeio.skills.JetpackBoost;
+import com.titozeio.skills.FreezeRay;
+import com.titozeio.skills.GuidedMissile;
+import com.titozeio.skills.PlasmaSaberAttack;
+import com.titozeio.skills.RepairNanobots;
 import com.titozeio.skills.Skill;
 import com.titozeio.skills.TurboPropulsion;
 import javafx.animation.PauseTransition;
@@ -44,8 +49,10 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -105,6 +112,8 @@ public class GameScreen extends Screen {
     @FXML
     private VBox skillInfoBox;
     @FXML
+    private VBox attackInfoBox;
+    @FXML
     private VBox hexInfoBox;
     @FXML
     private Label skillTypeInfoLabel;
@@ -112,6 +121,16 @@ public class GameScreen extends Screen {
     private Label skillDetailLine1Label;
     @FXML
     private Label skillDetailLine2Label;
+    @FXML
+    private ImageView attackTargetPortraitImage;
+    @FXML
+    private Label attackTerrainEffectsLabel;
+    @FXML
+    private Label attackExpectedDamageLabel;
+    @FXML
+    private Label attackRemainingHpLabel;
+    @FXML
+    private Label attackAdditionalEffectsLabel;
     @FXML
     private HBox skillFooterBox;
     @FXML
@@ -198,6 +217,7 @@ public class GameScreen extends Screen {
     private boolean infoSkillMode = false;
     private boolean logExpanded = false;
     private boolean infoHexMode = false;
+    private boolean infoAttackMode = false;
     private boolean hoverHexPreviewActive = false;
     private Hexagon lockedRobotInfoHex;
     /** Direcciones axiales (pointy-top) para cálculos de movimiento. */
@@ -1229,6 +1249,7 @@ public class GameScreen extends Screen {
 
     private void updateRobotInfoPanel(Robot robot) {
         infoHexMode = false;
+        infoAttackMode = false;
         setInfoModeVisibility(true);
         if (robot == null) {
             if (infoTitleLabel != null) {
@@ -1335,7 +1356,7 @@ public class GameScreen extends Screen {
      * Ejecuta la logica de handle info toggle action.
      */
     public void handleInfoToggleAction() {
-        if (selectedRobot == null || infoHexMode) {
+        if (selectedRobot == null || infoHexMode || infoAttackMode) {
             return;
         }
         infoSkillMode = !infoSkillMode;
@@ -1559,6 +1580,7 @@ public class GameScreen extends Screen {
         lockedRobotInfoHex = null;
         infoSkillMode = false;
         infoHexMode = false;
+        infoAttackMode = false;
         if (infoToggleButton != null)
             infoToggleButton.setText("+info");
         selectionMode = SelectionMode.NONE;
@@ -1580,6 +1602,7 @@ public class GameScreen extends Screen {
     private void showTerrainInfo(Hexagon hex) {
         infoHexMode = true;
         infoSkillMode = false;
+        infoAttackMode = false;
         setInfoModeVisibility(false);
         if (infoTitleLabel != null) {
             infoTitleLabel.setText("CASILLA (" + hex.getQ() + ", " + hex.getR() + ")");
@@ -1627,6 +1650,11 @@ public class GameScreen extends Screen {
         if (lockedRobotInfoHex != null && lockedRobotInfoHex != hex) {
             lockedRobotInfoHex = null;
         }
+        if (shouldShowAttackPreview(hex)) {
+            hoverHexPreviewActive = true;
+            showAttackPreview(hex.getOccupant());
+            return;
+        }
         hoverHexPreviewActive = true;
         showTerrainInfo(hex);
     }
@@ -1653,6 +1681,7 @@ public class GameScreen extends Screen {
             return;
         }
         infoHexMode = false;
+        infoAttackMode = false;
         setInfoModeVisibility(true);
         if (infoTitleLabel != null) {
             infoTitleLabel.setText("INFORMACIÓN");
@@ -1666,15 +1695,223 @@ public class GameScreen extends Screen {
     }
 
     private void setInfoModeVisibility(boolean robotMode) {
-        setNodeVisibleManaged(robotInfoBox, robotMode && !infoSkillMode);
-        setNodeVisibleManaged(skillInfoBox, robotMode && infoSkillMode);
-        setNodeVisibleManaged(hexInfoBox, !robotMode);
-        setNodeVisibleManaged(skillFooterBox, robotMode);
+        setNodeVisibleManaged(robotInfoBox, robotMode && !infoSkillMode && !infoAttackMode);
+        setNodeVisibleManaged(skillInfoBox, robotMode && infoSkillMode && !infoAttackMode);
+        setNodeVisibleManaged(attackInfoBox, infoAttackMode);
+        setNodeVisibleManaged(hexInfoBox, !robotMode && !infoAttackMode);
+        setNodeVisibleManaged(skillFooterBox, robotMode && !infoAttackMode);
         if (infoToggleButton != null) {
-            infoToggleButton.setDisable(!robotMode || selectedRobot == null);
-            infoToggleButton.setVisible(robotMode);
-            infoToggleButton.setManaged(robotMode);
+            boolean toggleVisible = robotMode && !infoAttackMode;
+            infoToggleButton.setDisable(!toggleVisible || selectedRobot == null);
+            infoToggleButton.setVisible(toggleVisible);
+            infoToggleButton.setManaged(toggleVisible);
         }
+    }
+
+    private boolean shouldShowAttackPreview(Hexagon hex) {
+        if (hex == null || !hex.isOccupied() || selectedRobot == null || game.getPhase() != GamePhase.COMBAT) {
+            return false;
+        }
+        Robot target = hex.getOccupant();
+        if (target.getOwner() == selectedRobot.getOwner()) {
+            return false;
+        }
+        if (selectionMode == SelectionMode.ATTACK) {
+            return true;
+        }
+        if (selectionMode != SelectionMode.SKILL) {
+            return false;
+        }
+        Skill skill = selectedRobot.getSkill();
+        return skill != null && skill.getType() == SkillType.ATTACK && !(skill instanceof RepairNanobots);
+    }
+
+    private void showAttackPreview(Robot target) {
+        AttackPreview preview = buildAttackPreview(target);
+        infoAttackMode = true;
+        infoHexMode = false;
+        infoSkillMode = false;
+        setInfoModeVisibility(true);
+        if (infoPanel != null) {
+            infoPanel.setOpacity(1.0);
+        }
+        if (infoTitleLabel != null) {
+            infoTitleLabel.setText("PREVISIÓN DE ATAQUE");
+        }
+        if (ownerBadgeLabel != null) {
+            ownerBadgeLabel.setText(resolveOwnerBadge(target));
+        }
+        if (attackTargetPortraitImage != null) {
+            attackTargetPortraitImage.setImage(loadPortraitForRobot(target));
+        }
+        if (attackTerrainEffectsLabel != null) {
+            attackTerrainEffectsLabel.setText(preview.terrainEffectsText());
+        }
+        if (attackExpectedDamageLabel != null) {
+            boolean visible = shouldShowExpectedDamage();
+            attackExpectedDamageLabel.setVisible(visible);
+            attackExpectedDamageLabel.setManaged(visible);
+            attackExpectedDamageLabel
+                    .setText(visible ? "Daño esperado: " + preview.expectedDamageText() : "");
+        }
+        if (attackRemainingHpLabel != null) {
+            boolean visible = shouldShowRemainingHp();
+            attackRemainingHpLabel.setVisible(visible);
+            attackRemainingHpLabel.setManaged(visible);
+            attackRemainingHpLabel.setText(visible ? "HP restantes: " + preview.remainingHpText() : "");
+        }
+        if (attackAdditionalEffectsLabel != null) {
+            attackAdditionalEffectsLabel.setText(preview.additionalEffectsText());
+        }
+    }
+
+    private AttackPreview buildAttackPreview(Robot target) {
+        if (selectedRobot == null || target == null || target.getPosition() == null) {
+            return new AttackPreview("Sin datos.", "0", "-", "Ninguno");
+        }
+        return switch (selectionMode) {
+            case ATTACK -> buildBasicAttackPreview(target);
+            case SKILL -> buildSkillAttackPreview(target);
+            default -> new AttackPreview("Sin datos.", "0", "-", "Ninguno");
+        };
+    }
+
+    private AttackPreview buildBasicAttackPreview(Robot target) {
+        List<String> effects = new ArrayList<>();
+        int damage = selectedRobot.getWeapon().getDamage();
+        String additionalEffects = "Ninguno";
+
+        Hexagon attackerHex = selectedRobot.getPosition();
+        Hexagon targetHex = target.getPosition();
+        if (attackerHex != null) {
+            float attackerTerrainMod = attackerHex.getAttackDamageModifier();
+            if (attackerTerrainMod > 1.0f) {
+                effects.add(formatPercentLine(attackerTerrainMod, "por overheat del atacante"));
+                damage = Math.round(damage * attackerTerrainMod);
+            }
+
+            float heightMod = attackerHex.getHeightAttackModifierAgainst(targetHex);
+            if (heightMod != 1.0f) {
+                effects.add(formatPercentLine(heightMod, describeHeightModifier(heightMod)));
+                damage = Math.round(damage * heightMod);
+            }
+        }
+
+        if (attackerHex == null || !selectedRobot.canAttack(target, game.getMap())) {
+            effects.add("Ataque no válido desde la posición actual.");
+            return new AttackPreview(joinLines(effects), "0", hpRemainingText(target, 0), additionalEffects);
+        }
+
+        float coverMod = game.getMap().getCoverModifier(attackerHex, targetHex);
+        if (coverMod < 0f) {
+            effects.add("Ataque bloqueado por cobertura total.");
+            return new AttackPreview(joinLines(effects), "0", hpRemainingText(target, 0), additionalEffects);
+        }
+        if (coverMod > 0f) {
+            effects.add(formatPercentLine(1f - coverMod, "por cobertura media"));
+            damage = Math.round(damage * (1f - coverMod));
+        }
+
+        float defenderTerrainMod = targetHex.getDamageModifier();
+        if (defenderTerrainMod != 1.0f) {
+            effects.add(formatPercentLine(defenderTerrainMod, "por terreno del defensor"));
+        }
+        damage = Math.max(0, Math.round(damage * defenderTerrainMod));
+        return new AttackPreview(
+                joinLines(effects),
+                String.valueOf(damage),
+                hpRemainingText(target, damage),
+                additionalEffects);
+    }
+
+    private AttackPreview buildSkillAttackPreview(Robot target) {
+        Skill skill = selectedRobot.getSkill();
+        if (skill == null) {
+            return new AttackPreview("Sin datos.", "0", "-", "Ninguno");
+        }
+
+        List<String> effects = new ArrayList<>();
+        String additionalEffects = "Ninguno";
+        int damage = 0;
+        boolean validTarget = isValidSkillTargetHex(selectedRobot, target.getPosition());
+
+        if (skill instanceof GuidedMissile guidedMissile) {
+            effects.add("Cobertura y visibilidad anuladas (" + guidedMissile.getName() + ").");
+            damage = guidedMissile.getDamage();
+        } else if (skill instanceof FreezeRay freezeRay) {
+            damage = freezeRay.getDamage();
+            int displayedDuration = Math.max(1, freezeRay.getFreezeDuration() - 1);
+            additionalEffects = "Rival congelado durante " + displayedDuration + " turno(s).";
+        } else if (skill instanceof PlasmaSaberAttack plasmaSaberAttack) {
+            damage = plasmaSaberAttack.getDamage();
+        } else {
+            effects.add("La skill actual no aplica sobre enemigos.");
+            return new AttackPreview(joinLines(effects), "0", hpRemainingText(target, 0), additionalEffects);
+        }
+
+        if (!validTarget) {
+            effects.add("Objetivo no válido para esta skill.");
+            return new AttackPreview(joinLines(effects), "0", hpRemainingText(target, 0), additionalEffects);
+        }
+
+        float defenderTerrainMod = target.getPosition().getDamageModifier();
+        if (defenderTerrainMod != 1.0f) {
+            effects.add(formatPercentLine(defenderTerrainMod, "por terreno del defensor"));
+        }
+        if (effects.isEmpty()) {
+            effects.add("Sin modificadores del terreno.");
+        }
+
+        damage = Math.max(0, Math.round(damage * defenderTerrainMod));
+        return new AttackPreview(
+                joinLines(effects),
+                String.valueOf(damage),
+                hpRemainingText(target, damage),
+                additionalEffects);
+    }
+
+    private boolean shouldShowExpectedDamage() {
+        AiDifficulty difficulty = game != null ? game.getAiDifficulty() : null;
+        return difficulty == AiDifficulty.EASY || difficulty == AiDifficulty.MEDIUM;
+    }
+
+    private boolean shouldShowRemainingHp() {
+        return game != null && game.getAiDifficulty() == AiDifficulty.EASY;
+    }
+
+    private String hpRemainingText(Robot target, int expectedDamage) {
+        int remaining = Math.max(0, target.getCurrentHp() - expectedDamage);
+        return remaining <= 0 ? "destruido" : String.valueOf(remaining);
+    }
+
+    private String describeHeightModifier(float modifier) {
+        if (modifier >= 1.5f) {
+            return "por ventaja de altura";
+        }
+        if (modifier > 1.0f) {
+            return "por ventaja de altura";
+        }
+        return "por desventaja de altura";
+    }
+
+    private String formatPercentLine(float modifier, String reason) {
+        int percent = Math.round((modifier - 1f) * 100f);
+        String sign = percent > 0 ? "+" : "";
+        return sign + percent + "% " + reason;
+    }
+
+    private String joinLines(List<String> lines) {
+        if (lines == null || lines.isEmpty()) {
+            return "Sin modificadores del terreno.";
+        }
+        return lines.stream().map(line -> "- " + line).collect(Collectors.joining("\n"));
+    }
+
+    private record AttackPreview(
+            String terrainEffectsText,
+            String expectedDamageText,
+            String remainingHpText,
+            String additionalEffectsText) {
     }
 
     private void setNodeVisibleManaged(Node node, boolean visible) {

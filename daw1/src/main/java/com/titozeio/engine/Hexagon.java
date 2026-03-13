@@ -86,7 +86,7 @@ public class Hexagon {
      * Devuelve el modificador de daño RECIBIDO por un robot posicionado en esta
      * casilla.
      * - Vegetación: 0.75 (25% reducción)
-     * - Agua nivel 1: 1.0 (el bonus afecta al daño infligido, no al recibido)
+     * - Agua nivel 1: 1.25 (25% de daño recibido adicional)
      * - Agua nivel 2: sin ataque posible (gestionado en Map)
      * - Normal: 1.0
      */
@@ -94,6 +94,8 @@ public class Hexagon {
         switch (terrain) {
             case VEGETATION:
                 return 0.75f;
+            case WATER_SHALLOW:
+                return 1.25f;
             default:
                 return 1.0f;
         }
@@ -116,12 +118,15 @@ public class Hexagon {
      * - +2 o más niveles: +50% de daño
      * - -1 nivel o menos: -25% de daño
      * - Mismo nivel: sin modificación
+     *
+     * Nota GDD: el agua poco profunda de nivel -1 cuenta como nivel 0 solo para
+     * estas comparaciones de altura ofensiva.
      */
     public float getHeightAttackModifierAgainst(Hexagon target) {
         if (target == null) {
             return 1.0f;
         }
-        int heightDiff = this.height - target.height;
+        int heightDiff = getEffectiveAttackHeight() - target.getEffectiveAttackHeight();
         if (heightDiff >= 2) {
             return 1.5f;
         }
@@ -132,6 +137,13 @@ public class Hexagon {
             return 0.75f;
         }
         return 1.0f;
+    }
+
+    private int getEffectiveAttackHeight() {
+        if (terrain == TerrainType.WATER_SHALLOW && height == -1) {
+            return 0;
+        }
+        return height;
     }
 
     /**

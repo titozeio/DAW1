@@ -66,7 +66,7 @@ class RobotTest {
     }
 
     @Test
-    void attackAppliesHeightBonusAndShallowWaterOnlyBuffsOutgoingDamage() {
+    void attackAppliesHeightBonusAndShallowWaterBuffsOutgoingAndIncomingDamage() {
         Player p1 = new Player("P1");
         Player p2 = new Player("P2");
         Robot attacker = TestFixtures.robot("AT", p1, 20, 3, 3, 8, null);
@@ -83,7 +83,7 @@ class RobotTest {
 
         attacker.attack(defender, map);
 
-        assertEquals(7, defender.getCurrentHp());
+        assertEquals(4, defender.getCurrentHp());
     }
 
     @Test
@@ -105,6 +105,27 @@ class RobotTest {
         attacker.attack(defender, map);
 
         assertEquals(14, defender.getCurrentHp());
+    }
+
+    @Test
+    void shallowWaterMinusOneDoesNotCountAsLowerHeightForAttackModifiers() {
+        Player p1 = new Player("P1");
+        Player p2 = new Player("P2");
+        Robot attacker = TestFixtures.robot("AT", p1, 20, 3, 3, 8, null);
+        Robot defender = TestFixtures.robot("DF", p2, 20, 3, 3, 4, null);
+
+        Map map = new Map(1, 2);
+        var attackerHex = TestFixtures.hex(0, 0, TerrainType.WATER_SHALLOW, -1);
+        var defenderHex = TestFixtures.hex(1, 0, TerrainType.NORMAL, 0);
+        map.setHexagon(0, 0, attackerHex);
+        map.setHexagon(1, 0, defenderHex);
+
+        attacker.setPosition(attackerHex);
+        defender.setPosition(defenderHex);
+
+        attacker.attack(defender, map);
+
+        assertEquals(10, defender.getCurrentHp());
     }
 
     @Test

@@ -125,6 +125,29 @@
                               <Label fx:id="skillDetailLine2Label" textFill="WHITE" />
                            </children>
                         </VBox>
+                        <VBox fx:id="attackInfoBox" spacing="5.0" visible="false" managed="false">
+                           <children>
+                              <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                 <children>
+                                    <StackPane prefWidth="90.0" prefHeight="90.0" styleClass="robot-frame, robot-frame-portrait">
+                                       <children>
+                                          <ImageView fx:id="attackTargetPortraitImage" fitWidth="82.0" fitHeight="82.0" preserveRatio="true" />
+                                       </children>
+                                    </StackPane>
+                                    <VBox spacing="4.0" prefWidth="250.0">
+                                       <children>
+                                          <Label text="EFECTOS DEL TERRENO" textFill="#57C0EF" />
+                                          <Label fx:id="attackTerrainEffectsLabel" textFill="#E1E1E1" wrapText="true" />
+                                          <Label fx:id="attackExpectedDamageLabel" textFill="WHITE" wrapText="true" />
+                                          <Label fx:id="attackRemainingHpLabel" textFill="WHITE" wrapText="true" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </HBox>
+                              <Label text="EFECTOS ADICIONALES" textFill="#57C0EF" />
+                              <Label fx:id="attackAdditionalEffectsLabel" textFill="#E1E1E1" wrapText="true" />
+                           </children>
+                        </VBox>
                         <VBox fx:id="hexInfoBox" spacing="5.0" visible="false" managed="false">
                            <children>
                               <HBox spacing="10.0" alignment="CENTER_LEFT">
