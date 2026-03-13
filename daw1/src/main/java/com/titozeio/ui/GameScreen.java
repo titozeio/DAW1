@@ -505,7 +505,7 @@ public class GameScreen extends Screen {
 
         // Ejecutar skill si estamos en modo SKILL y la casilla está resaltada
         if (selectionMode == SelectionMode.SKILL && hexRenderer.isSkillHighlighted(hex)) {
-            if (isValidSkillTargetHex(selectedRobot, hex)) {
+            if (canExecuteSkillOnHex(selectedRobot, hex)) {
                 executeSkill(hex);
             }
             return;
@@ -1067,6 +1067,20 @@ public class GameScreen extends Screen {
             }
         }
         return count;
+    }
+
+    private boolean canExecuteSkillOnHex(Robot robot, Hexagon hex) {
+        if (robot == null || hex == null) {
+            return false;
+        }
+        Skill skill = robot.getSkill();
+        if (skill == null) {
+            return false;
+        }
+        if (skill.getType() == SkillType.MOVEMENT) {
+            return !hex.isOccupied();
+        }
+        return isValidSkillTargetHex(robot, hex);
     }
 
     private boolean isValidSkillTargetHex(Robot robot, Hexagon hex) {
