@@ -574,6 +574,12 @@ public class GameScreen extends Screen {
                 }
             }
             if (robot.getOwner() == cur) {
+                if (selectionMode == SelectionMode.SKILL && hexRenderer.isSkillHighlighted(hex)
+                        && canExecuteSkillOnHex(selectedRobot, hex)) {
+                    executeSkill(hex);
+                    return;
+                }
+
                 // BLOQUEO: Si el robot está congelado, no se puede seleccionar para actuar
                 if (robot.hasState(com.titozeio.enums.RobotState.FROZEN)) {
                     SoundManager.play(SoundManager.UI_INVALID);
@@ -697,7 +703,8 @@ public class GameScreen extends Screen {
         addLogMessage(targets.isEmpty()
                 ? selectedRobot.getModelName() + " – ATACAR. Sin casillas en alcance."
                 : selectedRobot.getModelName() + " – ATACAR. " + targets.size()
-                        + " casilla(s) en alcance (" + validTargets + " objetivo(s) válidos). Clic de nuevo → modo skill.");
+                        + " casilla(s) en alcance (" + validTargets
+                        + " objetivo(s) válidos). Clic de nuevo → modo skill.");
     }
 
     /**
@@ -1091,7 +1098,7 @@ public class GameScreen extends Screen {
 
         for (Hexagon[] row : game.getMap().getGrid()) {
             for (Hexagon hex : row) {
-                if (hex == null || hex == origin)
+                if (hex == null || (!targetsAllies && hex == origin))
                     continue;
 
                 int dist = game.getMap().getDistance(origin, hex);
@@ -1141,7 +1148,8 @@ public class GameScreen extends Screen {
             return false;
         }
         Robot occupant = hex.getOccupant();
-        return occupant.getOwner() != robot.getOwner() && !occupant.isDestroyed() && robot.canAttack(occupant, game.getMap());
+        return occupant.getOwner() != robot.getOwner() && !occupant.isDestroyed()
+                && robot.canAttack(occupant, game.getMap());
     }
 
     private int countValidAttackTargets(Robot robot) {
@@ -1183,7 +1191,7 @@ public class GameScreen extends Screen {
 
         String skillClass = skill.getClass().getSimpleName();
         return switch (skillClass) {
-            case "RepairNanobots" -> occupant.getOwner() == robot.getOwner() && occupant != robot;
+            case "RepairNanobots" -> occupant.getOwner() == robot.getOwner();
             default -> occupant.getOwner() != robot.getOwner();
         };
     }
