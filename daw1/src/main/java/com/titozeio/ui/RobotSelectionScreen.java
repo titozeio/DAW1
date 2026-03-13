@@ -978,6 +978,14 @@ public class RobotSelectionScreen extends Screen {
         }
     }
 
+    @FXML
+    public void handleBackAction() {
+        if (game == null) {
+            return;
+        }
+        game.displayScreen(MainMenuScreen.create(stage, game));
+    }
+
     @Override
     /**
      * Ejecuta la logica de handle input.
