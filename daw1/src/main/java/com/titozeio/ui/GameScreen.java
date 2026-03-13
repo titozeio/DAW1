@@ -2235,7 +2235,7 @@ public class GameScreen extends Screen {
      */
     public void showOverlayMessage(String title, String message) {
         stopOverlayAutoClose();
-        overlayDismissOnClick = false;
+        overlayDismissOnClick = true;
         setNodeVisibleManaged(overlayAcceptButton, true);
         overlayTitle.setText(title);
         overlayMessage.setText(message);
