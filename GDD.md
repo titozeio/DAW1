@@ -342,6 +342,20 @@ Ejemplo orientativo de pesos de diseño:
 
 Estos pesos son deliberadamente simples para facilitar docencia, trazabilidad y ajuste posterior.
 
+### Diseño de la IA difícil
+
+La IA difícil introduce un concepto básico de **Minimax con profundidad limitada** sobre un conjunto reducido de acciones (poda heurística previa).
+En lugar de evaluar exhaustivamente todas las combinaciones, procede de la siguiente manera:
+1. Genera todas las acciones legales para todos los robots disponibles del jugador en el turno actual.
+2. Evalúa estas acciones usando la misma heurística base (con penalizaciones de exposición como la IA Media).
+3. Ordena las acciones y selecciona un subconjunto de acciones "prometedoras" (por ejemplo, las 5 mejores).
+4. Para cada acción prometedora, la IA calcula un valor de penalización (el "riesgo futuro") que simula qué pasaría si se cede el turno al rival:
+   - Se desplaza temporalmente al robot a su hipotética nueva casilla o se evalúa el daño infligido al objetivo atacado.
+   - Se suman las estimaciones de los ataques más perjudiciales que los enemigos vivos restantes podrían realizar contra el robot expuesto en ese escenario.
+5. Se elige la acción cuyo `Score_Inicial - Score_Respuesta_Enemiga` sea mayor.
+
+Esto produce un comportamiento "hard" donde la IA preparará mini emboscadas, evitará conscientemente quedarse en el rango letal de varios enemigos y priorizará los intercambios seguros de daño, a coste de más procesamiento por turno.
+
 ### Servicios propuestos
 
 - `TurnEngine`: calcula acciones legales, ejecuta comandos, avanza turnos y comprueba victoria.

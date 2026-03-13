@@ -322,6 +322,16 @@ public class Robot {
     }
 
     /**
+     * Establece los puntos de vida actuales del robot. Usado internamente para
+     * simulaciones IA.
+     * 
+     * @param hp El nuevo valor de HP (se limitará entre 0 y maxHp).
+     */
+    public void setCurrentHp(int hp) {
+        this.currentHp = Math.max(0, Math.min(maxHp, hp));
+    }
+
+    /**
      * Obtiene los puntos de movimiento base del robot.
      * 
      * @return Capacidad de desplazamiento por turno.

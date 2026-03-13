@@ -205,7 +205,7 @@ public class ActionEvaluator {
         return 50; // Puntuación por defecto para casos no contemplados
     }
 
-    private int estimateBasicAttackDamage(Game game, Robot actor, Robot target) {
+    public int estimateBasicAttackDamage(Game game, Robot actor, Robot target) {
         int damage = actor.getWeapon().getDamage();
         if (actor.getPosition() != null) {
             damage = Math.round(damage * actor.getPosition().getAttackDamageModifier());
@@ -265,7 +265,7 @@ public class ActionEvaluator {
         return count;
     }
 
-    private boolean canAttackTarget(Game game, Robot actor, Robot target) {
+    public boolean canAttackTarget(Game game, Robot actor, Robot target) {
         return canAttackTargetFrom(game, actor, actor.getPosition(), target.getPosition());
     }
 
