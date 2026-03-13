@@ -91,7 +91,8 @@ public class SettingsOverlayController {
     private final AtomicBoolean simulationCancelRequested = new AtomicBoolean(false);
     private SimulationStats currentSimulationStats;
     private final Map<String, RobotStatRow> robotStatRows = new LinkedHashMap<>();
-    private static final EnumSet<AiDifficulty> AVAILABLE_DIFFICULTIES = EnumSet.of(AiDifficulty.EASY);
+    private static final EnumSet<AiDifficulty> AVAILABLE_DIFFICULTIES = EnumSet.of(AiDifficulty.EASY,
+            AiDifficulty.MEDIUM);
     private SortMetric currentSortMetric = SortMetric.SCORE;
 
     @FXML
@@ -107,7 +108,14 @@ public class SettingsOverlayController {
             configureAiDifficultyCombo();
         }
         if (simulationMatchCountField != null) {
-            simulationMatchCountField.setText("100");
+            simulationMatchCountField.textProperty().addListener((obs, oldVal, newVal) -> {
+                if (game != null && !newVal.isEmpty()) {
+                    try {
+                        game.setSimulationMatchCount(Integer.parseInt(newVal.trim()));
+                    } catch (NumberFormatException ignored) {
+                    }
+                }
+            });
         }
         initializeRobotStatsRows();
         initializeSummaryBoxes();
@@ -280,6 +288,9 @@ public class SettingsOverlayController {
         }
         if (aiDifficultyChoice != null) {
             aiDifficultyChoice.setValue(game.getAiDifficulty());
+        }
+        if (simulationMatchCountField != null) {
+            simulationMatchCountField.setText(String.valueOf(game.getSimulationMatchCount()));
         }
     }
 
@@ -590,4 +601,3 @@ public class SettingsOverlayController {
         }
     }
 }
-
