@@ -2375,8 +2375,16 @@ public class GameScreen extends Screen {
             return;
         }
         aiBusy = true;
-        aiActionPause = new PauseTransition(javafx.util.Duration.millis(450));
-        aiActionPause.setOnFinished(event -> runAiStep());
+        boolean waitForTurnOverlay = overlayPane != null && overlayPane.isVisible();
+        aiActionPause = new PauseTransition(waitForTurnOverlay
+                ? javafx.util.Duration.seconds(1)
+                : javafx.util.Duration.millis(450));
+        aiActionPause.setOnFinished(event -> {
+            if (waitForTurnOverlay) {
+                hideOverlayPane();
+            }
+            runAiStep();
+        });
         aiActionPause.play();
     }
 
