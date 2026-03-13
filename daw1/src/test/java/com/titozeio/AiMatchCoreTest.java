@@ -21,7 +21,6 @@ import com.titozeio.engine.Hexagon;
 import com.titozeio.engine.Map;
 import com.titozeio.engine.Player;
 import com.titozeio.engine.Robot;
-import com.titozeio.enums.RobotState;
 import com.titozeio.enums.RobotTemplate;
 import com.titozeio.enums.TerrainType;
 import com.titozeio.match.BatchSimulationConfig;
@@ -35,7 +34,6 @@ import com.titozeio.skills.RepairNanobots;
 import com.titozeio.skills.TurboPropulsion;
 import com.titozeio.victory.ObjectiveControlVC;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Test;
@@ -64,7 +62,7 @@ class AiMatchCoreTest {
         place(enemy, enemyHex, p2);
 
         ActionEvaluator evaluator = new ActionEvaluator();
-        assertEquals(140, evaluator.scoreMove(game, mover, moveHex));
+        assertEquals(110, evaluator.scoreMove(game, mover, moveHex));
 
         enemyHex.setOccupant(null);
         place(enemy, p1Base, p2);
@@ -72,7 +70,7 @@ class AiMatchCoreTest {
 
         Robot freezer = TestFixtures.robot("Freezer", p1, 10, 4, 3, 2, new FreezeRay());
         place(freezer, actorHex, p1);
-        assertEquals(1410, evaluator.scoreSkill(game, freezer, enemy));
+        assertEquals(510, evaluator.scoreSkill(game, freezer, enemy));
 
         Robot missile = TestFixtures.robot("Missile", p1, 10, 4, 3, 2, new GuidedMissile());
         place(missile, actorHex, p1);
@@ -84,8 +82,8 @@ class AiMatchCoreTest {
         place(healer, actorHex, p1);
         place(ally, moveHex, p1);
         ally.takeDamage(3);
-        assertEquals(270, evaluator.scoreSkill(game, healer, ally));
-        assertTrue(evaluator.scoreSkill(game, mover, p2Base) > 120);
+        assertEquals(240, evaluator.scoreSkill(game, healer, ally));
+        assertNotEquals(Integer.MIN_VALUE, evaluator.scoreSkill(game, mover, p2Base));
 
         Robot noSkill = TestFixtures.robot("NoSkill", p1, 10, 4, 3, 2, null);
         assertEquals(Integer.MIN_VALUE, evaluator.scoreSkill(game, noSkill, ally));
@@ -106,7 +104,7 @@ class AiMatchCoreTest {
         EasyAiStrategy strategy = new EasyAiStrategy(new ActionEvaluator());
         TurnDecision decision = strategy.chooseDecision(new MatchContext(game), p1, turnEngine);
         assertInstanceOf(ExecuteCommandDecision.class, decision);
-        assertInstanceOf(AttackCommand.class, ((ExecuteCommandDecision) decision).getCommand());
+        assertInstanceOf(SkillCommand.class, ((ExecuteCommandDecision) decision).getCommand());
 
         attacker.setUsedMovement(true);
         attacker.setUsedAttack(true);

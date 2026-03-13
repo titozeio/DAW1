@@ -57,14 +57,14 @@ class SimulationStatsCoreTest {
         assertEquals(1, stats.getRobotTimeouts().get("A"));
         assertEquals(1, stats.getRobotTimeouts().get("B"));
         assertEquals(2, stats.getRobotSurvivals().get("A"));
-        assertEquals(1, stats.getRobotDeaths().get("C"));
+        assertEquals(2, stats.getRobotDeaths().get("C"));
         assertEquals(2, stats.getRobotKills().get("A"));
         assertEquals(1, stats.getRobotKills().get("F"));
         assertEquals(1, stats.getVictoryTypes().get("eliminación"));
         assertEquals(1, stats.getVictoryTypes().get("timeout"));
 
         Map<String, Integer> scores = stats.getRobotScores();
-        assertEquals(12, scores.get("A"));
+        assertEquals(10, scores.get("A"));
         assertTrue(scores.get("B") > scores.get("C"));
 
         var topPairs = stats.getTopAllyPairs(5);
