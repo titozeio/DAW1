@@ -1783,7 +1783,7 @@ public class GameScreen extends Screen {
     @FXML
     public void handleSettingsOpenAction() {
         if (settingsOverlayComponentController != null) {
-            settingsOverlayComponentController.show(game);
+            settingsOverlayComponentController.show(game, false);
         }
     }
 
