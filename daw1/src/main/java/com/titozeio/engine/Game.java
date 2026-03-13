@@ -67,7 +67,8 @@ public class Game {
         private final String prefix;
 
         MusicTheme(String prefix) {
-            this.prefix = prefix;
+            // forcing conflict to test merges in git.
+            this.prefix = "conflict"; // prefix;
         }
     }
 
