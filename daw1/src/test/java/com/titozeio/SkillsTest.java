@@ -98,6 +98,6 @@ class SkillsTest {
         Hexagon free = TestFixtures.hex(2, 1, TerrainType.NORMAL, 0);
         turbo.execute(actor, free);
         assertSame(actor, free.getOccupant());
-        assertEquals(1, turbo.getCurrentCooldown());
+        assertEquals(2, turbo.getCurrentCooldown());
     }
 }

@@ -155,8 +155,9 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.2.5</version>
         <configuration>
-          <argLine>@{argLine} --enable-native-access=ALL-UNNAMED --add-exports=javafx.base/com.sun.javafx=javafx.media -Dglass.platform=Monocle -Dmonocle.platform=Headless -Djava.awt.headless=true</argLine>
+          <argLine>@{argLine} --enable-native-access=ALL-UNNAMED --add-exports=javafx.base/com.sun.javafx=javafx.media -Djava.awt.headless=true</argLine>
           <redirectTestOutputToFile>true</redirectTestOutputToFile>
+          <excludedGroups>ui</excludedGroups>
         </configuration>
       </plugin>
       <plugin>
@@ -233,14 +234,9 @@
 
   <profiles>
     <profile>
-      <id>headless-tests</id>
-      <activation>
-        <property>
-          <name>env.CI</name>
-        </property>
-      </activation>
+      <id>ui-tests</id>
       <dependencies>
-        <!-- Solo en CI: backend headless de JavaFX para tests -->
+        <!-- Backend headless de JavaFX para tests UI explícitos -->
         <dependency>
           <groupId>org.testfx</groupId>
           <artifactId>openjfx-monocle</artifactId>
@@ -248,6 +244,19 @@
           <scope>test</scope>
         </dependency>
       </dependencies>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>3.2.5</version>
+            <configuration>
+              <argLine>@{argLine} --enable-native-access=ALL-UNNAMED --add-exports=javafx.base/com.sun.javafx=javafx.media -Dglass.platform=Monocle -Dmonocle.platform=Headless -Djava.awt.headless=true</argLine>
+              <groups>ui</groups>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 </project>

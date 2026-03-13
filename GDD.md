@@ -488,6 +488,21 @@ El proyecto usa **GitHub Actions** (`.github/workflows/ci.yml`) con el siguiente
   6. Subida del binario como artefacto de GitHub Actions.
   7. Publicación de un **GitHub Release** con el tag `latest-main`.
 
+  **Algunos comandos útiles**
+    mvn -q test -f .\daw1\pom.xml
+    mvn -q verify -f .\daw1\pom.xml
+    mvn -Dtest=MovementCalculatorTest test -f .\daw1\pom.xml
+    mvn -Dtest=MovementCalculatorTest#nombreDelMetodo test -f .\daw1\pom.xml
+
+    cd d:\projects\DAW1\daw1
+    mvn test
+    mvn verify
+
+    - Cuando termine, mira estos directorios:
+        Tests: daw1/target/surefire-reports
+        Cobertura HTML: daw1/target/site/jacoco/index.html
+
+
 # 4. Bucle de Juego (Game Loop)
 
 1. El juego comienza en la pantalla de **Nueva Partida**, donde se ve el título, instrucciones y se comienza el juego.

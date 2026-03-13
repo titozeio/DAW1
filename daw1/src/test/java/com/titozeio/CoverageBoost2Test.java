@@ -39,7 +39,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -52,6 +54,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * RobotSelectionScreen y GameScreen (métodos no cubiertos por tests
  * anteriores).
  */
+@Tag("ui")
+@Timeout(3)
 class CoverageBoost2Test {
 
     @BeforeAll
@@ -894,6 +898,7 @@ class CoverageBoost2Test {
         GameScreen s = new GameScreen();
         Game g = new Game(null);
         set(s, "game", g);
+        set(s, "turnEngine", g.getTurnEngine());
         set(s, "window", null);
         set(s, "scene", null);
         set(s, "hexRenderer", new com.titozeio.ui.HexRenderer(new Pane()));

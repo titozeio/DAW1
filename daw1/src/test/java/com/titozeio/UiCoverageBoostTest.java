@@ -36,8 +36,12 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
+@Tag("ui")
+@Timeout(3)
 class UiCoverageBoostTest {
     @BeforeAll
     static void initFx() {
@@ -228,6 +232,7 @@ class UiCoverageBoostTest {
         c.setOccupant(enemy);
 
         set(s, "game", g);
+        set(s, "turnEngine", g.getTurnEngine());
         set(s, "window", null);
         set(s, "scene", null);
         set(s, "hexRenderer", new HexRenderer(new Pane()));
