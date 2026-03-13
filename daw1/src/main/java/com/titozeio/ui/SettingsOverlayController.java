@@ -94,8 +94,6 @@ public class SettingsOverlayController {
     private static final EnumSet<AiDifficulty> AVAILABLE_DIFFICULTIES = EnumSet.of(AiDifficulty.EASY,
             AiDifficulty.MEDIUM);
     private SortMetric currentSortMetric = SortMetric.ALLROUND;
-    private static final EnumSet<AiDifficulty> AVAILABLE_DIFFICULTIES = EnumSet.of(AiDifficulty.EASY);
-    private SortMetric currentSortMetric = SortMetric.SCORE;
     private boolean simulationLaunchAllowed = true;
     private Runnable onAiDifficultyChanged;
 
