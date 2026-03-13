@@ -20,6 +20,7 @@ import com.titozeio.engine.Hexagon;
 import com.titozeio.engine.Map;
 import com.titozeio.engine.Player;
 import com.titozeio.engine.Robot;
+import com.titozeio.enums.RobotState;
 import com.titozeio.enums.RobotTemplate;
 import com.titozeio.enums.TerrainType;
 import com.titozeio.match.BatchSimulationConfig;
@@ -184,6 +185,8 @@ class AiMatchCoreTest {
         place(freeze, attackerHex, p1);
         freeze.getSkill().resetCooldown();
         assertFalse(turnEngine.canUseSkill(freeze));
+        freeze.applyState(RobotState.FROZEN, 1);
+        assertTrue(turnEngine.getLegalCommands(game, freeze).isEmpty(), "un robot congelado no debe tener comandos");
 
         MoveCommand move = new MoveCommand(attacker, p1Deploy);
         turnEngine.execute(move);

@@ -223,12 +223,14 @@ public class Robot {
      */
     public void applyState(RobotState state, int duration) {
         activeStates.put(state, duration);
+        updateStatusBehavior();
         System.out.println(modelName + " tiene el estado " + state + " durante " + duration + " turnos.");
     }
 
     /** Elimina un estado activo del robot. */
     public void removeState(RobotState state) {
         activeStates.remove(state);
+        updateStatusBehavior();
     }
 
     /** @return true si el robot tiene actualmente el estado indicado. */

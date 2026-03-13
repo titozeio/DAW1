@@ -199,7 +199,9 @@ public class GameScreen extends Screen {
     private HexRenderer hexRenderer;
     private TurnEngine turnEngine;
     private PauseTransition aiActionPause;
+    private PauseTransition overlayAutoClosePause;
     private boolean aiBusy;
+    private boolean overlayDismissOnClick;
 
     // Despliegue
     private Player deployingPlayer;
@@ -269,7 +271,7 @@ public class GameScreen extends Screen {
         hexRenderer.setOnHexClick(this::onHexClicked);
         hexRenderer.setOnHexHover(this::onHexHovered);
         hexRenderer.setOnHexHoverExit(this::onHexHoverExited);
-        hexRenderer.render(game.getMap());
+        renderMap();
 
         endTurnButton.setDisable(true);
         skillButton.setDisable(true);
@@ -278,6 +280,11 @@ public class GameScreen extends Screen {
             surrenderButton.setDisable(true);
         }
         overlayAcceptButton.setOnAction(e -> fadeOutNode(overlayPane, 180));
+        overlayPane.setOnMouseClicked(e -> {
+            if (overlayDismissOnClick) {
+                hideOverlayPane();
+            }
+        });
         victoryMenuButton.setOnAction(e -> returnToMenu());
         if (logScrollPane != null) {
             logScrollPane.setVisible(false);
@@ -397,7 +404,7 @@ public class GameScreen extends Screen {
             }
         }
         hexRenderer.setHighlightedHexes(zones);
-        hexRenderer.render(game.getMap());
+        renderMap();
     }
 
     private void updateDeployHud() {
@@ -494,7 +501,9 @@ public class GameScreen extends Screen {
                 "Turno 1 – " + game.getCurrentPlayer().getName()
                         + "\nElimina todos los robots enemigos o conquista su base.");
         addLogMessage("¡Comienza el combate!");
-        maybeRunAiTurn();
+        if (!maybeAutoEndHumanTurn()) {
+            maybeRunAiTurn();
+        }
     }
 
     private void updateCombatHud() {
@@ -671,7 +680,7 @@ public class GameScreen extends Screen {
         hexRenderer.setMoveHighlightedHexes(reachable);
         hexRenderer.setAttackHighlightedHexes(new HashSet<>());
         hexRenderer.setSkillHighlightedHexes(new HashSet<>(), false);
-        hexRenderer.render(game.getMap());
+        renderMap();
         addLogMessage(selectedRobot.getModelName() + " – MOVER (" + reachable.size()
                 + " casillas). Clic de nuevo → modo ataque.");
     }
@@ -684,7 +693,7 @@ public class GameScreen extends Screen {
         hexRenderer.setMoveHighlightedHexes(new HashSet<>());
         hexRenderer.setAttackHighlightedHexes(targets);
         hexRenderer.setSkillHighlightedHexes(new HashSet<>(), false);
-        hexRenderer.render(game.getMap());
+        renderMap();
         addLogMessage(targets.isEmpty()
                 ? selectedRobot.getModelName() + " – ATACAR. Sin casillas en alcance."
                 : selectedRobot.getModelName() + " – ATACAR. " + targets.size()
@@ -731,7 +740,7 @@ public class GameScreen extends Screen {
         hexRenderer.setMoveHighlightedHexes(new HashSet<>());
         hexRenderer.setAttackHighlightedHexes(new HashSet<>());
         hexRenderer.setSkillHighlightedHexes(targets, isAttackSkill);
-        hexRenderer.render(game.getMap());
+        renderMap();
 
         String colorHint = isAttackSkill ? "violeta" : "lima";
         addLogMessage("⚡ " + skill.getName() + " activada. "
@@ -763,7 +772,9 @@ public class GameScreen extends Screen {
             enterAttackMode();
         else
             clearSelection();
-        maybeRunAiTurn();
+        if (!maybeAutoEndHumanTurn()) {
+            maybeRunAiTurn();
+        }
     }
 
     /**
@@ -804,7 +815,9 @@ public class GameScreen extends Screen {
         }
         clearSelection();
         checkAndShowVictory("eliminación");
-        maybeRunAiTurn();
+        if (!maybeAutoEndHumanTurn()) {
+            maybeRunAiTurn();
+        }
     }
 
     /** Reproduce el SFX de arma adecuado según el tipo de ataque del robot. */
@@ -901,7 +914,9 @@ public class GameScreen extends Screen {
                 clearSelection();
         }
         checkAndShowVictory("eliminación");
-        maybeRunAiTurn();
+        if (!maybeAutoEndHumanTurn()) {
+            maybeRunAiTurn();
+        }
     }
 
     /** Reproduce el SFX correcto para cada skill. */
@@ -1191,7 +1206,39 @@ public class GameScreen extends Screen {
     }
 
     private boolean hasPendingActions(Robot robot) {
-        return robot != null && (!robot.isUsedMovement() || !robot.isUsedAttack() || canUseSkill(robot));
+        return hasMovementActionAvailable(robot) || hasAttackActionAvailable(robot);
+    }
+
+    private boolean hasMovementActionAvailable(Robot robot) {
+        if (robot == null || robot.isDestroyed()) {
+            return false;
+        }
+        return turnEngine.getLegalCommands(game, robot).stream()
+                .anyMatch(command -> command instanceof MoveCommand
+                        || (command instanceof SkillCommand && isMovementSkillCommand((SkillCommand) command)));
+    }
+
+    private boolean hasAttackActionAvailable(Robot robot) {
+        if (robot == null || robot.isDestroyed()) {
+            return false;
+        }
+        return turnEngine.getLegalCommands(game, robot).stream()
+                .anyMatch(command -> command instanceof AttackCommand
+                        || (command instanceof SkillCommand && isAttackSkillCommand((SkillCommand) command)));
+    }
+
+    private boolean isMovementSkillCommand(SkillCommand command) {
+        return command != null
+                && command.getRobot() != null
+                && command.getRobot().getSkill() != null
+                && command.getRobot().getSkill().getType() == SkillType.MOVEMENT;
+    }
+
+    private boolean isAttackSkillCommand(SkillCommand command) {
+        return command != null
+                && command.getRobot() != null
+                && command.getRobot().getSkill() != null
+                && command.getRobot().getSkill().getType() == SkillType.ATTACK;
     }
 
     /** Actualiza el texto y estado del botón SKILL según el robot seleccionado. */
@@ -1560,7 +1607,14 @@ public class GameScreen extends Screen {
         if (robot == null || robot.getOwner() == null || robot.getOwner().getName() == null) {
             return "";
         }
-        String n = robot.getOwner().getName().toLowerCase().replace(" ", "");
+        return resolveOwnerBadge(robot.getOwner());
+    }
+
+    private String resolveOwnerBadge(Player player) {
+        if (player == null || player.getName() == null) {
+            return "";
+        }
+        String n = player.getName().toLowerCase().replace(" ", "");
         if (n.contains("1") || n.contains("p1"))
             return "P1";
         if (n.contains("2") || n.contains("p2"))
@@ -1596,7 +1650,7 @@ public class GameScreen extends Screen {
         hexRenderer.setMoveHighlightedHexes(new HashSet<>());
         hexRenderer.setAttackHighlightedHexes(new HashSet<>());
         hexRenderer.setSkillHighlightedHexes(new HashSet<>(), false);
-        hexRenderer.render(game.getMap());
+        renderMap();
     }
 
     private void clearSelection() {
@@ -1930,7 +1984,7 @@ public class GameScreen extends Screen {
         if (lines == null || lines.isEmpty()) {
             return "Sin modificadores del terreno.";
         }
-        return lines.stream().map(line -> "- " + line).collect(Collectors.joining("\n"));
+        return lines.stream().collect(Collectors.joining("\n"));
     }
 
     private record AttackPreview(
@@ -2180,9 +2234,41 @@ public class GameScreen extends Screen {
      * @param message parametro de entrada.
      */
     public void showOverlayMessage(String title, String message) {
+        stopOverlayAutoClose();
+        overlayDismissOnClick = false;
+        setNodeVisibleManaged(overlayAcceptButton, true);
         overlayTitle.setText(title);
         overlayMessage.setText(message);
         fadeInNode(overlayPane, 200);
+    }
+
+    private void showTurnChangeOverlay(Player player) {
+        if (player == null) {
+            return;
+        }
+        stopOverlayAutoClose();
+        overlayDismissOnClick = true;
+        setNodeVisibleManaged(overlayAcceptButton, false);
+        overlayTitle.setText("CAMBIO DE TURNO");
+        overlayMessage.setText("TURNO DE " + resolveOwnerBadge(player));
+        fadeInNode(overlayPane, 200);
+
+        overlayAutoClosePause = new PauseTransition(javafx.util.Duration.seconds(32));
+        overlayAutoClosePause.setOnFinished(event -> hideOverlayPane());
+        overlayAutoClosePause.play();
+    }
+
+    private void hideOverlayPane() {
+        stopOverlayAutoClose();
+        overlayDismissOnClick = false;
+        fadeOutNode(overlayPane, 180);
+    }
+
+    private void stopOverlayAutoClose() {
+        if (overlayAutoClosePause != null) {
+            overlayAutoClosePause.stop();
+            overlayAutoClosePause = null;
+        }
     }
 
     /**
@@ -2239,10 +2325,53 @@ public class GameScreen extends Screen {
         addLogMessage("Fin de turno (" + game.getCurrentPlayer().getName() + ").");
         clearSelection();
         turnEngine.endTurn(game);
-        hexRenderer.render(game.getMap());
+        renderMap();
         updateCombatHud();
+        showTurnChangeOverlay(game.getCurrentPlayer());
         checkAndShowVictory("conquista de base");
-        maybeRunAiTurn();
+        if (game.checkVictory() != null) {
+            return;
+        }
+        if (!maybeAutoEndHumanTurn()) {
+            maybeRunAiTurn();
+        }
+    }
+
+    private void renderMap() {
+        syncPendingActionIndicators();
+        hexRenderer.render(game.getMap());
+    }
+
+    private void syncPendingActionIndicators() {
+        if (hexRenderer == null || game == null) {
+            return;
+        }
+        boolean showIndicators = game.getPhase() == GamePhase.COMBAT
+                && game.getCurrentPlayer() != null
+                && !game.isAiControlled(game.getCurrentPlayer());
+        boolean onLeftSide = game.getCurrentPlayer() == game.getP1();
+        hexRenderer.setPendingActionIndicators(showIndicators,
+                showIndicators ? game.getCurrentPlayer() : null,
+                onLeftSide);
+    }
+
+    private boolean maybeAutoEndHumanTurn() {
+        if (game == null
+                || game.getPhase() != GamePhase.COMBAT
+                || game.getCurrentPlayer() == null
+                || game.isAiControlled(game.getCurrentPlayer())
+                || aiBusy
+                || game.checkVictory() != null) {
+            return false;
+        }
+        boolean hasAnyLegalAction = game.getCurrentPlayer().getAliveUnits().stream()
+                .anyMatch(robot -> !turnEngine.getLegalCommands(game, robot).isEmpty());
+        if (hasAnyLegalAction) {
+            return false;
+        }
+        addLogMessage("No quedan acciones disponibles. Cambio de turno automático.");
+        endCurrentTurn();
+        return true;
     }
 
     private void maybeRunAiDeployment() {
@@ -2273,8 +2402,16 @@ public class GameScreen extends Screen {
             return;
         }
         aiBusy = true;
-        aiActionPause = new PauseTransition(javafx.util.Duration.millis(450));
-        aiActionPause.setOnFinished(event -> runAiStep());
+        boolean waitForTurnOverlay = overlayPane != null && overlayPane.isVisible();
+        aiActionPause = new PauseTransition(waitForTurnOverlay
+                ? javafx.util.Duration.seconds(1)
+                : javafx.util.Duration.millis(450));
+        aiActionPause.setOnFinished(event -> {
+            if (waitForTurnOverlay) {
+                hideOverlayPane();
+            }
+            runAiStep();
+        });
         aiActionPause.play();
     }
 
