@@ -155,7 +155,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.2.5</version>
         <configuration>
-          <argLine>@{argLine} --enable-native-access=ALL-UNNAMED --add-exports=javafx.base/com.sun.javafx=javafx.media -Djava.awt.headless=true</argLine>
+          <argLine>@{argLine} --enable-native-access=ALL-UNNAMED -Djava.awt.headless=true</argLine>
           <redirectTestOutputToFile>true</redirectTestOutputToFile>
           <excludedGroups>ui</excludedGroups>
         </configuration>
@@ -251,7 +251,7 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <version>3.2.5</version>
             <configuration>
-              <argLine>@{argLine} --enable-native-access=ALL-UNNAMED --add-exports=javafx.base/com.sun.javafx=javafx.media -Dglass.platform=Monocle -Dmonocle.platform=Headless -Djava.awt.headless=true</argLine>
+              <argLine>@{argLine} --enable-native-access=ALL-UNNAMED -Dglass.platform=Monocle -Dmonocle.platform=Headless -Djava.awt.headless=true</argLine>
               <groups>ui</groups>
             </configuration>
           </plugin>
