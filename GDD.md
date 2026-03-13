@@ -197,7 +197,6 @@ Efectos del terreno según el tipo y la altura:
 
         - Overheat: Incrementa el daño que hacen las armas de los robots en estas casillas en un 25% (al estar sumergidos, el agua enfría y pueden sobrecalentar las armas aplicando más potencia).
 
-        - Incrementa el daño de los robots en este terreno en un 25% (al estar sumergidos hasta la mitad, todos los impactos van a la cabeza u hombros, partes más vitales del robot).
 
         - Coste de movimiento: +1.
 
@@ -212,13 +211,17 @@ Efectos del terreno según el tipo y la altura:
     - Terreno **+1 nivel** (cuando se pasa de un nivel terrestre a otro superior en 1):
 
         - Coste de movimiento:+1 (acumulativo con terreno de vegetación espesa si la hubiera).
+        - Daño: +25% al daño.Cuando un robot ataca a otro que esté por debajo suya (el atacante está en una casilla de un nivel más que el defensor) hace más daño por la ventaja de altura.
 
-    - Terreno **+2 niveles**: Un robot no puede pasar de una casilla a otra contigua dos niveles superior a la que está (a menos que use una Skill que especifique lo contrario).
+    - Terreno **+2 niveles**: 
+        -Un robot no puede pasar de una casilla a otra contigua dos niveles superior a la que está (a menos que use una Skill que especifique lo contrario)
+        -Daño: 50% al daño.Cuando un robot ataca a otro que esté por debajo suya de más de un nivel (el atacante está en una casilla de al menos dos niveles más que el defensor) hace más daño por la ventaja de altura (no acumulable con la ventaja que aporta la diferencia por altura de +1).
 
     - Terreno **-1 nivel**  (cuando se pasa de un nivel terrestre  a otro inferior en 1):
 
         - Coste de movimiento:+1 (acumulativo con terreno de vegetación espesa si la hubiera).
-
+        - (-25%) al daño por desventaja de altura (si el atacante está a -1 o inferior niveles de aaltura con respecto del defensor).
+        
     - Terreno **-2 niveles (o más)**: Un robot puede saltar desde un terreno a otro de nivel inferior en 2 niveles o más:
 
         - Coste de movimiento:+1 (NO acumulativo con terreno de vegetación espesa si la hubiera).

@@ -5,8 +5,7 @@ package com.titozeio.enums;
  *
  * NORMAL - Sin efectos adicionales.
  * VEGETATION - Reducción de daño 25%, coste de movimiento +1.
- * WATER_SHALLOW - Nivel -1 (profundidad 1): daño infligido y recibido +25%,
- * coste +1.
+ * WATER_SHALLOW - Nivel -1 (profundidad 1): daño infligido +25%, coste +1.
  * WATER_DEEP - Nivel -2 (profundidad 2): no puede atacar ni ser atacado, coste
  * +2.
  */
