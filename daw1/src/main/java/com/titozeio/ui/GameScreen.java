@@ -4,6 +4,7 @@ import com.titozeio.ai.EndTurnDecision;
 import com.titozeio.ai.ExecuteCommandDecision;
 import com.titozeio.ai.MatchContext;
 import com.titozeio.ai.TurnDecision;
+import com.titozeio.ai.AiDifficulty;
 import com.titozeio.commands.AttackCommand;
 import com.titozeio.commands.GameCommand;
 import com.titozeio.commands.MoveCommand;
@@ -20,6 +21,10 @@ import com.titozeio.enums.SkillType;
 import com.titozeio.enums.TerrainType;
 import com.titozeio.match.TurnEngine;
 import com.titozeio.skills.JetpackBoost;
+import com.titozeio.skills.FreezeRay;
+import com.titozeio.skills.GuidedMissile;
+import com.titozeio.skills.PlasmaSaberAttack;
+import com.titozeio.skills.RepairNanobots;
 import com.titozeio.skills.Skill;
 import com.titozeio.skills.TurboPropulsion;
 import javafx.animation.PauseTransition;
@@ -44,8 +49,10 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -105,6 +112,8 @@ public class GameScreen extends Screen {
     @FXML
     private VBox skillInfoBox;
     @FXML
+    private VBox attackInfoBox;
+    @FXML
     private VBox hexInfoBox;
     @FXML
     private Label skillTypeInfoLabel;
@@ -112,6 +121,16 @@ public class GameScreen extends Screen {
     private Label skillDetailLine1Label;
     @FXML
     private Label skillDetailLine2Label;
+    @FXML
+    private ImageView attackTargetPortraitImage;
+    @FXML
+    private Label attackTerrainEffectsLabel;
+    @FXML
+    private Label attackExpectedDamageLabel;
+    @FXML
+    private Label attackRemainingHpLabel;
+    @FXML
+    private Label attackAdditionalEffectsLabel;
     @FXML
     private HBox skillFooterBox;
     @FXML
@@ -198,6 +217,7 @@ public class GameScreen extends Screen {
     private boolean infoSkillMode = false;
     private boolean logExpanded = false;
     private boolean infoHexMode = false;
+    private boolean infoAttackMode = false;
     private boolean hoverHexPreviewActive = false;
     private Hexagon lockedRobotInfoHex;
     /** Direcciones axiales (pointy-top) para cálculos de movimiento. */
@@ -510,25 +530,40 @@ public class GameScreen extends Screen {
             return;
         }
 
-        // Ejecutar skill si estamos en modo SKILL y la casilla está resaltada
-        if (selectionMode == SelectionMode.SKILL && hexRenderer.isSkillHighlighted(hex)) {
-            executeSkill(hex);
-            return;
-        }
-        // Ejecutar movimiento normal
-        if (selectionMode == SelectionMode.MOVE && hexRenderer.isMoveHighlighted(hex)) {
-            executeMove(hex);
-            return;
-        }
-        // Ejecutar ataque normal
-        if (selectionMode == SelectionMode.ATTACK && hexRenderer.isAttackHighlighted(hex)) {
-            executeAttack(hex);
+        if (selectionMode == SelectionMode.ATTACK) {
+            if (isValidAttackTargetHex(selectedRobot, hex)) {
+                executeAttack(hex);
+                return;
+            }
+            if (hex.isOccupied()) {
+                Robot robot = hex.getOccupant();
+                clearSelection();
+                if (robot.getOwner() == cur && hasPendingActions(robot)) {
+                    selectRobot(robot);
+                } else {
+                    updateRobotInfoPanel(robot);
+                    lockedRobotInfoHex = hex;
+                    if (infoPanel != null) {
+                        infoPanel.setOpacity(0.7);
+                    }
+                }
+                return;
+            }
+            clearSelection();
+            showTerrainInfo(hex);
             return;
         }
 
         // Cick en casilla ocupada
         if (hex.isOccupied()) {
             Robot robot = hex.getOccupant();
+            if (robot.getOwner() != cur) {
+                if (selectionMode == SelectionMode.SKILL && hexRenderer.isSkillHighlighted(hex)
+                        && canExecuteSkillOnHex(selectedRobot, hex)) {
+                    executeSkill(hex);
+                    return;
+                }
+            }
             if (robot.getOwner() == cur) {
                 // BLOQUEO: Si el robot está congelado, no se puede seleccionar para actuar
                 if (robot.hasState(com.titozeio.enums.RobotState.FROZEN)) {
@@ -552,6 +587,19 @@ public class GameScreen extends Screen {
                     infoPanel.setOpacity(0.7);
                 }
             }
+            return;
+        }
+
+        // Ejecutar skill si estamos en modo SKILL y la casilla está resaltada
+        if (selectionMode == SelectionMode.SKILL && hexRenderer.isSkillHighlighted(hex)) {
+            if (canExecuteSkillOnHex(selectedRobot, hex)) {
+                executeSkill(hex);
+            }
+            return;
+        }
+        // Ejecutar movimiento normal
+        if (selectionMode == SelectionMode.MOVE && hexRenderer.isMoveHighlighted(hex)) {
+            executeMove(hex);
             return;
         }
         clearSelection();
@@ -631,15 +679,16 @@ public class GameScreen extends Screen {
     private void enterAttackMode() {
         selectionMode = SelectionMode.ATTACK;
         updateSkillButton(selectedRobot);
-        Set<Hexagon> targets = getAttackableHexes(selectedRobot);
+        Set<Hexagon> targets = getAttackReachableHexes(selectedRobot);
+        int validTargets = countValidAttackTargets(selectedRobot);
         hexRenderer.setMoveHighlightedHexes(new HashSet<>());
         hexRenderer.setAttackHighlightedHexes(targets);
         hexRenderer.setSkillHighlightedHexes(new HashSet<>(), false);
         hexRenderer.render(game.getMap());
         addLogMessage(targets.isEmpty()
-                ? selectedRobot.getModelName() + " – ATACAR. Sin objetivos en rango."
+                ? selectedRobot.getModelName() + " – ATACAR. Sin casillas en alcance."
                 : selectedRobot.getModelName() + " – ATACAR. " + targets.size()
-                        + " objetivo(s) (naranja). Clic de nuevo → modo skill.");
+                        + " casilla(s) en alcance (" + validTargets + " objetivo(s) válidos). Clic de nuevo → modo skill.");
     }
 
     /**
@@ -666,8 +715,9 @@ public class GameScreen extends Screen {
         boolean isAttackSkill = (skill.getType() == SkillType.ATTACK);
 
         Set<Hexagon> targets = isAttackSkill
-                ? getSkillAttackTargets(selectedRobot)
+                ? getSkillAttackReachableHexes(selectedRobot)
                 : getSkillMovementTargets(selectedRobot);
+        int validTargets = isAttackSkill ? countValidSkillTargets(selectedRobot) : targets.size();
 
         if (targets.isEmpty()) {
             SoundManager.play(SoundManager.UI_INVALID);
@@ -685,7 +735,9 @@ public class GameScreen extends Screen {
 
         String colorHint = isAttackSkill ? "violeta" : "lima";
         addLogMessage("⚡ " + skill.getName() + " activada. "
-                + targets.size() + " objetivo(s) " + colorHint + ".");
+                + targets.size() + (isAttackSkill ? " casilla(s) en alcance" : " objetivo(s)")
+                + " " + colorHint
+                + (isAttackSkill ? " (" + validTargets + " objetivo(s) válidos)." : "."));
     }
 
     // ── Ejecución de acciones ─────────────────────────────────────────────────
@@ -982,7 +1034,7 @@ public class GameScreen extends Screen {
      * (GuidedMissile ignora visibilidad)
      * - PlasmaSaberAttack → robots adyacentes enemigos
      */
-    private Set<Hexagon> getSkillAttackTargets(Robot robot) {
+    private Set<Hexagon> getSkillAttackReachableHexes(Robot robot) {
         Skill skill = robot.getSkill();
         Set<Hexagon> targets = new HashSet<>();
         Hexagon origin = robot.getPosition();
@@ -1024,14 +1076,7 @@ public class GameScreen extends Screen {
 
         for (Hexagon[] row : game.getMap().getGrid()) {
             for (Hexagon hex : row) {
-                if (hex == null || !hex.isOccupied())
-                    continue;
-                Robot occ = hex.getOccupant();
-
-                boolean correctTeam = targetsAllies
-                        ? occ.getOwner() == robot.getOwner() && occ != robot
-                        : occ.getOwner() != robot.getOwner();
-                if (!correctTeam)
+                if (hex == null || hex == origin)
                     continue;
 
                 int dist = game.getMap().getDistance(origin, hex);
@@ -1040,10 +1085,13 @@ public class GameScreen extends Screen {
 
                 if (!ignoresVisibility && !game.getMap().hasVisibility(origin, hex))
                     continue;
-                if (occ.isDestroyed())
+                if (!ignoresVisibility && game.getMap().getCoverModifier(origin, hex) < 0) {
                     continue;
+                }
 
-                targets.add(hex);
+                if (!targetsAllies || hex.isOccupied()) {
+                    targets.add(hex);
+                }
             }
         }
         return targets;
@@ -1051,20 +1099,88 @@ public class GameScreen extends Screen {
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
-    private Set<Hexagon> getAttackableHexes(Robot robot) {
+    private Set<Hexagon> getAttackReachableHexes(Robot robot) {
         Set<Hexagon> targets = new HashSet<>();
+        if (robot == null || robot.getPosition() == null || robot.getWeapon() == null) {
+            return targets;
+        }
         for (Hexagon[] row : game.getMap().getGrid()) {
             for (Hexagon hex : row) {
-                if (hex == null || !hex.isOccupied())
+                if (hex == null || hex == robot.getPosition())
                     continue;
-                Robot occ = hex.getOccupant();
-                if (occ.getOwner() == robot.getOwner())
+                int dist = game.getMap().getDistance(robot.getPosition(), hex);
+                if (dist > robot.getWeapon().getRange())
                     continue;
-                if (robot.canAttack(occ, game.getMap()))
-                    targets.add(hex);
+                if (!game.getMap().hasVisibility(robot.getPosition(), hex))
+                    continue;
+                if (game.getMap().getCoverModifier(robot.getPosition(), hex) < 0)
+                    continue;
+                targets.add(hex);
             }
         }
         return targets;
+    }
+
+    private boolean isValidAttackTargetHex(Robot robot, Hexagon hex) {
+        if (robot == null || hex == null || !hex.isOccupied()) {
+            return false;
+        }
+        Robot occupant = hex.getOccupant();
+        return occupant.getOwner() != robot.getOwner() && !occupant.isDestroyed() && robot.canAttack(occupant, game.getMap());
+    }
+
+    private int countValidAttackTargets(Robot robot) {
+        int count = 0;
+        for (Hexagon hex : getAttackReachableHexes(robot)) {
+            if (isValidAttackTargetHex(robot, hex)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private boolean canExecuteSkillOnHex(Robot robot, Hexagon hex) {
+        if (robot == null || hex == null) {
+            return false;
+        }
+        Skill skill = robot.getSkill();
+        if (skill == null) {
+            return false;
+        }
+        if (skill.getType() == SkillType.MOVEMENT) {
+            return !hex.isOccupied();
+        }
+        return isValidSkillTargetHex(robot, hex);
+    }
+
+    private boolean isValidSkillTargetHex(Robot robot, Hexagon hex) {
+        if (robot == null || hex == null || !hex.isOccupied()) {
+            return false;
+        }
+        Skill skill = robot.getSkill();
+        if (skill == null || skill.getType() != SkillType.ATTACK) {
+            return false;
+        }
+        Robot occupant = hex.getOccupant();
+        if (occupant.isDestroyed()) {
+            return false;
+        }
+
+        String skillClass = skill.getClass().getSimpleName();
+        return switch (skillClass) {
+            case "RepairNanobots" -> occupant.getOwner() == robot.getOwner() && occupant != robot;
+            default -> occupant.getOwner() != robot.getOwner();
+        };
+    }
+
+    private int countValidSkillTargets(Robot robot) {
+        int count = 0;
+        for (Hexagon hex : getSkillAttackReachableHexes(robot)) {
+            if (isValidSkillTargetHex(robot, hex)) {
+                count++;
+            }
+        }
+        return count;
     }
 
     private boolean canUseSkill(Robot robot) {
@@ -1072,6 +1188,10 @@ public class GameScreen extends Screen {
                 && robot.getSkill().isReady()
                 && !(robot.isUsedMovement() && robot.getSkill().getType() == SkillType.MOVEMENT)
                 && !(robot.isUsedAttack() && robot.getSkill().getType() == SkillType.ATTACK);
+    }
+
+    private boolean hasPendingActions(Robot robot) {
+        return robot != null && (!robot.isUsedMovement() || !robot.isUsedAttack() || canUseSkill(robot));
     }
 
     /** Actualiza el texto y estado del botón SKILL según el robot seleccionado. */
@@ -1155,6 +1275,7 @@ public class GameScreen extends Screen {
 
     private void updateRobotInfoPanel(Robot robot) {
         infoHexMode = false;
+        infoAttackMode = false;
         setInfoModeVisibility(true);
         if (robot == null) {
             if (infoTitleLabel != null) {
@@ -1261,7 +1382,7 @@ public class GameScreen extends Screen {
      * Ejecuta la logica de handle info toggle action.
      */
     public void handleInfoToggleAction() {
-        if (selectedRobot == null || infoHexMode) {
+        if (selectedRobot == null || infoHexMode || infoAttackMode) {
             return;
         }
         infoSkillMode = !infoSkillMode;
@@ -1485,6 +1606,7 @@ public class GameScreen extends Screen {
         lockedRobotInfoHex = null;
         infoSkillMode = false;
         infoHexMode = false;
+        infoAttackMode = false;
         if (infoToggleButton != null)
             infoToggleButton.setText("+info");
         selectionMode = SelectionMode.NONE;
@@ -1506,6 +1628,7 @@ public class GameScreen extends Screen {
     private void showTerrainInfo(Hexagon hex) {
         infoHexMode = true;
         infoSkillMode = false;
+        infoAttackMode = false;
         setInfoModeVisibility(false);
         if (infoTitleLabel != null) {
             infoTitleLabel.setText("CASILLA (" + hex.getQ() + ", " + hex.getR() + ")");
@@ -1553,6 +1676,11 @@ public class GameScreen extends Screen {
         if (lockedRobotInfoHex != null && lockedRobotInfoHex != hex) {
             lockedRobotInfoHex = null;
         }
+        if (shouldShowAttackPreview(hex)) {
+            hoverHexPreviewActive = true;
+            showAttackPreview(hex.getOccupant());
+            return;
+        }
         hoverHexPreviewActive = true;
         showTerrainInfo(hex);
     }
@@ -1579,6 +1707,7 @@ public class GameScreen extends Screen {
             return;
         }
         infoHexMode = false;
+        infoAttackMode = false;
         setInfoModeVisibility(true);
         if (infoTitleLabel != null) {
             infoTitleLabel.setText("INFORMACIÓN");
@@ -1592,15 +1721,223 @@ public class GameScreen extends Screen {
     }
 
     private void setInfoModeVisibility(boolean robotMode) {
-        setNodeVisibleManaged(robotInfoBox, robotMode && !infoSkillMode);
-        setNodeVisibleManaged(skillInfoBox, robotMode && infoSkillMode);
-        setNodeVisibleManaged(hexInfoBox, !robotMode);
-        setNodeVisibleManaged(skillFooterBox, robotMode);
+        setNodeVisibleManaged(robotInfoBox, robotMode && !infoSkillMode && !infoAttackMode);
+        setNodeVisibleManaged(skillInfoBox, robotMode && infoSkillMode && !infoAttackMode);
+        setNodeVisibleManaged(attackInfoBox, infoAttackMode);
+        setNodeVisibleManaged(hexInfoBox, !robotMode && !infoAttackMode);
+        setNodeVisibleManaged(skillFooterBox, robotMode && !infoAttackMode);
         if (infoToggleButton != null) {
-            infoToggleButton.setDisable(!robotMode || selectedRobot == null);
-            infoToggleButton.setVisible(robotMode);
-            infoToggleButton.setManaged(robotMode);
+            boolean toggleVisible = robotMode && !infoAttackMode;
+            infoToggleButton.setDisable(!toggleVisible || selectedRobot == null);
+            infoToggleButton.setVisible(toggleVisible);
+            infoToggleButton.setManaged(toggleVisible);
         }
+    }
+
+    private boolean shouldShowAttackPreview(Hexagon hex) {
+        if (hex == null || !hex.isOccupied() || selectedRobot == null || game.getPhase() != GamePhase.COMBAT) {
+            return false;
+        }
+        Robot target = hex.getOccupant();
+        if (target.getOwner() == selectedRobot.getOwner()) {
+            return false;
+        }
+        if (selectionMode == SelectionMode.ATTACK) {
+            return true;
+        }
+        if (selectionMode != SelectionMode.SKILL) {
+            return false;
+        }
+        Skill skill = selectedRobot.getSkill();
+        return skill != null && skill.getType() == SkillType.ATTACK && !(skill instanceof RepairNanobots);
+    }
+
+    private void showAttackPreview(Robot target) {
+        AttackPreview preview = buildAttackPreview(target);
+        infoAttackMode = true;
+        infoHexMode = false;
+        infoSkillMode = false;
+        setInfoModeVisibility(true);
+        if (infoPanel != null) {
+            infoPanel.setOpacity(1.0);
+        }
+        if (infoTitleLabel != null) {
+            infoTitleLabel.setText("PREVISIÓN DE ATAQUE");
+        }
+        if (ownerBadgeLabel != null) {
+            ownerBadgeLabel.setText(resolveOwnerBadge(target));
+        }
+        if (attackTargetPortraitImage != null) {
+            attackTargetPortraitImage.setImage(loadPortraitForRobot(target));
+        }
+        if (attackTerrainEffectsLabel != null) {
+            attackTerrainEffectsLabel.setText(preview.terrainEffectsText());
+        }
+        if (attackExpectedDamageLabel != null) {
+            boolean visible = shouldShowExpectedDamage();
+            attackExpectedDamageLabel.setVisible(visible);
+            attackExpectedDamageLabel.setManaged(visible);
+            attackExpectedDamageLabel
+                    .setText(visible ? "Daño esperado: " + preview.expectedDamageText() : "");
+        }
+        if (attackRemainingHpLabel != null) {
+            boolean visible = shouldShowRemainingHp();
+            attackRemainingHpLabel.setVisible(visible);
+            attackRemainingHpLabel.setManaged(visible);
+            attackRemainingHpLabel.setText(visible ? "HP restantes: " + preview.remainingHpText() : "");
+        }
+        if (attackAdditionalEffectsLabel != null) {
+            attackAdditionalEffectsLabel.setText(preview.additionalEffectsText());
+        }
+    }
+
+    private AttackPreview buildAttackPreview(Robot target) {
+        if (selectedRobot == null || target == null || target.getPosition() == null) {
+            return new AttackPreview("Sin datos.", "0", "-", "Ninguno");
+        }
+        return switch (selectionMode) {
+            case ATTACK -> buildBasicAttackPreview(target);
+            case SKILL -> buildSkillAttackPreview(target);
+            default -> new AttackPreview("Sin datos.", "0", "-", "Ninguno");
+        };
+    }
+
+    private AttackPreview buildBasicAttackPreview(Robot target) {
+        List<String> effects = new ArrayList<>();
+        int damage = selectedRobot.getWeapon().getDamage();
+        String additionalEffects = "Ninguno";
+
+        Hexagon attackerHex = selectedRobot.getPosition();
+        Hexagon targetHex = target.getPosition();
+        if (attackerHex != null) {
+            float attackerTerrainMod = attackerHex.getAttackDamageModifier();
+            if (attackerTerrainMod > 1.0f) {
+                effects.add(formatPercentLine(attackerTerrainMod, "por overheat del atacante"));
+                damage = Math.round(damage * attackerTerrainMod);
+            }
+
+            float heightMod = attackerHex.getHeightAttackModifierAgainst(targetHex);
+            if (heightMod != 1.0f) {
+                effects.add(formatPercentLine(heightMod, describeHeightModifier(heightMod)));
+                damage = Math.round(damage * heightMod);
+            }
+        }
+
+        if (attackerHex == null || !selectedRobot.canAttack(target, game.getMap())) {
+            effects.add("Ataque no válido desde la posición actual.");
+            return new AttackPreview(joinLines(effects), "0", hpRemainingText(target, 0), additionalEffects);
+        }
+
+        float coverMod = game.getMap().getCoverModifier(attackerHex, targetHex);
+        if (coverMod < 0f) {
+            effects.add("Ataque bloqueado por cobertura total.");
+            return new AttackPreview(joinLines(effects), "0", hpRemainingText(target, 0), additionalEffects);
+        }
+        if (coverMod > 0f) {
+            effects.add(formatPercentLine(1f - coverMod, "por cobertura media"));
+            damage = Math.round(damage * (1f - coverMod));
+        }
+
+        float defenderTerrainMod = targetHex.getDamageModifier();
+        if (defenderTerrainMod != 1.0f) {
+            effects.add(formatPercentLine(defenderTerrainMod, "por terreno del defensor"));
+        }
+        damage = Math.max(0, Math.round(damage * defenderTerrainMod));
+        return new AttackPreview(
+                joinLines(effects),
+                String.valueOf(damage),
+                hpRemainingText(target, damage),
+                additionalEffects);
+    }
+
+    private AttackPreview buildSkillAttackPreview(Robot target) {
+        Skill skill = selectedRobot.getSkill();
+        if (skill == null) {
+            return new AttackPreview("Sin datos.", "0", "-", "Ninguno");
+        }
+
+        List<String> effects = new ArrayList<>();
+        String additionalEffects = "Ninguno";
+        int damage = 0;
+        boolean validTarget = isValidSkillTargetHex(selectedRobot, target.getPosition());
+
+        if (skill instanceof GuidedMissile guidedMissile) {
+            effects.add("Cobertura y visibilidad anuladas (" + guidedMissile.getName() + ").");
+            damage = guidedMissile.getDamage();
+        } else if (skill instanceof FreezeRay freezeRay) {
+            damage = freezeRay.getDamage();
+            int displayedDuration = Math.max(1, freezeRay.getFreezeDuration() - 1);
+            additionalEffects = "Rival congelado durante " + displayedDuration + " turno(s).";
+        } else if (skill instanceof PlasmaSaberAttack plasmaSaberAttack) {
+            damage = plasmaSaberAttack.getDamage();
+        } else {
+            effects.add("La skill actual no aplica sobre enemigos.");
+            return new AttackPreview(joinLines(effects), "0", hpRemainingText(target, 0), additionalEffects);
+        }
+
+        if (!validTarget) {
+            effects.add("Objetivo no válido para esta skill.");
+            return new AttackPreview(joinLines(effects), "0", hpRemainingText(target, 0), additionalEffects);
+        }
+
+        float defenderTerrainMod = target.getPosition().getDamageModifier();
+        if (defenderTerrainMod != 1.0f) {
+            effects.add(formatPercentLine(defenderTerrainMod, "por terreno del defensor"));
+        }
+        if (effects.isEmpty()) {
+            effects.add("Sin modificadores del terreno.");
+        }
+
+        damage = Math.max(0, Math.round(damage * defenderTerrainMod));
+        return new AttackPreview(
+                joinLines(effects),
+                String.valueOf(damage),
+                hpRemainingText(target, damage),
+                additionalEffects);
+    }
+
+    private boolean shouldShowExpectedDamage() {
+        AiDifficulty difficulty = game != null ? game.getAiDifficulty() : null;
+        return difficulty == AiDifficulty.EASY || difficulty == AiDifficulty.MEDIUM;
+    }
+
+    private boolean shouldShowRemainingHp() {
+        return game != null && game.getAiDifficulty() == AiDifficulty.EASY;
+    }
+
+    private String hpRemainingText(Robot target, int expectedDamage) {
+        int remaining = Math.max(0, target.getCurrentHp() - expectedDamage);
+        return remaining <= 0 ? "destruido" : String.valueOf(remaining);
+    }
+
+    private String describeHeightModifier(float modifier) {
+        if (modifier >= 1.5f) {
+            return "por ventaja de altura";
+        }
+        if (modifier > 1.0f) {
+            return "por ventaja de altura";
+        }
+        return "por desventaja de altura";
+    }
+
+    private String formatPercentLine(float modifier, String reason) {
+        int percent = Math.round((modifier - 1f) * 100f);
+        String sign = percent > 0 ? "+" : "";
+        return sign + percent + "% " + reason;
+    }
+
+    private String joinLines(List<String> lines) {
+        if (lines == null || lines.isEmpty()) {
+            return "Sin modificadores del terreno.";
+        }
+        return lines.stream().map(line -> "- " + line).collect(Collectors.joining("\n"));
+    }
+
+    private record AttackPreview(
+            String terrainEffectsText,
+            String expectedDamageText,
+            String remainingHpText,
+            String additionalEffectsText) {
     }
 
     private void setNodeVisibleManaged(Node node, boolean visible) {
@@ -1902,6 +2239,7 @@ public class GameScreen extends Screen {
         addLogMessage("Fin de turno (" + game.getCurrentPlayer().getName() + ").");
         clearSelection();
         turnEngine.endTurn(game);
+        hexRenderer.render(game.getMap());
         updateCombatHud();
         checkAndShowVictory("conquista de base");
         maybeRunAiTurn();

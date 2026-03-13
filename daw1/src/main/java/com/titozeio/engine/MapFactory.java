@@ -51,14 +51,14 @@ public class MapFactory {
             map.setHexagon(5, r, new Hexagon(5, r, water, height));
         }
 
-        // Agua en q=4, r=4-6, q=6, r=3-6
-        map.setHexagon(4, 4, new Hexagon(4, 4, TerrainType.WATER_SHALLOW, 1));
-        map.setHexagon(4, 5, new Hexagon(4, 5, TerrainType.WATER_SHALLOW, 1));
-        map.setHexagon(4, 6, new Hexagon(4, 6, TerrainType.WATER_SHALLOW, 1));
-        map.setHexagon(6, 3, new Hexagon(6, 3, TerrainType.WATER_SHALLOW, 1));
-        map.setHexagon(6, 4, new Hexagon(6, 4, TerrainType.WATER_SHALLOW, 1));
-        map.setHexagon(6, 5, new Hexagon(6, 5, TerrainType.WATER_SHALLOW, 1));
-        map.setHexagon(6, 6, new Hexagon(6, 6, TerrainType.WATER_SHALLOW, 1));
+        // Ensanchamiento lateral del canal: sigue siendo agua poco profunda (nivel -1)
+        map.setHexagon(4, 4, new Hexagon(4, 4, TerrainType.WATER_SHALLOW, -1));
+        map.setHexagon(4, 5, new Hexagon(4, 5, TerrainType.WATER_SHALLOW, -1));
+        map.setHexagon(4, 6, new Hexagon(4, 6, TerrainType.WATER_SHALLOW, -1));
+        map.setHexagon(6, 3, new Hexagon(6, 3, TerrainType.WATER_SHALLOW, -1));
+        map.setHexagon(6, 4, new Hexagon(6, 4, TerrainType.WATER_SHALLOW, -1));
+        map.setHexagon(6, 5, new Hexagon(6, 5, TerrainType.WATER_SHALLOW, -1));
+        map.setHexagon(6, 6, new Hexagon(6, 6, TerrainType.WATER_SHALLOW, -1));
 
         // 3. Mesetas q=2 y q=3
         // Altura 1 en q=2 (filas 1-7 excepto 4)

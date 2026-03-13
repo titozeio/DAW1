@@ -25,6 +25,10 @@ class HexagonTest {
         assertEquals(1.25f, shallow.getDamageModifier());
         assertEquals(1.25f, shallow.getAttackDamageModifier());
         assertEquals(1.0f, normal.getAttackDamageModifier());
+        assertEquals(1.25f, vegetation.getHeightAttackModifierAgainst(normal));
+        assertEquals(0.75f, normal.getHeightAttackModifierAgainst(vegetation));
+        assertEquals(1.5f, TestFixtures.hex(4, 0, TerrainType.NORMAL, 2).getHeightAttackModifierAgainst(normal));
+        assertEquals(1.0f, shallow.getHeightAttackModifierAgainst(normal));
     }
 
     @Test

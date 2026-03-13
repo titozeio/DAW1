@@ -211,6 +211,9 @@ public class ActionEvaluator {
             damage = Math.round(damage * actor.getPosition().getAttackDamageModifier());
         }
         if (actor.getPosition() != null && target.getPosition() != null) {
+            damage = Math.round(damage * actor.getPosition().getHeightAttackModifierAgainst(target.getPosition()));
+        }
+        if (actor.getPosition() != null && target.getPosition() != null) {
             float coverMod = game.getMap().getCoverModifier(actor.getPosition(), target.getPosition());
             if (coverMod < 0f) {
                 return 0;

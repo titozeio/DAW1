@@ -97,7 +97,7 @@ public class Robot {
 
     /**
      * Realiza un ataque contra otro robot.
-     * Aplica modificadores de terreno (agua superficial, vegetación) y cobertura.
+     * Aplica modificadores de terreno, diferencia de altura y cobertura.
      *
      * @param target el robot objetivo.
      * @param map    el mapa actual (para calcular visibilidad y cobertura).
@@ -117,6 +117,10 @@ public class Robot {
         // Modificador Overheat (atacante en agua poco profunda)
         if (position != null) {
             damage = Math.round(damage * position.getAttackDamageModifier());
+        }
+        // Modificador por diferencia de altura entre atacante y defensor
+        if (position != null && target.getPosition() != null) {
+            damage = Math.round(damage * position.getHeightAttackModifierAgainst(target.getPosition()));
         }
 
         // Modificador de cobertura

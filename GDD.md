@@ -221,8 +221,10 @@ Efectos del terreno según el tipo y la altura:
 
         - Overheat: Incrementa el daño que hacen las armas de los robots en estas casillas en un 25% (al estar sumergidos, el agua enfría y pueden sobrecalentar las armas aplicando más potencia).
 
-        - Incrementa el daño de los robots en este terreno en un 25% (al estar sumergidos hasta la mitad, todos los impactos van a la cabeza u hombros, partes más vitales del robot).
+        - +25% de daño recibido (las partes expuestas al daño son cabeza y hombros, más vitales).
 
+        - NOTA: A efectos debonificadores/penalizadores por diferencia de altura, el -1 de nivel en terreno acuático se considera 0. Por ejemplo: Un robot en terreno acuático -1, atacando a otro en nivel 0, tendría simplemente +25% por overheat (no contaría el -25% por desventaja de 1 de altura). Otro ejemplo: Un robot en terreno +1 contra otro en terreno acuático -1 tendría +25% (el terreno cuático cuenta como nivel 0 a estos efectos, pero el atcante está a +1).
+        
         - Coste de movimiento: +1.
 
     - Nivel -2 (profundidad 2):
@@ -236,12 +238,16 @@ Efectos del terreno según el tipo y la altura:
     - Terreno **+1 nivel** (cuando se pasa de un nivel terrestre a otro superior en 1):
 
         - Coste de movimiento:+1 (acumulativo con terreno de vegetación espesa si la hubiera).
+        - Daño: +25% al daño.Cuando un robot ataca a otro que esté por debajo suya (el atacante está en una casilla de un nivel más que el defensor) hace más daño por la ventaja de altura.
 
-    - Terreno **+2 niveles**: Un robot no puede pasar de una casilla a otra contigua dos niveles superior a la que está (a menos que use una Skill que especifique lo contrario).
+    - Terreno **+2 niveles**: 
+        -Un robot no puede pasar de una casilla a otra contigua dos niveles superior a la que está (a menos que use una Skill que especifique lo contrario)
+        -Daño: 50% al daño.Cuando un robot ataca a otro que esté por debajo suya de más de un nivel (el atacante está en una casilla de al menos dos niveles más que el defensor) hace más daño por la ventaja de altura (no acumulable con la ventaja que aporta la diferencia por altura de +1).
 
     - Terreno **-1 nivel**  (cuando se pasa de un nivel terrestre  a otro inferior en 1):
 
         - Coste de movimiento:+1 (acumulativo con terreno de vegetación espesa si la hubiera).
+        - (-25%) al daño por desventaja de altura (si el atacante está a -1 o inferior niveles de aaltura con respecto del defensor).
 
     - Terreno **-2 niveles (o más)**: Un robot puede saltar desde un terreno a otro de nivel inferior en 2 niveles o más:
 
@@ -251,7 +257,7 @@ Efectos del terreno según el tipo y la altura:
 
         - Una Skill de movimiento podría anular el coste adicional e incluso el daño.
 
-- **Cobertura**: En un ataque, si entre el robot atacante y el defensor (siguiendo el camino de hexágonos más corto), hay alguna casilla de terreno de 1 nivel superior a la casilla del  atacante y a la del defensor, se considera que el defensor tiene **cobertura media** (el daño se reduce en un 50%). Si hay alguna casilla de 2 niveles superior, entonces se considera **cobertura total** (el atacante no puede atacar a ese defensor desde esa posición).
+- **Cobertura**: En un ataque, si entre el robot atacante y el defensor (siguiendo el camino de hexágonos más corto), hay alguna casilla de terreno de 1 nivel superior a la casilla del  atacante y a la del defensor (sin contar las de atacante y defensor), se considera que el defensor tiene **cobertura media** (el daño se reduce en un 50%). Si hay alguna casilla de 2 niveles superior, entonces se considera **cobertura total** (el atacante no puede atacar a ese defensor desde esa posición).
 
 # 3. Aspectos Técnicos (Stack Tecnológico)
 
@@ -884,6 +890,13 @@ Lista de sprites, sonidos y música (importante para organizar la carpeta src/ma
     - **Bloque de info adicional**: Un panel, inicalmente vacío (simplemente un label informativo de "info"), que mostrará info adicional cuando: 
       - Se pasa el ratón por encima de un robot: se muestra su nombre, estadísticas y descripción.
       - Se pasa el ratón por encima de un terreno: se muestra su descripción, el tipo, la altura.
+      - Durante la fase de **ataque normal** o de **skill ofensiva**, si se pasa el ratón por encima de un enemigo, se sustituye temporalmente el panel de info normal por un **panel de preview de ataque** con:
+        - Retrato del objetivo.
+        - Lista de efectos del terreno y de cobertura que afectan al ataque.
+        - Indicación explícita cuando una skill anula alguno de esos efectos.
+        - `Daño esperado` solo en dificultad **Fácil** o **Media**.
+        - `HP restantes` solo en dificultad **Fácil**.
+        - Efectos adicionales de la skill (por ejemplo, congelación).
     - **Botón de Fin de turno**: El jugador puede pulsar este botón para indicar que ha terminado de realizar las acciones de sus robots. Al pulsarlo, se pasa al siguiente jugador. Si queda algún robot por realizar acciones, se mostrará un mensaje indicándolo: "Jugador [X], te quedan robots por realizar acciones. ¿Seguro que quieres finalizar el turno?" con dos opciones: "Cancelar" y "Finalizar turno". Cuando al jugador no le quedan más acciones de ningún robot, se realiza el cambio de turno automáticamente, mostrándose un mensaje antes.
     > **Estado actual**: El botón «Fin de turno» siempre está disponible durante el combate; no se muestra confirmación si quedan acciones pendientes. El cambio de turno no es automático. ❗ *Pendiente de implementar la confirmación y cambio automático.*
     - **Botón de Rendirse**: El jugador puede pulsar «Rendirse» en cualquier momento del combate. Al hacerlo, se declara la victoria del oponente y se muestra el overlay de victoria. No existe pantalla de pausa separada en la implementación actual; la opción de rendirse está integrada directamente en la barra de acciones del combate.
@@ -915,6 +928,13 @@ Lista de sprites, sonidos y música (importante para organizar la carpeta src/ma
 - Robots enemigos en panel de info mostrados con opacidad reducida (feedback visual de “no propio”).
 - Barras de vida actualizadas a formato segmentado (1 segmento = 1 HP), tanto en mapa como en panel de info.
 - Reubicación de acciones inferiores (`Skill` y `Finalizar turno`) junto al log inferior para no invadir zona central del mapa.
+- Nuevo panel contextual de preview de ataque al hacer `hover` sobre enemigos durante `ATTACK` o `SKILL` ofensiva:
+  - Prioridad visual sobre el panel de robot y el de hexágono mientras dura el hover.
+  - Muestra retrato del objetivo y resumen de modificadores aplicables al daño.
+  - Expone `Daño esperado` en dificultades `Fácil` y `Media`.
+  - Expone `HP restantes` solo en dificultad `Fácil`.
+  - Muestra efectos adicionales de la skill, como congelación con `Rayo Congelador`.
+  - Si la skill modifica reglas del terreno o cobertura, el panel lo indica explícitamente (por ejemplo, `Misiles Teledirigidos`).
 - Ajustes de hit-testing/interacción en HUD:
   - Paneles inferiores y de info configurados para no bloquear `hover/click` del mapa en sus zonas vacías.
   - Los botones interactivos (`toggle log`, `skill`, `fin turno`, `+info`) conservan interacción normal.
