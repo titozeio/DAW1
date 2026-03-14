@@ -8,12 +8,11 @@ import com.titozeio.enums.RobotTemplate;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
@@ -35,19 +34,24 @@ public class DarkSoulsDraftAdvisor {
     private final Map<String, Integer> allroundScores;
     private final Map<String, PairStat> allyPairs;
     private final Map<String, Integer> matchupDominance;
+    private Path loadedStatsPath;
+    private FileTime loadedStatsTimestamp;
 
     public DarkSoulsDraftAdvisor() {
-        this(loadLatestStatsData().orElseGet(DraftStatsData::fallback));
+        this(loadLatestStatsData().orElseGet(LoadedDraftStatsData::fallback));
     }
 
-    DarkSoulsDraftAdvisor(DraftStatsData data) {
+    DarkSoulsDraftAdvisor(LoadedDraftStatsData data) {
         this.allroundScores = new HashMap<>(data.allroundScores());
         this.allyPairs = new HashMap<>(data.allyPairs());
         this.matchupDominance = new HashMap<>(data.matchupDominance());
+        this.loadedStatsPath = data.sourcePath();
+        this.loadedStatsTimestamp = data.lastModified();
     }
 
     public RobotTemplate chooseBestPick(List<RobotTemplate> available, List<RobotTemplate> ownTeam,
             List<RobotTemplate> enemyTeam) {
+        refreshStatsIfNeeded();
         if (available == null || available.isEmpty()) {
             return null;
         }
@@ -65,6 +69,7 @@ public class DarkSoulsDraftAdvisor {
     }
 
     public List<RobotTemplate> chooseTeam(List<RobotTemplate> pool, List<RobotTemplate> enemyTeam, int size, long seed) {
+        refreshStatsIfNeeded();
         if (pool == null || pool.isEmpty() || size <= 0) {
             return List.of();
         }
@@ -130,7 +135,29 @@ public class DarkSoulsDraftAdvisor {
         return robotA.compareTo(robotB) <= 0 ? robotA + " + " + robotB : robotB + " + " + robotA;
     }
 
-    private static Optional<DraftStatsData> loadLatestStatsData() {
+    private void refreshStatsIfNeeded() {
+        Optional<LoadedDraftStatsData> latest = loadLatestStatsData();
+        if (latest.isEmpty()) {
+            return;
+        }
+        LoadedDraftStatsData data = latest.get();
+        if (data.sourcePath() == null || data.lastModified() == null) {
+            return;
+        }
+        if (data.sourcePath().equals(loadedStatsPath) && data.lastModified().equals(loadedStatsTimestamp)) {
+            return;
+        }
+        allroundScores.clear();
+        allroundScores.putAll(data.allroundScores());
+        allyPairs.clear();
+        allyPairs.putAll(data.allyPairs());
+        matchupDominance.clear();
+        matchupDominance.putAll(data.matchupDominance());
+        loadedStatsPath = data.sourcePath();
+        loadedStatsTimestamp = data.lastModified();
+    }
+
+    private static Optional<LoadedDraftStatsData> loadLatestStatsData() {
         for (Path baseDir : List.of(Path.of("stats"), Path.of("daw1", "stats"))) {
             if (!Files.isDirectory(baseDir)) {
                 continue;
@@ -147,7 +174,8 @@ public class DarkSoulsDraftAdvisor {
                         })
                         .findFirst();
                 if (latest.isPresent()) {
-                    return Optional.of(parseStats(latest.get()));
+                    Path latestPath = latest.get();
+                    return Optional.of(parseStats(latestPath, Files.getLastModifiedTime(latestPath)));
                 }
             } catch (IOException ignored) {
             }
@@ -155,14 +183,14 @@ public class DarkSoulsDraftAdvisor {
         return Optional.empty();
     }
 
-    private static DraftStatsData parseStats(Path path) throws IOException {
+    private static LoadedDraftStatsData parseStats(Path path, FileTime lastModified) throws IOException {
         JsonObject root = JsonParser.parseString(Files.readString(path)).getAsJsonObject();
 
         Map<String, Integer> allround = parseIntMap(root.getAsJsonObject("robotScoresALL"));
         Map<String, Integer> dominance = parseIntMap(root.getAsJsonObject("matchupDominance"));
         Map<String, PairStat> pairs = parsePairStats(root.getAsJsonObject("allyPairs"));
 
-        return new DraftStatsData(allround, pairs, dominance);
+        return new LoadedDraftStatsData(allround, pairs, dominance, path, lastModified);
     }
 
     private static Map<String, Integer> parseIntMap(JsonObject object) {
@@ -194,14 +222,14 @@ public class DarkSoulsDraftAdvisor {
     record PairStat(int appearances, double winRate, double timeoutRate) {
     }
 
-    record DraftStatsData(Map<String, Integer> allroundScores, Map<String, PairStat> allyPairs,
-            Map<String, Integer> matchupDominance) {
-        static DraftStatsData fallback() {
+    record LoadedDraftStatsData(Map<String, Integer> allroundScores, Map<String, PairStat> allyPairs,
+            Map<String, Integer> matchupDominance, Path sourcePath, FileTime lastModified) {
+        static LoadedDraftStatsData fallback() {
             Map<String, Integer> fallbackScores = new HashMap<>();
             for (Map.Entry<RobotTemplate, Integer> entry : FALLBACK_ALLROUND.entrySet()) {
                 fallbackScores.put(displayName(entry.getKey()), entry.getValue());
             }
-            return new DraftStatsData(fallbackScores, Map.of(), Map.of());
+            return new LoadedDraftStatsData(fallbackScores, Map.of(), Map.of(), null, null);
         }
     }
 }
