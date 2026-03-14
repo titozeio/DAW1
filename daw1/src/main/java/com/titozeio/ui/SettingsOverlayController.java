@@ -143,6 +143,8 @@ public class SettingsOverlayController {
 
     @FXML
     public void handleSettingsCloseAction() {
+        cancelSimulationIfRunning();
+        Screen.fadeOutNode(simulationOverlay, 150);
         Screen.fadeOutNode(settingsOverlay, 150);
     }
 
@@ -204,7 +206,7 @@ public class SettingsOverlayController {
         BatchSimulationConfig config = new BatchSimulationConfig(
                 matchCount,
                 System.currentTimeMillis(),
-                60,
+                200,
                 game.getAiDifficulty(),
                 game.getAiDifficulty(),
                 null,
@@ -243,6 +245,10 @@ public class SettingsOverlayController {
 
     @FXML
     public void handleCancelSimulationAction() {
+        cancelSimulationIfRunning();
+    }
+
+    private void cancelSimulationIfRunning() {
         simulationCancelRequested.set(true);
         if (simulationTask != null) {
             simulationTask.cancel();
@@ -271,6 +277,7 @@ public class SettingsOverlayController {
 
     @FXML
     public void handleSimulationCloseAction() {
+        cancelSimulationIfRunning();
         Screen.fadeOutNode(simulationOverlay, 150);
     }
 

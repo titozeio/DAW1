@@ -142,16 +142,33 @@ public class SimulationStats {
                 continue;
 
             double winRate = (double) wins / matches;
+            double timeoutRate = (double) timeouts / matches;
             double survivals = robotSurvivals.getOrDefault(robot, 0);
             double survivalRate = survivals / matches;
+            double deaths = robotDeaths.getOrDefault(robot, 0);
+            double deathRate = deaths / matches;
 
             double killsAvg = (double) robotKills.getOrDefault(robot, 0) / matches;
             double dmgDealtAvg = (double) robotDamageDealt.getOrDefault(robot, 0) / matches;
             double dmgReceivedAvg = (double) robotDamageReceived.getOrDefault(robot, 0) / matches;
 
-            double scoreDps = (dmgDealtAvg * 10) + (killsAvg * 50);
-            double scoreTank = (dmgReceivedAvg * 8) + (survivalRate * 150) + (winRate * 100);
-            double scoreSup = (winRate * 600) + (survivalRate * 100) + (dmgDealtAvg * 2);
+            // Scores normalizados por partida para priorizar eficiencia y conversión
+            // en victoria, evitando inflar métricas brutas como "daño recibido".
+            double scoreDps = (killsAvg * 45.0)
+                    + (dmgDealtAvg * 6.0)
+                    + (winRate * 20.0)
+                    - (timeoutRate * 15.0);
+
+            double tankingValue = dmgReceivedAvg * survivalRate;
+            double scoreTank = (tankingValue * 5.0)
+                    + (survivalRate * 35.0)
+                    + (winRate * 10.0)
+                    - (deathRate * 10.0);
+
+            double scoreSup = (winRate * 30.0)
+                    + (survivalRate * 25.0)
+                    + (killsAvg * 10.0)
+                    - (timeoutRate * 15.0);
 
             double score = 0;
             if ("DPS".equals(role)) {
@@ -161,7 +178,7 @@ public class SimulationStats {
             } else if ("SUPPORT".equals(role)) {
                 score = scoreSup;
             } else if ("ALLROUND".equals(role)) {
-                score = (scoreDps + scoreTank + scoreSup) / 3.0;
+                score = (scoreDps * 0.40) + (scoreTank * 0.35) + (scoreSup * 0.25);
             }
             scores.put(robot, (int) Math.round(score));
         }
