@@ -695,7 +695,7 @@ Lista de sprites, sonidos y música (importante para organizar la carpeta src/ma
 - **Nanobots reparadores**:
     - Tipo: Ataque.
     - Alcance: 1.
-    - Daño: 5.
+    - Daño: 6.
     - Cooldown: 2 turnos.
     - Efecto especial: Hace que el robot objetivo recupere una cantidad de HPs igual a la cantidad de daño especificada (no se puede usar sobre robots ya destruidos).
     - Descripción: Aunque parezca un ataque, esta skill despliega un enjambre de nanobbots sobre un robot aliado. Los nanobots actúan rápidamente, restaurando las partes dañadas del robot aliado.
@@ -762,7 +762,7 @@ Lista de sprites, sonidos y música (importante para organizar la carpeta src/ma
     - **Movimiento**: 4.
     - **Armas**:
         - Nombre: Cañón laser.
-        - Alcance: 4.  
+        - Alcance: 3.  
         - Daño: 3.
         - Descripción: Cañón laser montado en el hombro derecho.    
     - **Skills**: Nanobots reparadores.
@@ -782,7 +782,7 @@ Lista de sprites, sonidos y música (importante para organizar la carpeta src/ma
 - **Death Knight**:
     - **Modelo**: Death Knight.
     - **Descripción**: Una mole de asalto con una armadura medieval-gótica pesada inspirada en los caballeros oscuros. Su esquema de color es monocromático: negro obsidiana y gris carbón, resaltado únicamente por sus ojos de un rojo intenso con efecto lens flare. Carece de propulsores en la espalda; toda su potencia de empuje reside en los talones de sus pies sobredimensionados y en su martillo gigante propulsado. 
-    - **HP**: 15.
+    - **HP**: 14.
     - **Movimiento**: 5.
     - **Armas**:
         - Nombre: Martillo propulsado.

@@ -6,14 +6,14 @@ import com.titozeio.enums.SkillType;
 /**
  * Skill: Nanobots Reparadores — Bulwark.
  *
- * Tipo: Ataque | Alcance: 1 | Heal: 5 | Cooldown: 2 turnos.
+ * Tipo: Ataque | Alcance: 1 | Heal: 6 | Cooldown: 2 turnos.
  * Efecto especial GDD: El robot objetivo RECUPERA HP en lugar de recibir daño.
  * No se puede usar sobre robots ya destruidos.
  */
 public class RepairNanobots extends Skill {
 
     private final int range = 1;
-    private final int healAmount = 5;
+    private final int healAmount = 6;
 
     /**
      * Crea una nueva instancia de la clase.

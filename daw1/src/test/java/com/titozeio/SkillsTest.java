@@ -73,7 +73,7 @@ class SkillsTest {
 
         skill.execute(actor, ally);
         assertTrue(actor.isUsedAttack());
-        assertEquals(9, ally.getCurrentHp());
+        assertEquals(10, ally.getCurrentHp());
     }
 
     @Test

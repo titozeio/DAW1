@@ -13,7 +13,7 @@ import com.titozeio.skills.*;
  * -------------------------------------------------------------------
  * VICTORY_SABER | HP 12 | Mov 5 | Cañón de plasma (3/4) | PlasmaSaberAttack
  * BULLSEYE | HP 5 | Mov 5 | Doble cañón auto. (5/6) | GuidedMissile
- * BULWARK | HP 15 | Mov 4 | Cañón laser (4/3) | RepairNanobots
+ * BULWARK | HP 14 | Mov 4 | Cañón laser (3/3) | RepairNanobots
  * SCOUT | HP 8 | Mov 4 | Cañón automático (6/5) | JetpackBoost
  * DEATH_KNIGHT | HP 15 | Mov 4 | Martillo propulsado(1/8) | TurboPropulsion
  * ICE_AGE | HP 9 | Mov 4 | Misiles de racimo (4/3) | FreezeRay
@@ -78,7 +78,7 @@ public enum RobotTemplate {
                 public Robot createRobot(Player owner) {
                         Weapon weapon = new Weapon(
                                         "Cañón laser",
-                                        4, 3,
+                                        3, 3,
                                         "Cañón laser montado en el hombro derecho. Poco efectivo y de corto alcance.",
                                         AttackType.ENERGY);
                         Skill skill = new RepairNanobots();
@@ -133,7 +133,7 @@ public enum RobotTemplate {
                                         "Death Knight",
                                         "Un robot lento, extremadamente resistente y con un gran ataque cuerpo a cuerpo. "
                                                         + "Cuando activa sus retropropulsores, puede desplazarse rápidamente.",
-                                        15, 4, weapon, skill, owner);
+                                        14, 4, weapon, skill, owner);
                 }
         },
 
