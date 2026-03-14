@@ -60,6 +60,7 @@ public class Game {
     private static final String PREF_SFX_ENABLED = "sfxEnabled";
     private static final String PREF_AI_DIFFICULTY = "aiDifficulty";
     private static final String PREF_SIM_MATCH_COUNT = "simulationMatchCount";
+    private static final String PREF_FIRST_RUN_INITIALIZED = "firstRunInitialized";
     private static final Preferences PREFS = Preferences.userNodeForPackage(Game.class);
 
     // Referencia a la ventana de JavaFX
@@ -88,6 +89,7 @@ public class Game {
         this.controllers = new HashMap<>();
         this.turnEngine = new TurnEngine();
         this.turnCounter = 1;
+        initializePreferencesIfNeeded();
         this.musicEnabled = PREFS.getBoolean(PREF_MUSIC_ENABLED, true);
         this.sfxEnabled = PREFS.getBoolean(PREF_SFX_ENABLED, true);
         this.aiDifficulty = loadAiDifficultyPreference();
@@ -178,6 +180,22 @@ public class Game {
         } catch (IllegalArgumentException ex) {
             return AiDifficulty.EASY;
         }
+    }
+
+    private static void initializePreferencesIfNeeded() {
+        if (PREFS.getBoolean(PREF_FIRST_RUN_INITIALIZED, false)) {
+            return;
+        }
+        if (PREFS.get(PREF_MUSIC_ENABLED, null) == null) {
+            PREFS.putBoolean(PREF_MUSIC_ENABLED, true);
+        }
+        if (PREFS.get(PREF_SFX_ENABLED, null) == null) {
+            PREFS.putBoolean(PREF_SFX_ENABLED, true);
+        }
+        if (PREFS.get(PREF_AI_DIFFICULTY, null) == null) {
+            PREFS.put(PREF_AI_DIFFICULTY, AiDifficulty.EASY.name());
+        }
+        PREFS.putBoolean(PREF_FIRST_RUN_INITIALIZED, true);
     }
 
     /**
