@@ -152,23 +152,32 @@ public class SimulationStats {
             double dmgDealtAvg = (double) robotDamageDealt.getOrDefault(robot, 0) / matches;
             double dmgReceivedAvg = (double) robotDamageReceived.getOrDefault(robot, 0) / matches;
 
-            // Scores normalizados por partida para priorizar eficiencia y conversión
-            // en victoria, evitando inflar métricas brutas como "daño recibido".
-            double scoreDps = (killsAvg * 45.0)
-                    + (dmgDealtAvg * 6.0)
-                    + (winRate * 20.0)
-                    - (timeoutRate * 15.0);
+            // Scores normalizados por partida.
+            // DPS valora daño, remates y conversión en victoria.
+            // TANK premia absorber presión sobreviviendo.
+            // SUPPORT intenta aproximar contribución táctica y utilidad, así que
+            // penaliza perfiles de daño puro.
+            // ALLROUND se orienta a balance general: prioriza winrate y consistencia
+            // por encima de una mezcla artificial de roles.
+            double scoreDps = (killsAvg * 42.0)
+                    + (dmgDealtAvg * 5.5)
+                    + (winRate * 18.0)
+                    - (timeoutRate * 18.0);
 
-            double tankingValue = dmgReceivedAvg * survivalRate;
-            double scoreTank = (tankingValue * 5.0)
-                    + (survivalRate * 35.0)
-                    + (winRate * 10.0)
-                    - (deathRate * 10.0);
+            double tankingValue = dmgReceivedAvg * (0.5 + survivalRate);
+            double scoreTank = (tankingValue * 4.5)
+                    + (survivalRate * 45.0)
+                    + (winRate * 12.0)
+                    - (deathRate * 14.0)
+                    - (timeoutRate * 8.0);
 
-            double scoreSup = (winRate * 30.0)
-                    + (survivalRate * 25.0)
-                    + (killsAvg * 10.0)
-                    - (timeoutRate * 15.0);
+            double scoreSup = (winRate * 12.0)
+                    + (survivalRate * 28.0)
+                    + (dmgReceivedAvg * 2.8)
+                    - (dmgDealtAvg * 1.4)
+                    - (killsAvg * 12.0)
+                    - (deathRate * 12.0)
+                    - (timeoutRate * 10.0);
 
             double score = 0;
             if ("DPS".equals(role)) {
@@ -178,7 +187,11 @@ public class SimulationStats {
             } else if ("SUPPORT".equals(role)) {
                 score = scoreSup;
             } else if ("ALLROUND".equals(role)) {
-                score = (scoreDps * 0.40) + (scoreTank * 0.35) + (scoreSup * 0.25);
+                score = (winRate * 70.0)
+                        + (killsAvg * 12.0)
+                        + (dmgDealtAvg * 2.0)
+                        + (survivalRate * 10.0)
+                        - (timeoutRate * 20.0);
             }
             scores.put(robot, (int) Math.round(score));
         }

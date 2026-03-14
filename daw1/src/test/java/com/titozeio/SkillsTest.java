@@ -46,6 +46,7 @@ class SkillsTest {
         GuidedMissile gm = new GuidedMissile();
         gm.execute(actor, target);
         assertEquals(15, target.getCurrentHp());
+        assertEquals(3, gm.getCurrentCooldown());
         assertTrue(gm.isIgnoresCover());
         assertTrue(gm.isIgnoresVisibility());
 
@@ -53,6 +54,7 @@ class SkillsTest {
         PlasmaSaberAttack saber = new PlasmaSaberAttack();
         saber.execute(actor, target);
         assertEquals(10, target.getCurrentHp());
+        assertEquals(2, saber.getCurrentCooldown());
     }
 
     @Test
@@ -86,7 +88,7 @@ class SkillsTest {
         JetpackBoost jetpack = new JetpackBoost();
         jetpack.execute(actor, to);
         assertSame(actor, to.getOccupant());
-        assertEquals(1, jetpack.getCurrentCooldown());
+        assertEquals(2, jetpack.getCurrentCooldown());
         assertTrue(jetpack.isIgnoresHeightLimits());
 
         Hexagon blocked = TestFixtures.hex(2, 0, TerrainType.NORMAL, 0);

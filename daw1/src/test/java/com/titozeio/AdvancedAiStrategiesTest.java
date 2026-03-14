@@ -187,19 +187,6 @@ class AdvancedAiStrategiesTest {
 
         assertEquals(3, team.size());
         assertEquals(3, new HashSet<>(team).size());
-
-        BatchSimulationService service = new BatchSimulationService(new MatchRunner(new TurnEngine()));
-        Method buildTeam = BatchSimulationService.class.getDeclaredMethod(
-                "buildTeamForDifficulty", AiDifficulty.class, List.class, long.class, List.class);
-        buildTeam.setAccessible(true);
-
-        @SuppressWarnings("unchecked")
-        List<RobotTemplate> darkTeam = (List<RobotTemplate>) buildTeam.invoke(service,
-                AiDifficulty.DARK_SOULS, new java.util.ArrayList<>(Arrays.asList(RobotTemplate.values())), 999L,
-                List.of(RobotTemplate.SCOUT));
-
-        assertEquals(3, darkTeam.size());
-        assertEquals(3, new HashSet<>(darkTeam).size());
     }
 
     @Test

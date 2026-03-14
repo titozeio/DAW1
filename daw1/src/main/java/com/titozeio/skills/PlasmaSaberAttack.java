@@ -6,7 +6,7 @@ import com.titozeio.enums.SkillType;
 /**
  * Skill: Sable de Plasma — Victory Saber.
  *
- * Tipo: Ataque | Alcance: 1 | Daño: 10 | Cooldown: 3 turnos.
+ * Tipo: Ataque | Alcance: 1 | Daño: 10 | Cooldown: 2 turnos.
  * Descripción GDD: El robot despliega un sable de plasma que hace daño masivo.
  */
 public class PlasmaSaberAttack extends Skill {
@@ -21,7 +21,7 @@ public class PlasmaSaberAttack extends Skill {
         super(
                 "Sable de Plasma",
                 SkillType.ATTACK,
-                3,
+                2,
                 "El robot despliega un sable de plasma que hace daño masivo. "
                         + "El sable es tan potente que necesita una cantidad brutal de energía para volver a generarse.");
     }

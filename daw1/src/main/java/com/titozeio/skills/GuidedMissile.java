@@ -6,7 +6,7 @@ import com.titozeio.enums.SkillType;
 /**
  * Skill: Misiles Teledirigidos — Bullseye.
  *
- * Tipo: Ataque | Alcance: 6 | Daño: 5 | Cooldown: 2 turnos.
+ * Tipo: Ataque | Alcance: 6 | Daño: 5 | Cooldown: 3 turnos.
  * Efecto especial GDD: Permite atacar sin visibilidad e ignorando reglas de
  * cobertura.
  */
@@ -24,7 +24,7 @@ public class GuidedMissile extends Skill {
         super(
                 "Misiles Teledirigidos",
                 SkillType.ATTACK,
-                2,
+                3,
                 "El robot cuenta con misiles teledirigidos que viajan hacia el objetivo rodeando obstáculos, "
                         + "permitiendo ignorar todo tipo de cobertura y visibilidad.");
     }

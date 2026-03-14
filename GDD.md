@@ -673,13 +673,13 @@ Lista de sprites, sonidos y música (importante para organizar la carpeta src/ma
 - **Retropropulsores**:
     - Tipo: Movimiento.
     - Movimiento: 7.
-    - Cooldown: 1 turno.
+    - Cooldown: 2 turnos.
     - Efecto especial: Ignora el tipo de terreno a efectos de movimiento (coste y posibilidad). Por ejemplo, un robot con esta skill podría moverse de una casilla de altura 0 a una casilla de altura 2.
     - Descripción: El robot cuenta con unos retropropulsores que le impulsan por el aire. No llega a poder volar, ya que el impulso dura muy poco dado el coste energético. 
 
 - **Turbo Propulsores**:
     - Tipo: Movimiento.
-    - Movimiento: 5.
+    - Movimiento: 6.
     - Cooldown: 2 turnos.
     - Efecto especial: Ninguno.
     - Descripción: Cada dos turnos, el robot puede activar unos turbo propulsores en sus patas, que le impulsan a una velocidad mucho mayor de su movimiento normal.
@@ -688,7 +688,7 @@ Lista de sprites, sonidos y música (importante para organizar la carpeta src/ma
     - Tipo: Ataque.
     - Alcance: 6.
     - Daño: 5.
-    - Cooldown: 2 turnos.
+    - Cooldown: 3 turnos.
     - Efecto especial: Permite atacar sin visibilidad e ignorando reglas de cobertura, siempre que el enemigo esté al alcance.
     - Descripción: El robot cuenta con unos misiles teledirigidos que viajan hacia el objetivo rodeando obstáculos, permitiendo ignorar todo tipo de cobertura y visibilidad.
 
@@ -704,7 +704,7 @@ Lista de sprites, sonidos y música (importante para organizar la carpeta src/ma
     - Tipo: Ataque.
     - Alcance: 1.
     - Daño: 10.
-    - Cooldown: 3 turnos.
+    - Cooldown: 2 turnos.
     - Descripción: El robot despliega un sable de plasma que hace daño masivo. El sable es tan potente que necesita una cantidad de  energía brutal para volver a generarse, por lo que normalmente solo se puede usar 1 o 2 veces en el combate.
 
 - **Rayo congelador**:
@@ -746,12 +746,12 @@ Lista de sprites, sonidos y música (importante para organizar la carpeta src/ma
 - **Bullseye**:
     - **Modelo**: Bullseye.
     - **Descripción**: También conocido en el terreno de combate como "Glass Cannon" (Cañón de cristal). Es un robot de artillería móvil con un sensor óptico central de color rojo intenso que proyecta un destello letal. Muy rápido y con gran alcance, pero con blindaje ligero y visiblemente desgastado por el combate.
-    - **HP**: 7.
+    - **HP**: 5.
     - **Movimiento**: 5.
     - **Armas**:
         - Nombre: Doble cañón automático.
         - Alcance: 5.  
-        - Daño: 7.
+        - Daño: 6.
         - Descripción: Brazos integrados convertidos en cañones automáticos rotatorios.
     - **Skills**: Misiles teledirigidos.
   
@@ -762,7 +762,7 @@ Lista de sprites, sonidos y música (importante para organizar la carpeta src/ma
     - **Movimiento**: 4.
     - **Armas**:
         - Nombre: Cañón laser.
-        - Alcance: 3.  
+        - Alcance: 4.  
         - Daño: 3.
         - Descripción: Cañón laser montado en el hombro derecho.    
     - **Skills**: Nanobots reparadores.
@@ -775,15 +775,15 @@ Lista de sprites, sonidos y música (importante para organizar la carpeta src/ma
     - **Armas**:
         - Nombre: Cañón automático.
         - Alcance: 6.  
-        - Daño: 7.
+        - Daño: 5.
         - Descripción: Cañón automático de alta precisión integrado en el brazo derecho.  
     - **Skills**: Retropropulsores.
 
 - **Death Knight**:
     - **Modelo**: Death Knight.
     - **Descripción**: Una mole de asalto con una armadura medieval-gótica pesada inspirada en los caballeros oscuros. Su esquema de color es monocromático: negro obsidiana y gris carbón, resaltado únicamente por sus ojos de un rojo intenso con efecto lens flare. Carece de propulsores en la espalda; toda su potencia de empuje reside en los talones de sus pies sobredimensionados y en su martillo gigante propulsado. 
-    - **HP**: 12.
-    - **Movimiento**: 3.
+    - **HP**: 15.
+    - **Movimiento**: 5.
     - **Armas**:
         - Nombre: Martillo propulsado.
         - Alcance: 1.  
@@ -798,7 +798,7 @@ Lista de sprites, sonidos y música (importante para organizar la carpeta src/ma
     - **Movimiento**: 4.
     - **Armas**:
         - Nombre: Misiles de racimo
-        - Alcance: 5.  
+        - Alcance: 4.  
         - Daño: 3.
         - Descripción: Lanzamisiles de hombro integrados de perfil bajo.
     - **Skills**: Rayo congelador.

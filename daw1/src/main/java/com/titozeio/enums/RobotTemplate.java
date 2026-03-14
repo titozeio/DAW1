@@ -11,12 +11,12 @@ import com.titozeio.skills.*;
  *
  * Stats según el GDD:
  * -------------------------------------------------------------------
- * VICTORY_SABER | HP 12 | Mov 4 | Cañón de plasma (3/4) | PlasmaSaberAttack
- * BULLSEYE | HP 7 | Mov 5 | Doble cañón auto. (5/7) | GuidedMissile
- * BULWARK | HP 15 | Mov 4 | Cañón laser (3/3) | RepairNanobots
- * SCOUT | HP 8 | Mov 4 | Cañón automático (6/7) | JetpackBoost
- * DEATH_KNIGHT | HP 12 | Mov 3 | Martillo propulsado(1/8) | TurboPropulsion
- * ICE_AGE | HP 9 | Mov 4 | Misiles de racimo (5/3) | FreezeRay
+ * VICTORY_SABER | HP 12 | Mov 5 | Cañón de plasma (3/4) | PlasmaSaberAttack
+ * BULLSEYE | HP 5 | Mov 5 | Doble cañón auto. (5/6) | GuidedMissile
+ * BULWARK | HP 15 | Mov 4 | Cañón laser (4/3) | RepairNanobots
+ * SCOUT | HP 8 | Mov 4 | Cañón automático (6/5) | JetpackBoost
+ * DEATH_KNIGHT | HP 15 | Mov 4 | Martillo propulsado(1/8) | TurboPropulsion
+ * ICE_AGE | HP 9 | Mov 4 | Misiles de racimo (4/3) | FreezeRay
  */
 public enum RobotTemplate {
 
@@ -39,7 +39,7 @@ public enum RobotTemplate {
                                         "Victory Saber",
                                         "Un robot de otra época, con aspecto bastante humanoide, anterior a las DAW1, "
                                                         + "pensado para ser pilotado por un humano y reconvertido a uso por la IA.",
-                                        12, 4, weapon, skill, owner);
+                                        12, 5, weapon, skill, owner);
                 }
         },
 
@@ -54,7 +54,7 @@ public enum RobotTemplate {
                 public Robot createRobot(Player owner) {
                         Weapon weapon = new Weapon(
                                         "Doble cañón automático",
-                                        5, 7,
+                                        5, 6,
                                         "En lugar de brazos, Bullseye cuenta con dos cañones automáticos "
                                                         + "que hacen bastante daño a un alcance importante.",
                                         AttackType.KINETIC);
@@ -63,7 +63,7 @@ public enum RobotTemplate {
                                         "Bullseye",
                                         "También conocido como \"Glass Cannon\", es un robot muy rápido "
                                                         + "y con un gran alcance de ataque, pero con muy poco blindaje.",
-                                        7, 5, weapon, skill, owner);
+                                        5, 5, weapon, skill, owner);
                 }
         },
 
@@ -78,7 +78,7 @@ public enum RobotTemplate {
                 public Robot createRobot(Player owner) {
                         Weapon weapon = new Weapon(
                                         "Cañón laser",
-                                        3, 3,
+                                        4, 3,
                                         "Cañón laser montado en el hombro derecho. Poco efectivo y de corto alcance.",
                                         AttackType.ENERGY);
                         Skill skill = new RepairNanobots();
@@ -101,7 +101,7 @@ public enum RobotTemplate {
                 public Robot createRobot(Player owner) {
                         Weapon weapon = new Weapon(
                                         "Cañón automático",
-                                        6, 7,
+                                        6, 5,
                                         "Su brazo derecho es un cañón automático de gran alcance y potencia.",
                                         AttackType.KINETIC);
                         Skill skill = new JetpackBoost();
@@ -131,9 +131,9 @@ public enum RobotTemplate {
                         Skill skill = new TurboPropulsion();
                         return new Robot(
                                         "Death Knight",
-                                        "Un robot lento, muy resistente y con un gran ataque cuerpo a cuerpo. "
+                                        "Un robot lento, extremadamente resistente y con un gran ataque cuerpo a cuerpo. "
                                                         + "Cuando activa sus retropropulsores, puede desplazarse rápidamente.",
-                                        12, 3, weapon, skill, owner);
+                                        15, 4, weapon, skill, owner);
                 }
         },
 
@@ -148,7 +148,7 @@ public enum RobotTemplate {
                 public Robot createRobot(Player owner) {
                         Weapon weapon = new Weapon(
                                         "Misiles de racimo",
-                                        5, 3,
+                                        4, 3,
                                         "Tiene dos afustes de misiles en los hombros. Tienen muy buen alcance, "
                                                         + "pero fallan la mitad, por lo que su daño no es tan temible.",
                                         AttackType.EXPLOSIVE);

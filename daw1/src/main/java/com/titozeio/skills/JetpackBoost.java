@@ -7,7 +7,7 @@ import com.titozeio.enums.SkillType;
 /**
  * Skill: Retropropulsores — Scout.
  *
- * Tipo: Movimiento | Puntos de movimiento: 7 | Cooldown: 1 turno.
+ * Tipo: Movimiento | Puntos de movimiento: 7 | Cooldown: 2 turnos.
  * Efecto especial GDD: Ignora el tipo de terreno Y los límites de altura al
  * calcular
  * el coste de movimiento (puede pasar de altura 0 a altura 2, por ejemplo).
@@ -25,7 +25,7 @@ public class JetpackBoost extends Skill {
         super(
                 "Retropropulsores",
                 SkillType.MOVEMENT,
-                1,
+                2,
                 "El robot cuenta con unos retropropulsores que le impulsan por el aire. "
                         + "No llega a poder volar, ya que el impulso dura muy poco dado el coste energético.");
     }
