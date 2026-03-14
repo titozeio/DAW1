@@ -48,9 +48,9 @@ public class BatchSimulationService {
             }
             // Generamos una semilla única por partida derivada de la base
             long matchSeed = random.nextLong();
-            List<RobotTemplate> teamP1 = config.teamP1() != null ? config.teamP1() : randomTeam(matchSeed);
-            List<RobotTemplate> teamP2 = config.teamP2() != null ? config.teamP2()
-                    : randomTeam(matchSeed ^ 0x9E3779B97F4A7C15L);
+            DraftTeams draftTeams = buildTeamsForMatch(config, matchSeed);
+            List<RobotTemplate> teamP1 = draftTeams.teamP1();
+            List<RobotTemplate> teamP2 = draftTeams.teamP2();
 
             MatchResult result = matchRunner.runMatch(
                     i + 1L,
@@ -69,9 +69,27 @@ public class BatchSimulationService {
         return stats;
     }
 
-    private List<RobotTemplate> randomTeam(long seed) {
-        List<RobotTemplate> pool = new ArrayList<>(Arrays.asList(RobotTemplate.values()));
+    private DraftTeams buildTeamsForMatch(BatchSimulationConfig config, long seed) {
+        List<RobotTemplate> sharedPool = new ArrayList<>(Arrays.asList(RobotTemplate.values()));
+        List<RobotTemplate> teamP1 = config.teamP1() != null
+                ? List.copyOf(config.teamP1())
+                : randomTeam(sharedPool, seed);
+        removePickedRobots(sharedPool, teamP1);
+        List<RobotTemplate> teamP2 = config.teamP2() != null
+                ? List.copyOf(config.teamP2())
+                : randomTeam(sharedPool, seed ^ 0x9E3779B97F4A7C15L);
+        return new DraftTeams(teamP1, teamP2);
+    }
+
+    private List<RobotTemplate> randomTeam(List<RobotTemplate> pool, long seed) {
         Collections.shuffle(pool, new Random(seed));
         return List.copyOf(pool.subList(0, 3));
+    }
+
+    private void removePickedRobots(List<RobotTemplate> pool, List<RobotTemplate> picked) {
+        pool.removeAll(picked);
+    }
+
+    private record DraftTeams(List<RobotTemplate> teamP1, List<RobotTemplate> teamP2) {
     }
 }

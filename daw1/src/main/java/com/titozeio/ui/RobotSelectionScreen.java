@@ -1,5 +1,7 @@
 package com.titozeio.ui;
 
+import com.titozeio.ai.AiDifficulty;
+import com.titozeio.ai.DarkSoulsDraftAdvisor;
 import com.titozeio.engine.Game;
 import com.titozeio.engine.Player;
 import com.titozeio.engine.Robot;
@@ -150,6 +152,7 @@ public class RobotSelectionScreen extends Screen {
     private java.util.Map<RobotTemplate, Media> mediaCache = new java.util.HashMap<>();
     private Timeline loadingPulse;
     private PauseTransition aiSelectionPause;
+    private final DarkSoulsDraftAdvisor darkSoulsDraftAdvisor = new DarkSoulsDraftAdvisor();
 
     @FXML
     private TutorialOverlayController tutorialOverlayComponentController;
@@ -840,9 +843,10 @@ public class RobotSelectionScreen extends Screen {
         if (!isSingleHumanSelectionMode() || !isPlayer2Turn || availableTemplates.isEmpty()) {
             return;
         }
-        List<RobotTemplate> pool = new ArrayList<>(availableTemplates);
-        Collections.shuffle(pool);
-        RobotTemplate selected = pool.getFirst();
+        RobotTemplate selected = pickAiTemplate();
+        if (selected == null) {
+            return;
+        }
         player2Templates.add(selected);
         availableTemplates.remove(selected);
 
@@ -856,6 +860,15 @@ public class RobotSelectionScreen extends Screen {
         isPlayer2Turn = false;
         refreshView();
         showTurnOverlay();
+    }
+
+    private RobotTemplate pickAiTemplate() {
+        if (game != null && game.getAiDifficulty() == AiDifficulty.DARK_SOULS) {
+            return darkSoulsDraftAdvisor.chooseBestPick(availableTemplates, player2Templates, player1Templates);
+        }
+        List<RobotTemplate> pool = new ArrayList<>(availableTemplates);
+        Collections.shuffle(pool);
+        return pool.isEmpty() ? null : pool.getFirst();
     }
 
     private void transitionToCombatScreen() {

@@ -93,6 +93,16 @@ public abstract class Skill {
     }
 
     /**
+     * Ajusta el cooldown actual para simulaciones internas de la IA.
+     * No debe usarse desde la UI ni desde el flujo normal del combate.
+     *
+     * @param currentCooldown nuevo valor del cooldown restante.
+     */
+    public void setCurrentCooldownForSimulation(int currentCooldown) {
+        this.currentCooldown = Math.max(0, currentCooldown);
+    }
+
+    /**
      * Obtiene description.
      * @return valor resultante de la operacion.
      */

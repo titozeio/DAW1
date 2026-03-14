@@ -245,6 +245,30 @@ public class Robot {
     }
 
     /**
+     * Devuelve una copia del estado interno de efectos activos.
+     * Se usa por la IA para simular y restaurar ramas de búsqueda.
+     *
+     * @return mapa inmutable de estado a duración restante.
+     */
+    public java.util.Map<RobotState, Integer> snapshotActiveStates() {
+        return new HashMap<>(activeStates);
+    }
+
+    /**
+     * Restaura el conjunto de estados activos desde una instantánea previa.
+     * Se usa solo en simulaciones internas de la IA.
+     *
+     * @param states estados y duraciones a restaurar.
+     */
+    public void restoreActiveStates(java.util.Map<RobotState, Integer> states) {
+        activeStates.clear();
+        if (states != null) {
+            activeStates.putAll(states);
+        }
+        updateStatusBehavior();
+    }
+
+    /**
      * Reduce 1 turno los contadores de estados activos y elimina los que expiren.
      * Llamar al inicio de cada turno del robot.
      */

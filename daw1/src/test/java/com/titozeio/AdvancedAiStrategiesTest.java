@@ -3,7 +3,9 @@ package com.titozeio;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.titozeio.ai.ActionEvaluator;
+import com.titozeio.ai.AiDifficulty;
 import com.titozeio.ai.DarkSoulsAiStrategy;
+import com.titozeio.ai.DarkSoulsDraftAdvisor;
 import com.titozeio.ai.EndTurnDecision;
 import com.titozeio.ai.ExecuteCommandDecision;
 import com.titozeio.ai.HardAiStrategy;
@@ -19,7 +21,11 @@ import com.titozeio.engine.Hexagon;
 import com.titozeio.engine.Map;
 import com.titozeio.engine.Player;
 import com.titozeio.engine.Robot;
+import com.titozeio.enums.RobotState;
+import com.titozeio.enums.RobotTemplate;
 import com.titozeio.enums.TerrainType;
+import com.titozeio.match.BatchSimulationService;
+import com.titozeio.match.MatchRunner;
 import com.titozeio.match.TurnEngine;
 import com.titozeio.skills.FreezeRay;
 import com.titozeio.skills.GuidedMissile;
@@ -27,8 +33,12 @@ import com.titozeio.skills.JetpackBoost;
 import com.titozeio.skills.PlasmaSaberAttack;
 import com.titozeio.skills.RepairNanobots;
 import com.titozeio.skills.TurboPropulsion;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class AdvancedAiStrategiesTest {
@@ -132,19 +142,23 @@ class AdvancedAiStrategiesTest {
         executeSimulatedCommand.invoke(strategy, new SkillCommand(healer, healer), game);
         assertTrue(healer.getCurrentHp() >= healerHpBefore);
         assertTrue(healer.isUsedAttack());
-        assertTrue(healer.isUsedMovement());
+        assertFalse(healer.isUsedMovement());
+        assertEquals(healer.getSkill().getCooldown(), healer.getSkill().getCurrentCooldown());
 
         missile.setUsedAttack(false);
         missile.setUsedMovement(false);
         int enemyBBefore = enemyB.getCurrentHp();
         executeSimulatedCommand.invoke(strategy, new SkillCommand(missile, enemyB), game);
         assertTrue(enemyB.getCurrentHp() < enemyBBefore);
+        assertTrue(missile.isUsedAttack());
+        assertFalse(missile.isUsedMovement());
 
         freezer.setUsedAttack(false);
         freezer.setUsedMovement(false);
         enemyABefore = enemyA.getCurrentHp();
         executeSimulatedCommand.invoke(strategy, new SkillCommand(freezer, enemyA), game);
         assertTrue(enemyA.getCurrentHp() <= enemyABefore);
+        assertTrue(enemyA.hasState(RobotState.FROZEN));
 
         saber.setUsedAttack(false);
         saber.setUsedMovement(false);
@@ -163,6 +177,54 @@ class AdvancedAiStrategiesTest {
         evaluateBoard.setAccessible(true);
         int score = (Integer) evaluateBoard.invoke(strategy, game, p1);
         assertNotEquals(0, score);
+    }
+
+    @Test
+    void darkSoulsDraftAdvisorAndBatchSimulationServiceProduceStructuredTeams() throws Exception {
+        DarkSoulsDraftAdvisor advisor = new DarkSoulsDraftAdvisor();
+        List<RobotTemplate> team = advisor.chooseTeam(Arrays.asList(RobotTemplate.values()),
+                List.of(RobotTemplate.BULLSEYE), 3, 123L);
+
+        assertEquals(3, team.size());
+        assertEquals(3, new HashSet<>(team).size());
+
+        BatchSimulationService service = new BatchSimulationService(new MatchRunner(new TurnEngine()));
+        Method buildTeam = BatchSimulationService.class.getDeclaredMethod(
+                "buildTeamForDifficulty", AiDifficulty.class, List.class, long.class, List.class);
+        buildTeam.setAccessible(true);
+
+        @SuppressWarnings("unchecked")
+        List<RobotTemplate> darkTeam = (List<RobotTemplate>) buildTeam.invoke(service,
+                AiDifficulty.DARK_SOULS, new java.util.ArrayList<>(Arrays.asList(RobotTemplate.values())), 999L,
+                List.of(RobotTemplate.SCOUT));
+
+        assertEquals(3, darkTeam.size());
+        assertEquals(3, new HashSet<>(darkTeam).size());
+    }
+
+    @Test
+    void batchSimulationBuildsTeamsFromSharedPoolWithoutCrossTeamDuplicates() throws Exception {
+        BatchSimulationService service = new BatchSimulationService(new MatchRunner(new TurnEngine()));
+        Method buildTeamsForMatch = BatchSimulationService.class.getDeclaredMethod(
+                "buildTeamsForMatch", com.titozeio.match.BatchSimulationConfig.class, long.class);
+        buildTeamsForMatch.setAccessible(true);
+
+        com.titozeio.match.BatchSimulationConfig config = new com.titozeio.match.BatchSimulationConfig(
+                1, 1L, 200, AiDifficulty.DARK_SOULS, AiDifficulty.DARK_SOULS, null, null);
+        Object draftTeams = buildTeamsForMatch.invoke(service, config, 123L);
+
+        Method teamP1Method = draftTeams.getClass().getDeclaredMethod("teamP1");
+        Method teamP2Method = draftTeams.getClass().getDeclaredMethod("teamP2");
+        teamP1Method.setAccessible(true);
+        teamP2Method.setAccessible(true);
+        @SuppressWarnings("unchecked")
+        List<RobotTemplate> teamP1 = (List<RobotTemplate>) teamP1Method.invoke(draftTeams);
+        @SuppressWarnings("unchecked")
+        List<RobotTemplate> teamP2 = (List<RobotTemplate>) teamP2Method.invoke(draftTeams);
+
+        assertEquals(3, teamP1.size());
+        assertEquals(3, teamP2.size());
+        assertTrue(Collections.disjoint(teamP1, teamP2));
     }
 
     private static Game buildGameWithMap(int rows, int cols) throws Exception {

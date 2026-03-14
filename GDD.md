@@ -398,6 +398,11 @@ La IA nivel DARK SOULS representa el techo algorítmico y estratégico del juego
    - Presión y Exposición Realista: Resta puntos al score global de la simulación por cada unidad propia que acabe el turno expuesta a rangos de ataque enemigos letales (simulando que tras finalizar el combo Dark Souls, es el turno del jugador y este hará masacres).
    - Control Terreno y Centro: Castiga el alejamiento de las casillas centrales y premia el control de puntos elevados o posiciones con vegetación.
 
+> **Estado actual implementado (marzo 2026)**:
+> - `DARK SOULS` explora combos propios más profundos que el resto de IAs y, al evaluar una rama, castiga la mejor respuesta inmediata disponible del rival en lugar de asumir un tablero "estático".
+> - La simulación interna conserva cooldowns, estados y el tipo real de acción consumida por cada skill, para que la búsqueda no tome decisiones basadas en reglas incorrectas.
+> - En selección de robots para `PvE` y en composición automática de equipos para simulaciones, `DARK SOULS` usa el último export JSON disponible en `stats/` para ponderar score global (`ALLROUND`), sinergias de pareja (`allyPairs`) y counters directos (`matchupDominance`).
+
 ### Servicios propuestos
 
 - `TurnEngine`: calcula acciones legales, ejecuta comandos, avanza turnos y comprueba victoria.
