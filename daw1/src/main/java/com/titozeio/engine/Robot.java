@@ -173,8 +173,9 @@ public class Robot {
      * Los HP nunca pueden superar el máximo original.
      */
     public void heal(int amount) {
+        int restored = Math.min(amount, maxHp - currentHp);
         currentHp = Math.min(maxHp, currentHp + amount);
-        System.out.println(modelName + " recupera " + amount + " HP. HP actual: " + currentHp + "/" + maxHp);
+        System.out.println(modelName + " recupera " + restored + " HP. HP actual: " + currentHp + "/" + maxHp);
     }
 
     /** @return true si el robot ha sido destruido (HP ≤ 0). */
@@ -325,6 +326,16 @@ public class Robot {
      */
     public int getCurrentHp() {
         return currentHp;
+    }
+
+    /**
+     * Establece los puntos de vida actuales del robot. Usado internamente para
+     * simulaciones IA.
+     * 
+     * @param hp El nuevo valor de HP (se limitará entre 0 y maxHp).
+     */
+    public void setCurrentHp(int hp) {
+        this.currentHp = Math.max(0, Math.min(maxHp, hp));
     }
 
     /**

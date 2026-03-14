@@ -20,19 +20,43 @@
   - [Sistema de Coordenadas del Mapa:](#sistema-de-coordenadas-del-mapa)
   - [Arquitectura y Patrones:](#arquitectura-y-patrones)
   - [IA, Modos de Control y Simulación Masiva:](#ia-modos-de-control-y-simulación-masiva)
+    - [Objetivo de arquitectura](#objetivo-de-arquitectura)
+    - [Enfoque recomendado para IA](#enfoque-recomendado-para-ia)
+    - [Diseño de la IA fácil](#diseño-de-la-ia-fácil)
+      - [Heurística actualmente implementada (marzo 2026)](#heurística-actualmente-implementada-marzo-2026)
+    - [Diseño de la IA difícil](#diseño-de-la-ia-difícil)
+    - [Diseño de la IA DARK SOULS](#diseño-de-la-ia-dark-souls)
+    - [Servicios propuestos](#servicios-propuestos)
+    - [Simulación masiva para balanceo](#simulación-masiva-para-balanceo)
+    - [Datos a registrar por partida](#datos-a-registrar-por-partida)
+    - [Métricas agregadas de balanceo](#métricas-agregadas-de-balanceo)
+    - [Puntuaciones de Rol](#puntuaciones-de-rol)
+    - [Orden recomendado de implementación](#orden-recomendado-de-implementación)
   - [Estructura de Paquetes:](#estructura-de-paquetes)
   - [Sistema de Audio:](#sistema-de-audio)
+    - [Música de fondo](#música-de-fondo)
+    - [Efectos de sonido (SFX)](#efectos-de-sonido-sfx)
+      - [Tabla de SFX implementados:](#tabla-de-sfx-implementados)
+      - [Sistema de SFX global en botones](#sistema-de-sfx-global-en-botones)
   - [CI/CD (Integración Continua):](#cicd-integración-continua)
 - [4. Bucle de Juego (Game Loop)](#4-bucle-de-juego-game-loop)
+    - [Variantes del bucle](#variantes-del-bucle)
 - [5. Contenido, Niveles](#5-contenido-niveles)
   - [Asset List:](#asset-list)
+    - [Música](#música)
+    - [Efectos de Sonido (SFX)](#efectos-de-sonido-sfx-1)
   - [Diseño de Nivel (mapa):](#diseño-de-nivel-mapa)
+    - [Mapa 1 — «Yermo Industrial»](#mapa-1--yermo-industrial)
   - [Lista de skills:](#lista-de-skills)
   - [Lista de Robots:](#lista-de-robots)
+    - [Dirección visual canónica para concept art (vinculante)](#dirección-visual-canónica-para-concept-art-vinculante)
 - [6. Interfaz (UI/HUD)](#6-interfaz-uihud)
   - [Pantalla de inicio:](#pantalla-de-inicio)
+    - [Estado actual implementado (marzo 2026)](#estado-actual-implementado-marzo-2026)
   - [Pantalla de Nueva partida (Selección de Robots):](#pantalla-de-nueva-partida-selección-de-robots)
+    - [Estado actual implementado (marzo 2026)](#estado-actual-implementado-marzo-2026-1)
   - [Pantalla de Combate:](#pantalla-de-combate)
+    - [Estado actual implementado (marzo 2026)](#estado-actual-implementado-marzo-2026-2)
 
 
 # 1. Concepto de Alto Nivel (The Pitch)
@@ -323,7 +347,7 @@ La puntuación usada en `ActionEvaluator` es la siguiente:
   - `GuidedMissile`: base `260 + daño * 22`, `+1000` si mata.
   - `PlasmaSaberAttack`: base `280 + daño * 20`, `+1000` si mata.
 - **Skill de curación**:
-  - `RepairNanobots`: `180 + curación_efectiva * 30`, donde la curación efectiva es el mínimo entre HP faltante y curación de la skill.
+  - `RepairNanobots`: `180 + curación_efectiva * 30`, donde la curación efectiva es el mínimo entre HP faltante y curación de la skill. Si el HP faltante es 0 (objetivo intacto), las IA Fácil/Media otorgan 0 puntos, pero Difícil (HARD) y DARK SOULS aplican una penalización agresiva de `-10000` para descartar por completo este despilfarro.
 - **Skills de movimiento**:
   - `JetpackBoost` y `TurboPropulsion`: `120 + puntuación_del_movimiento_resultante`.
 
@@ -348,6 +372,31 @@ Ejemplo orientativo de pesos de diseño:
 - `-200` entrar en una casilla especialmente mala.
 
 Estos pesos son deliberadamente simples para facilitar docencia, trazabilidad y ajuste posterior.
+
+### Diseño de la IA difícil
+
+La IA difícil usa un **Lookahead de un turno** con poda heurística para optimizar el ratio riesgo-recompensa.
+En lugar de depender exclusivamente de penalizaciones abstractas basadas en el número de enemigos (como hace la IA de nivel Medio), procede de la siguiente manera:
+1. Genera todas las acciones legales para todos los robots disponibles.
+2. Evalúa sus ganancias agresivas usando la heurística base sin penalizar preventivamente la exposición.
+3. Filtra un subconjunto de acciones "prometedoras" y muy ofensivas.
+4. Para cada acción prometedora, simula el movimiento o ataque y calcula un valor de penalización específico: la cantidad matemática de daño real que los enemigos restantes podrían infligir al robot expuesto en su nueva situación. Al darle más peso a infligir daño que a recibirlo, no duda en efectuar asaltos rentables ni en intercambiar daño si tiene ventaja de supervivencia.
+5. Elige la acción con mejor balance exacto de Daño Infligido / Ventaja Táctica frente a Daño Esperado Recibido.
+
+Esto produce un comportamiento "hard" donde la IA preparará mini emboscadas, evaluará con precisión si vale la pena saltar a plena vista para asesinar un objetivo prioritario y priorizará los intercambios numéricos agresivos.
+
+### Diseño de la IA DARK SOULS
+
+La IA nivel DARK SOULS representa el techo algorítmico y estratégico del juego. A diferencia del análisis que realiza la IA Difícil sobre *una única acción individual*, la IA Dark Souls despliega una **Búsqueda en Profundidad (DFS / DFS Combo Search) de N acciones a lo largo de su propio turno al completo**.
+
+**Planteamiento técnico:**
+1. **Profundidad de Búsqueda sobre el propio Turno:** La IA no piensa de acción en acción; en lugar de eso, traza ramificaciones evaluando "Si mi Robot A se mueve, luego mi Robot B ataca, y luego el Robot C usa su Rayo Congelador, ¿cómo queda todo?". Explora secuencias completas de hasta 4 acciones cruzadas simuladas antes de que termine su turno.
+2. **Generación Dinámica de Estados (Snapshot):** Emplea un simulador sin UI ultrarrápido (`GameStateSnapshot`) que clona en microsegundos HP, posiciones y estado de todos los robots para no ensuciar la partida visual probando millones de futuros en los que dispara y se desplaza antes de revertirlos quirúrgicamente.
+3. **Poda Heurística Extremadamente Agresiva:** Debido a que el factor factorial de combinar tres robots moviéndose y atacando es astronómico, se usa *Move Ordering*. En cada paso del turno simulado, filtra las decenas de opciones a solo las 3 mejores antes de explorar la siguiente acción del combo.
+4. **Evaluacion del Tablero Final (Heurística Madura Avanzada):** Al final del combo simulado (cuando no quedan más acciones que realizar en ese turno), extrae una "fotografía global" y le asigna una puntuación al tablero completo:
+   - Supervivencia y Vitalidad: Pesa enormemente los HP totales vivos en ambos bandos.
+   - Presión y Exposición Realista: Resta puntos al score global de la simulación por cada unidad propia que acabe el turno expuesta a rangos de ataque enemigos letales (simulando que tras finalizar el combo Dark Souls, es el turno del jugador y este hará masacres).
+   - Control Terreno y Centro: Castiga el alejamiento de las casillas centrales y premia el control de puntos elevados o posiciones con vegetación.
 
 ### Servicios propuestos
 
@@ -389,6 +438,8 @@ Requisitos del sistema de simulación:
 - `survivorsP2`
 - `destroyedP1`
 - `destroyedP2`
+- `damageDealtByRobot` (diccionario)
+- `damageReceivedByRobot` (diccionario)
 
 ### Métricas agregadas de balanceo
 
@@ -400,6 +451,20 @@ Requisitos del sistema de simulación:
 - Duración media de partida.
 - Distribución por tipo de victoria.
 - Número de partidas terminadas por `timeout` o límite de turnos.
+
+### Puntuaciones de Rol
+
+Para evaluar visual y de forma rápida el rendimiento adecuado de un robot según su papel estratégico en la mesa, se definen cuatro puntuaciones compuestas. Estas se calculan transformando primero las métricas acumuladas en **medias por partida** para cada robot (`WinRate`, `KillsAvg`, `DmgDealtAvg`, `DmgReceivedAvg`, `SurvivalRate`):
+
+- **DPS (Dañador / Ejecutor):** Robots que hacen mucho daño y causan bajas. No penaliza morir si hace mucho daño.
+  - `(DmgDealtAvg * 10) + (KillsAvg * 50)`
+- **Tank (Vanguardia / Absorción):** Robots que reciben mucho daño absorbiéndolo por sus aliados y aguantando.
+  - `(DmgReceivedAvg * 8) + (SurvivalRate * 150) + (WinRate * 100)`
+- **Support (Apoyo / Control):** Robots cuya eficacia a menudo no se refleja numéricamente salvo en hacer ganar a su equipo.
+  - `(WinRate * 600) + (SurvivalRate * 100) + (DmgDealtAvg * 2)`
+- **All-round (Todoterreno):** Equilibrado, prima no fallar en ninguna categoría general. Es la media aritmética de los otros tres roles.
+  - `(Score_DPS + Score_Tank + Score_Support) / 3`
+
 
 ### Orden recomendado de implementación
 

@@ -48,6 +48,8 @@ public class MatchRunner {
         String victoryType = "timeout";
         int safety = 0;
         Map<String, Integer> killsByRobot = new HashMap<>();
+        Map<String, Integer> damageDealtByRobot = new HashMap<>();
+        Map<String, Integer> damageReceivedByRobot = new HashMap<>();
         while (winner == null && game.getTurnCounter() <= maxTurns && safety < maxTurns * 12) {
             Player current = game.getCurrentPlayer();
             PlayerController controller = game.getController(current);
@@ -61,7 +63,39 @@ public class MatchRunner {
                 }
             } else if (decision instanceof ExecuteCommandDecision executeCommandDecision) {
                 GameCommand command = executeCommandDecision.getCommand();
+
+                Map<Robot, Integer> hpMap = new HashMap<>();
+                for (Robot r : game.getP1().getUnits())
+                    hpMap.put(r, r.getCurrentHp());
+                for (Robot r : game.getP2().getUnits())
+                    hpMap.put(r, r.getCurrentHp());
+
                 turnEngine.execute(command);
+
+                Robot actor = null;
+                if (command instanceof AttackCommand ac)
+                    actor = ac.getAttacker();
+                else if (command instanceof SkillCommand sc)
+                    actor = sc.getRobot();
+
+                int totalDamageDealtThisTurn = 0;
+                for (Player p : List.of(game.getP1(), game.getP2())) {
+                    for (Robot r : p.getUnits()) {
+                        int before = hpMap.getOrDefault(r, r.getCurrentHp());
+                        int lost = before - r.getCurrentHp();
+                        if (lost > 0) {
+                            damageReceivedByRobot.merge(r.getModelName(), lost, Integer::sum);
+                            if (actor != null && r != actor) {
+                                totalDamageDealtThisTurn += lost;
+                            }
+                        }
+                    }
+                }
+
+                if (actor != null && totalDamageDealtThisTurn > 0) {
+                    damageDealtByRobot.merge(actor.getModelName(), totalDamageDealtThisTurn, Integer::sum);
+                }
+
                 registerKill(command, killsByRobot);
                 cleanupDestroyedRobots(game);
                 winner = game.checkVictory();
@@ -87,7 +121,9 @@ public class MatchRunner {
                 toNames(game.getP2().getAliveUnits()),
                 toDestroyedNames(game.getP1().getUnits()),
                 toDestroyedNames(game.getP2().getUnits()),
-                Map.copyOf(killsByRobot));
+                Map.copyOf(killsByRobot),
+                Map.copyOf(damageDealtByRobot),
+                Map.copyOf(damageReceivedByRobot));
     }
 
     private void populateTeams(Game game, List<RobotTemplate> teamP1, List<RobotTemplate> teamP2) {

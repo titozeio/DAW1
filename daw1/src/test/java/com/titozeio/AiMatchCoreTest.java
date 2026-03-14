@@ -12,7 +12,6 @@ import com.titozeio.ai.ExecuteCommandDecision;
 import com.titozeio.ai.HumanController;
 import com.titozeio.ai.MatchContext;
 import com.titozeio.ai.TurnDecision;
-import com.titozeio.commands.AttackCommand;
 import com.titozeio.commands.GameCommand;
 import com.titozeio.commands.MoveCommand;
 import com.titozeio.commands.SkillCommand;
@@ -124,7 +123,8 @@ class AiMatchCoreTest {
         assertEquals(game, new MatchContext(game).getGame());
         assertEquals("Fácil", AiDifficulty.EASY.getDisplayName());
         assertEquals("Fácil", AiDifficulty.EASY.toString());
-        assertNotNull(new ExecuteCommandDecision(new MoveCommand(attacker, game.getMap().getHexagon(0, 0))).getCommand());
+        assertNotNull(
+                new ExecuteCommandDecision(new MoveCommand(attacker, game.getMap().getHexagon(0, 0))).getCommand());
         assertNotNull(new EndTurnDecision());
     }
 
@@ -162,7 +162,8 @@ class AiMatchCoreTest {
         place(enemy, enemyHex, p2);
 
         assertEquals(2, turnEngine.getDeployHexes(game, p1).size());
-        assertTrue(turnEngine.getAttackTargets(game, attacker).isEmpty(), "La cobertura total bloquea el ataque normal");
+        assertTrue(turnEngine.getAttackTargets(game, attacker).isEmpty(),
+                "La cobertura total bloquea el ataque normal");
         assertTrue(turnEngine.getSkillAttackTargets(game, attacker).contains(enemyHex),
                 "GuidedMissile debe ignorar la visibilidad");
 
@@ -205,7 +206,8 @@ class AiMatchCoreTest {
     void matchRunnerAndBatchSimulationServiceProduceDeterministicCoreResults() {
         MatchRunner runner = new MatchRunner(new TurnEngine());
         List<RobotTemplate> team1 = List.of(RobotTemplate.BULLSEYE, RobotTemplate.SCOUT, RobotTemplate.BULWARK);
-        List<RobotTemplate> team2 = List.of(RobotTemplate.ICE_AGE, RobotTemplate.DEATH_KNIGHT, RobotTemplate.VICTORY_SABER);
+        List<RobotTemplate> team2 = List.of(RobotTemplate.ICE_AGE, RobotTemplate.DEATH_KNIGHT,
+                RobotTemplate.VICTORY_SABER);
 
         MatchResult result = runner.runMatch(7L, 99L, AiDifficulty.EASY, AiDifficulty.MEDIUM, team1, team2, 0);
         assertEquals(7L, result.matchId());
@@ -244,6 +246,8 @@ class AiMatchCoreTest {
                         List.of(),
                         List.of("B"),
                         List.of("D"),
+                        java.util.Map.of("A", 1),
+                        java.util.Map.of("A", 1),
                         java.util.Map.of("A", 1));
             }
         };

@@ -30,7 +30,9 @@ class SimulationStatsCoreTest {
                 List.of(),
                 List.of("C"),
                 List.of("D", "E", "F"),
-                Map.of("A", 2, "B", 1));
+                Map.of("A", 2, "B", 1),
+                Map.of("A", 10, "B", 5),
+                Map.of("C", 10, "D", 15));
 
         MatchResult timeout = new MatchResult(
                 2L,
@@ -46,7 +48,9 @@ class SimulationStatsCoreTest {
                 List.of("B"),
                 List.of("D", "E"),
                 List.of("C", "F"),
-                Map.of("F", 1));
+                Map.of("F", 1),
+                Map.of("F", 5),
+                Map.of("A", 5));
 
         stats.record(p1Win);
         stats.record(timeout);
@@ -63,8 +67,8 @@ class SimulationStatsCoreTest {
         assertEquals(1, stats.getVictoryTypes().get("eliminación"));
         assertEquals(1, stats.getVictoryTypes().get("timeout"));
 
-        Map<String, Integer> scores = stats.getRobotScores();
-        assertEquals(10, scores.get("A"));
+        Map<String, Integer> scores = stats.getRoleScores("ALLROUND");
+        assertTrue(scores.containsKey("A"));
         assertTrue(scores.get("B") > scores.get("C"));
 
         var topPairs = stats.getTopAllyPairs(5);

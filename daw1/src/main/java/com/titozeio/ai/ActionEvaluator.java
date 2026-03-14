@@ -21,6 +21,23 @@ import com.titozeio.skills.TurboPropulsion;
  * inmediata.
  */
 public class ActionEvaluator {
+    private final AiDifficulty difficulty;
+
+    /**
+     * Constructor por defecto (Dificultad Fácil).
+     */
+    public ActionEvaluator() {
+        this(AiDifficulty.EASY);
+    }
+
+    /**
+     * Constructor con nivel de dificultad específico.
+     * 
+     * @param difficulty Nivel que afectará a los pesos de la heurística.
+     */
+    public ActionEvaluator(AiDifficulty difficulty) {
+        this.difficulty = difficulty;
+    }
 
     /**
      * Evalúa una acción de movimiento hacia una casilla destino.
@@ -63,6 +80,30 @@ public class ActionEvaluator {
             }
         }
 
+        // MEDICIÓN DE RIESGO (Medio): Penalización por exposición heurística
+        // Hard y Dark Souls lo evalúan de forma dinámica en su lookahead, no queremos
+        // doble penalización
+        if (difficulty == AiDifficulty.MEDIUM) {
+            int threats = countEnemiesCanAttack(game, target, enemy);
+            if (threats > 1) {
+                score -= 150; // "Terminar muy expuesto" (GDD)
+            } else if (threats == 1) {
+                score -= 40; // Ligero riesgo
+            }
+        }
+
+        // Priorización de supervivencia si tiene poca vida
+        if (difficulty != AiDifficulty.EASY) {
+            if (actor.getCurrentHp() <= actor.getMaxHp() * 0.3) {
+                if (target.getTerrain() == TerrainType.VEGETATION) {
+                    score += 100; // Buscar cobertura desesperadamente
+                }
+                if (newBestDistance > currentBestDistance) {
+                    score += 50; // Huir es buena idea si estamos fatal
+                }
+            }
+        }
+
         return score;
     }
 
@@ -89,6 +130,21 @@ public class ActionEvaluator {
         if (isThreateningBase(game, target)) {
             score += 150;
         }
+
+        // FOCUS FIRE (Medio+): Bonus por atacar al mismo objetivo que otros aliados
+        if (difficulty != AiDifficulty.EASY) {
+            for (Robot ally : actor.getOwner().getAliveUnits()) {
+                if (ally != actor && !ally.isDestroyed() && canAttackTarget(game, ally, target)) {
+                    score += 60; // Concentrar fuego es más eficiente
+                }
+            }
+
+            // Priorización de objetivos débiles (Rematador)
+            if (target.getCurrentHp() <= target.getMaxHp() * 0.25) {
+                score += 100;
+            }
+        }
+
         return score;
     }
 
@@ -140,6 +196,9 @@ public class ActionEvaluator {
         if (skill instanceof RepairNanobots repairNanobots && target instanceof Robot ally) {
             int missingHp = ally.getMaxHp() - ally.getCurrentHp();
             if (missingHp <= 0) {
+                if (difficulty == AiDifficulty.HARD || difficulty == AiDifficulty.DARK_SOULS) {
+                    return -10000; // Penalización agresiva para que no considere la acción vacía
+                }
                 return 0; // No curar si ya está al máximo
             }
             return 180 + Math.min(missingHp, repairNanobots.getHealAmount()) * 30;
@@ -153,7 +212,7 @@ public class ActionEvaluator {
         return 50; // Puntuación por defecto para casos no contemplados
     }
 
-    private int estimateBasicAttackDamage(Game game, Robot actor, Robot target) {
+    public int estimateBasicAttackDamage(Game game, Robot actor, Robot target) {
         int damage = actor.getWeapon().getDamage();
         if (actor.getPosition() != null) {
             damage = Math.round(damage * actor.getPosition().getAttackDamageModifier());
@@ -204,6 +263,29 @@ public class ActionEvaluator {
             }
         }
         return false;
+    }
+
+    private int countEnemiesCanAttack(Game game, Hexagon hex, Player enemyPlayer) {
+        int count = 0;
+        for (Robot enemy : enemyPlayer.getAliveUnits()) {
+            if (canAttackTargetFrom(game, enemy, enemy.getPosition(), hex)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public boolean canAttackTarget(Game game, Robot actor, Robot target) {
+        return canAttackTargetFrom(game, actor, actor.getPosition(), target.getPosition());
+    }
+
+    private boolean canAttackTargetFrom(Game game, Robot actor, Hexagon from, Hexagon targetHex) {
+        if (from == null || targetHex == null)
+            return false;
+        int dist = game.getMap().getDistance(from, targetHex);
+        return dist <= actor.getWeapon().getRange()
+                && game.getMap().hasVisibility(from, targetHex)
+                && game.getMap().getCoverModifier(from, targetHex) >= 0f;
     }
 
     private boolean isThreateningBase(Game game, Robot robot) {

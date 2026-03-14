@@ -4,6 +4,9 @@ import com.titozeio.ai.ActionEvaluator;
 import com.titozeio.ai.AiController;
 import com.titozeio.ai.AiDifficulty;
 import com.titozeio.ai.EasyAiStrategy;
+import com.titozeio.ai.HardAiStrategy;
+import com.titozeio.ai.DarkSoulsAiStrategy;
+import com.titozeio.ai.MediumAiStrategy;
 import com.titozeio.ai.HumanController;
 import com.titozeio.ai.PlayerController;
 import com.titozeio.match.TurnEngine;
@@ -52,9 +55,11 @@ public class Game {
     private boolean musicEnabled = true;
     private boolean sfxEnabled = true;
     private AiDifficulty aiDifficulty = AiDifficulty.EASY;
+    private int simulationMatchCount = 100;
     private static final String PREF_MUSIC_ENABLED = "musicEnabled";
     private static final String PREF_SFX_ENABLED = "sfxEnabled";
     private static final String PREF_AI_DIFFICULTY = "aiDifficulty";
+    private static final String PREF_SIM_MATCH_COUNT = "simulationMatchCount";
     private static final Preferences PREFS = Preferences.userNodeForPackage(Game.class);
 
     // Referencia a la ventana de JavaFX
@@ -86,6 +91,7 @@ public class Game {
         this.musicEnabled = PREFS.getBoolean(PREF_MUSIC_ENABLED, true);
         this.sfxEnabled = PREFS.getBoolean(PREF_SFX_ENABLED, true);
         this.aiDifficulty = loadAiDifficultyPreference();
+        this.simulationMatchCount = PREFS.getInt(PREF_SIM_MATCH_COUNT, 100);
         SoundManager.setEnabled(this.sfxEnabled);
 
         // Crear los jugadores sin robots (los robots se asignan en
@@ -157,8 +163,11 @@ public class Game {
 
     private PlayerController createAiController(AiDifficulty difficulty) {
         return switch (difficulty) {
-            case EASY, MEDIUM, HARD, DARK_SOULS ->
-                new AiController(new EasyAiStrategy(new ActionEvaluator()), turnEngine);
+            case EASY -> new AiController(new EasyAiStrategy(new ActionEvaluator(AiDifficulty.EASY)), turnEngine);
+            case MEDIUM -> new AiController(new MediumAiStrategy(new ActionEvaluator(AiDifficulty.MEDIUM)), turnEngine);
+            case HARD -> new AiController(new HardAiStrategy(new ActionEvaluator(AiDifficulty.HARD)), turnEngine);
+            case DARK_SOULS ->
+                new AiController(new DarkSoulsAiStrategy(new ActionEvaluator(AiDifficulty.DARK_SOULS)), turnEngine);
         };
     }
 
@@ -559,5 +568,24 @@ public class Game {
         this.aiDifficulty = aiDifficulty;
         PREFS.put(PREF_AI_DIFFICULTY, aiDifficulty.name());
         configureControllers(gameMode != null ? gameMode : GameMode.PVP);
+    }
+
+    /**
+     * Obtiene el número de partidas predeterminado para las simulaciones masivas.
+     * 
+     * @return Cantidad de partidas a ejecutar.
+     */
+    public int getSimulationMatchCount() {
+        return simulationMatchCount;
+    }
+
+    /**
+     * Establece y persiste el número de partidas para futuras simulaciones.
+     * 
+     * @param count Nuevo valor para el contador de simulación.
+     */
+    public void setSimulationMatchCount(int count) {
+        this.simulationMatchCount = count;
+        PREFS.putInt(PREF_SIM_MATCH_COUNT, count);
     }
 }
