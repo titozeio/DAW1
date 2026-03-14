@@ -39,7 +39,7 @@
                   <Label text="Usa el PANEL DE INFO (abajo izquierda) para ver estadísticas detalladas, HPs y cooldowns de habilidades. Revisa el COMBAT LOG (abajo centro) para un registro histórico de daños, ataques y eventos críticos." textFill="#D6DCE0" wrapText="true" />
                   
                   <Label text="4. TERRENO Y VENTAJA" textFill="#57C0EF" style="-fx-font-weight: bold;"><font><Font size="18.0"/></font></Label>
-                  <Label text="La altura y el bosque proporcionan cobertura defensiva. El agua poco profunda potencia el daño infligido pero aumenta drásticamente tu vulnerabilidad." textFill="#D6DCE0" wrapText="true" />
+                  <Label text="Vegetación: -25% de daño recibido y +1 al coste de movimiento. Agua poco profunda: +25% al daño infligido, +25% al daño recibido y +1 al coste de movimiento. Agua profunda: no se puede atacar ni ser atacado. Altura: +25% al atacar desde +1 nivel, +50% desde +2 o más, y -25% si atacas desde abajo. La cobertura intermedia puede reducir el daño o bloquear el disparo por completo." textFill="#D6DCE0" wrapText="true" />
                   
                   <Label text="MISIONES DE VICTORIA" textFill="#FF9E57" style="-fx-font-weight: bold;"><font><Font size="18.0"/></font></Label>
                   <Label text="● Destruye todas las unidades enemigas en el campo de batalla.&#10;● Captura la base rival (casilla central enemiga) y resiste allí 2 turnos." textFill="#D6DCE0" wrapText="true" />

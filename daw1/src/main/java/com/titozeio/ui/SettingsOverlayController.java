@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -91,8 +90,6 @@ public class SettingsOverlayController {
     private final AtomicBoolean simulationCancelRequested = new AtomicBoolean(false);
     private SimulationStats currentSimulationStats;
     private final Map<String, RobotStatRow> robotStatRows = new LinkedHashMap<>();
-    private static final EnumSet<AiDifficulty> AVAILABLE_DIFFICULTIES = EnumSet.of(AiDifficulty.EASY,
-            AiDifficulty.MEDIUM, AiDifficulty.HARD, AiDifficulty.DARK_SOULS);
     private SortMetric currentSortMetric = SortMetric.ALLROUND;
     private boolean simulationLaunchAllowed = true;
     private Runnable onAiDifficultyChanged;
