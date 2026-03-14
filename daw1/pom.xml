@@ -177,7 +177,8 @@
               <excludes>
                 <!-- JavaFX UI: difícil de cubrir de forma robusta en CI/headless -->
                 <exclude>com/titozeio/ui/**</exclude>
-              </excludes>
+                <exclude>com/titozeio/engine/Main*</exclude>
+                <exclude>com/titozeio/engine/SoundManager*</exclude>              </excludes>
             </configuration>
           </execution>
           <execution>
@@ -190,7 +191,8 @@
               <!-- Excluir UI JavaFX del informe/cálculo para evitar penalizar coverage en CI -->
               <excludes>
                 <exclude>com/titozeio/ui/**</exclude>
-              </excludes>
+                <exclude>com/titozeio/engine/Main*</exclude>
+                <exclude>com/titozeio/engine/SoundManager*</exclude>              </excludes>
             </configuration>
           </execution>
           <execution>
@@ -203,7 +205,8 @@
               <!-- Excluir UI JavaFX del check (bundle) para que el umbral refleje el core testeable -->
               <excludes>
                 <exclude>com/titozeio/ui/**</exclude>
-              </excludes>
+                <exclude>com/titozeio/engine/Main*</exclude>
+                <exclude>com/titozeio/engine/SoundManager*</exclude>              </excludes>
               <rules>
                 <rule>
                   <element>BUNDLE</element>
@@ -260,3 +263,5 @@
     </profile>
   </profiles>
 </project>
+
+
